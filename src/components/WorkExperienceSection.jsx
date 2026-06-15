@@ -242,11 +242,11 @@ const WorkExperienceSection = () => {
  const hasExperiences = useMemo(() => experiences.length > 0, [experiences])
 
  return (
- <section
- id="WorkExperience"
- className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[var(--color-backdrop-base)] overflow-hidden py-20 sm:py-24"
- aria-label="Work Experience Section"
- >
+  <section
+    id="WorkExperience"
+    className="md:px-[10%] px-[5%] w-full bg-[var(--color-backdrop-base)] overflow-hidden py-24 md:py-32"
+    aria-label="Work Experience Section"
+  >
  <div className="relative z-10 max-w-7xl mx-auto">
  <SectionHeader />
 

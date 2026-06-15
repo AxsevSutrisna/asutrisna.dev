@@ -33,7 +33,6 @@ const LandingPage = () => {
  <Navbar />
 
  <Home />
- <About />
  <WorkExperienceSection />
  <Suspense fallback={<div className="h-20" />}>
  <Portofolio />

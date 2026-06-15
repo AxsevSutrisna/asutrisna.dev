@@ -187,6 +187,17 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  {item.description}
  </p>
 
+ {/* Role Badges */}
+ {item.role_badges && (
+ <div className="flex flex-wrap gap-1.5">
+   {item.role_badges.split(',').map(r => r.trim()).filter(Boolean).map((role, idx) => (
+     <span key={idx} className="px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-widest border border-white/10 bg-white/5 text-indigo-300 uppercase">
+       {role}
+     </span>
+   ))}
+ </div>
+ )}
+
  {/* Quote block */}
  {item.quote && (
  <div className="relative rounded-xl bg-indigo-500/8 border border-indigo-500/20 p-3.5 overflow-hidden">
@@ -233,14 +244,15 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
 }
 
 /* ── Premium About Form ── */
-const AboutForm = ({ initial, onSubmit, onCancel, uploading, onViewCv}) => {
- const isEditing = Boolean(initial)
- const [form, setForm] = useState({
- name: initial?.name ??'',
- description: initial?.description ??'',
- quote: initial?.quote ??'',
- is_published: initial?.is_published ?? true,
-})
+ const AboutForm = ({ initial, onSubmit, onCancel, uploading, onViewCv}) => {
+  const isEditing = Boolean(initial)
+  const [form, setForm] = useState({
+  name: initial?.name ??'',
+  description: initial?.description ??'',
+  quote: initial?.quote ??'',
+  role_badges: initial?.role_badges ??'',
+  is_published: initial?.is_published ?? true,
+ })
  const [photoFile, setPhotoFile] = useState(null)
  const [cvFileEn, setCvFileEn] = useState(null)
  const [cvFileId, setCvFileId] = useState(null)
@@ -416,6 +428,20 @@ const AboutForm = ({ initial, onSubmit, onCancel, uploading, onViewCv}) => {
  <p className="text-xs text-indigo-300/80 italic">&ldquo;{form.quote}&rdquo;</p>
  </div>
  )}
+ </div>
+
+ {/* Role Badges */}
+ <div className="space-y-1.5 mt-4">
+ <label className={labelCls}>Role Badges</label>
+ <input
+   type="text"
+   value={form.role_badges}
+   onChange={set('role_badges')}
+   placeholder="e.g. DEVELOPER, EDUCATOR, MENTOR"
+   className={getInputClass('role_badges')}
+ />
+ <p className="text-[10px] text-gray-600">Separate multiple badges with commas (,)</p>
+ <FieldError message={errors.role_badges} />
  </div>
  </div>
 
@@ -594,10 +620,10 @@ export default function About() {
  if (form.is_published) {
  await supabase.from('about_contents').update({ is_published: false}).eq('is_published', true)
 }
- await supabase.from('about_contents').insert({
- name: form.name, description: form.description, quote: form.quote,
- photo_url: photoUrl, cv_en_url: cvUrlEn, cv_id_url: cvUrlId, is_published: form.is_published, version: 1,
-})
+  await supabase.from('about_contents').insert({
+  name: form.name, description: form.description, quote: form.quote, role_badges: form.role_badges,
+  photo_url: photoUrl, cv_en_url: cvUrlEn, cv_id_url: cvUrlId, is_published: form.is_published, version: 1,
+ })
  setShowCreate(false)
  pushToast('success','About content created successfully!')
  fetchItems()
@@ -619,11 +645,11 @@ export default function About() {
  if (form.is_published) {
  await supabase.from('about_contents').update({ is_published: false}).neq('id', editItem.id).eq('is_published', true)
 }
- await supabase.from('about_contents').update({
- name: form.name, description: form.description, quote: form.quote,
- photo_url: photoUrl, cv_en_url: cvUrlEn, cv_id_url: cvUrlId, is_published: form.is_published,
- version: (editItem.version || 1) + 1,
-}).eq('id', editItem.id)
+  await supabase.from('about_contents').update({
+  name: form.name, description: form.description, quote: form.quote, role_badges: form.role_badges,
+  photo_url: photoUrl, cv_en_url: cvUrlEn, cv_id_url: cvUrlId, is_published: form.is_published,
+  version: (editItem.version || 1) + 1,
+ }).eq('id', editItem.id)
  setEditItem(null)
  pushToast('success','About content updated successfully!')
  fetchItems()

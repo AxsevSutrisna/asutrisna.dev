@@ -1,10 +1,12 @@
 import { useEffect, useState, memo, useMemo, useRef} from"react"
+import { Link } from "react-router-dom"
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, ChevronDown, Download} from"lucide-react"
 import AOS from'aos'
 import'aos/dist/aos.css'
 import { supabase} from"../supabase"
 import PublicCtaButton from"../components/ui/public-cta-button"
 import { Badge} from"@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
  DropdownMenu,
  DropdownMenuTrigger,
@@ -37,86 +39,57 @@ const parseSupabaseStorageUrl = (value) => {
  return { bucket, filePath}
 }
 
-// Memoized Components
-const Header = memo(({ name}) => (
- <div className="text-center lg:mb-8 mb-2 px-[5%]">
- <div className="inline-block relative group">
- <h2
- className="text-4xl md:text-5xl font-display font-bold text-white"
- data-aos="zoom-in-up"
- data-aos-duration="600"
- >
- About Me
- </h2>
- </div>
- <p
- className="mt-2 max-w-2xl mx-auto text-base sm:text-lg flex items-center justify-center gap-2"
- style={{ color:'var(--color-text-secondary)'}}
- data-aos="zoom-in-up"
- data-aos-duration="800"
- >
- <Sparkles className="w-5 h-5 text-purple-400" />
- Transforming ideas into digital experiences for {name || ABOUT_FALLBACK.name}
- <Sparkles className="w-5 h-5 text-purple-400" />
- </p>
- </div>
+const ProfileImage = memo(({ photoUrl, yearsOfExperience }) => (
+  <div className="flex justify-center items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
+    <div
+      className="relative group w-full max-w-md mx-auto lg:mx-0"
+      data-aos="fade-up"
+      data-aos-duration="1000"
+    >
+      <div className="absolute -inset-4 opacity-[20%] z-0 hidden sm:block">
+        <div className="absolute inset-0 rounded-[2rem] blur-2xl animate-pulse-slow" style={{ background: 'var(--color-primary-light)' }} />
+      </div>
+
+      <div className="relative w-full aspect-[4/5] sm:aspect-[4/5] md:aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl bg-black/20">
+        <img
+          src={photoUrl || ABOUT_FALLBACK.photo_url}
+          alt="Profile"
+          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+          loading="lazy"
+          onError={(event) => {
+            event.currentTarget.src = ABOUT_FALLBACK.photo_url
+          }}
+        />
+        
+        {/* Glow overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/80 via-transparent to-transparent opacity-80" />
+        
+        {/* Floating Badge */}
+        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-[#161b22] border border-white/10 rounded-2xl p-4 shadow-2xl flex flex-col items-center justify-center transform transition-all duration-500 hover:scale-105 hover:border-white/20 hover:shadow-[0_0_20px_rgba(var(--color-primary-light-rgb),0.3)]">
+          <span className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--color-primary-light)' }}>
+            {yearsOfExperience}+
+          </span>
+          <span className="text-[10px] sm:text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">
+            Years Experience
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 ));
-Header.displayName ='Header';
-
-const ProfileImage = memo(({ photoUrl}) => (
- <div className="flex justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
- <div
- className="relative group"
- data-aos="fade-up"
- data-aos-duration="1000"
- >
- {/* Optimized gradient backgrounds with reduced complexity for mobile */}
- <div className="absolute -inset-6 opacity-[25%] z-0 hidden sm:block">
- <div className="absolute inset-0 bg-[#0f172a] rounded-full blur-2xl animate-spin-slower" />
- <div className="absolute inset-0 bg-[#0f172a] rounded-full blur-2xl animate-pulse-slow opacity-50" />
- <div className="absolute inset-0 bg-[#0f172a] rounded-full blur-2xl animate-float opacity-50" />
- </div>
-
- <div className="relative">
- <div className="w-72 h-72 sm:w-80 sm:h-80 rounded-full overflow-hidden transform transition-all duration-700 group-hover:scale-105 neo-photo bg-black/20">
- <div className="absolute inset-0 rounded-full z-20 transition-all duration-700 group-hover:scale-105" />
-
- {/* Optimized overlay effects - disabled on mobile */}
- <div className="absolute inset-0 bg-[#0f172a] z-10 transition-opacity duration-700 group-hover:opacity-0 hidden sm:block" />
- <div className="absolute inset-0 bg-[#0f172a] z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 hidden sm:block" />
-
- <img
- src={photoUrl || ABOUT_FALLBACK.photo_url}
- alt="Profile"
- className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
- loading="lazy"
- onError={(event) => {
- event.currentTarget.src = ABOUT_FALLBACK.photo_url
-}}
- />
-
- {/* Advanced hover effects - desktop only */}
- <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 z-20 hidden sm:block">
- <div className="absolute inset-0 bg-[#0f172a] transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
- <div className="absolute inset-0 bg-[#0f172a] transform translate-y-full group-hover:-translate-y-full transition-transform duration-1000 delay-100" />
- <div className="absolute inset-0 rounded-full border-8 border-white/10 scale-0 group-hover:scale-100 transition-transform duration-700 animate-pulse-slow" />
- </div>
- </div>
- </div>
- </div>
- </div>
-));
-ProfileImage.displayName ='ProfileImage';
+ProfileImage.displayName = 'ProfileImage';
 
 const StatCard = memo(({ icon: Icon, value, label, description, animation, href}) => {
- const Wrapper = href ?'a' :'div'
+ const isInternalLink = href && href.startsWith('/');
+ const Wrapper = isInternalLink ? Link : (href ? 'a' : 'div');
+ const linkProps = isInternalLink ? { to: href } : (href ? { href } : {});
 
  return (
  <Wrapper
  data-aos={animation}
  data-aos-duration={1300}
  className="relative group block h-full"
- href={href}
+ {...linkProps}
  >
  <div className="relative z-10 p-6 h-full flex flex-col justify-between rounded-xl border-2 border-white/10 bg-white/5 shadow-[6px_6px_0_rgba(255,255,255,0.15)] hover:translate-x-[6px] hover:translate-y-[6px] hover:shadow-none hover:border-white/30 transition-all duration-200">
  <div className="absolute -z-10 inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300 rounded-xl" style={{ background:'linear-gradient(to bottom right, var(--color-primary-dark), var(--color-primary-light))'}}></div>
@@ -301,145 +274,117 @@ const AboutPage = () => {
 }, []);
 
  // Memoized stats data
- const statsData = useMemo(() => [
- {
- icon: Code,
- value: totalProjects,
- label:"Total Projects",
- description:"Innovative web solutions crafted",
- animation:"fade-right",
- href:"#Portofolio",
-},
- {
- icon: Award,
- value: totalCertificates,
- label:"Certificates",
- description:"Professional skills validated",
- animation:"fade-up",
- href:"#Portofolio",
-},
- {
- icon: Globe,
- value: YearExperienceDecimal,
- label:"Years of Experience",
- description: YearExperienceLabel ||"Continuous learning journey",
- animation:"fade-left",
- href:"#WorkExperience",
-},
- ], [totalProjects, totalCertificates, YearExperienceDecimal, YearExperienceLabel]);
+  const statsData = useMemo(() => [
+  {
+  icon: Code,
+  value: totalProjects,
+  label:"Total Projects",
+  description:"Innovative web solutions crafted",
+  animation:"fade-right",
+  href:"/projects",
+ },
+  {
+  icon: Award,
+  value: totalCertificates,
+  label:"Certificates",
+  description:"Professional skills validated",
+  animation:"fade-up",
+  href:"/certificates",
+ },
+  {
+  icon: Globe,
+  value: YearExperienceDecimal,
+  label:"Years of Experience",
+  description: YearExperienceLabel ||"Continuous learning journey",
+  animation:"fade-left",
+  href:"/experience",
+ },
+  ], [totalProjects, totalCertificates, YearExperienceDecimal, YearExperienceLabel]);
 
- return (
- <div
- className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0"
- id="About"
- itemScope
- itemType="https://schema.org/Person"
+  return (
+    <div
+      className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0"
+      id="About"
+      itemScope
+      itemType="https://schema.org/Person"
+    >
+      <div className="w-full mx-auto pt-8 sm:pt-12 relative">
+        <div className="flex flex-col-reverse lg:grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
+          
+          <div className="space-y-6 text-left">
+            {/* Small Badge About Me */}
+            <div data-aos="fade-right" data-aos-duration="1000">
+              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-white/20 text-white/80 bg-white/5 backdrop-blur-md">
+                <span className="text-sm font-medium" style={{ color: 'var(--color-primary-light)' }}>About Me</span>
+              </Badge>
+            </div>
 
- >
- <Header name={content.name} />
+            <h2
+              className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight"
+              data-aos="fade-right"
+              data-aos-duration="1200"
+            >
+              <span className="text-white">Hello, My Name is </span>
+              <br className="hidden sm:block"/>
+              <span style={{ color: 'var(--color-primary-light)' }}>{content.name}</span>
+            </h2>
 
- <div className="w-full mx-auto pt-8 sm:pt-12 relative">
- <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
- <div className="space-y-6 text-center lg:text-left">
- <h2
- className="text-3xl sm:text-4xl lg:text-5xl font-bold"
- data-aos="fade-right"
- data-aos-duration="1000"
- >
- <span className="font-display text-white">Hello, I&apos;m</span>
- <span
- className="block mt-2 text-gray-200"
- data-aos="fade-right"
- data-aos-duration="1300"
- itemProp="name"
- >
- {content.name}
- </span>
- </h2>
+            <div
+              className="text-base sm:text-lg leading-relaxed text-justify sm:text-left text-gray-300 space-y-4"
+              data-aos="fade-right"
+              data-aos-duration="1400"
+            >
+              {content.description.split('\n').map((paragraph, index) => (
+                paragraph.trim() ? <p key={index}>{paragraph}</p> : null
+              ))}
+            </div>
 
- <p
- className="text-base sm:text-lg lg:text-xl leading-relaxed text-justify pb-4 sm:pb-0"
- style={{ color:'var(--color-text-secondary)'}}
- data-aos="fade-right"
- data-aos-duration="1500"
- >
- {content.description}
- </p>
+            {/* Personal Quote */}
+            {content.quote && (
+              <blockquote
+                className="border-l-2 border-white/20 pl-4 text-sm sm:text-base italic text-gray-400"
+                style={{ borderColor: 'var(--color-primary-light)' }}
+                data-aos="fade-right"
+                data-aos-duration="1500"
+              >
+                "{content.quote}"
+              </blockquote>
+            )}
 
- {/* Quote Section */}
- <Badge
- asChild
- variant="default"
- className="relative p-4 my-6 w-full flex justify-start rounded-xl whitespace-normal overflow-hidden group text-left"
- data-aos="fade-up"
- data-aos-duration="1700"
- >
- <div>
- {/* Floating orbs background */}
- <div className="absolute top-2 right-4 w-16 h-16 rounded-full blur-xl" style={{ background:'linear-gradient(90deg, rgba(var(--color-primary-dark-rgb),0.2), rgba(var(--color-primary-light-rgb),0.2))'}}></div>
- <div className="absolute -bottom-4 -left-2 w-12 h-12 rounded-full blur-lg" style={{ background:'linear-gradient(90deg, rgba(var(--color-primary-light-rgb),0.2), rgba(var(--color-primary-dark-rgb),0.2))'}}></div>
+            {/* Role Badges */}
+            <div className="flex flex-wrap gap-2 pt-2" data-aos="fade-right" data-aos-duration="1600">
+              {(content.role_badges 
+                  ? content.role_badges.split(',').map(r => r.trim()).filter(Boolean) 
+                  : ['DEVELOPER', 'EDUCATOR', 'MENTOR', 'LECTURER', 'SPEAKER', 'IOT ENTHUSIAST']
+              ).map((role) => (
+                <Badge key={role} variant="outline" className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-semibold tracking-widest border-white/10 bg-[#0f172a] shadow-sm uppercase" style={{ color: 'var(--color-primary-light)' }}>
+                  {role}
+                </Badge>
+              ))}
+            </div>
 
- {/* Quote icon */}
- <div className="absolute top-3 left-4 opacity-30" style={{ color:'var(--color-primary-dark)'}}>
- <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
- <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z" />
- </svg>
- </div>
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4" data-aos="fade-right" data-aos-duration="1800">
+              <Button asChild className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--color-primary-main)', color: 'white' }}>
+                <Link to="/contact">👋 Get in touch</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold border-white/20 bg-[#0f172a] hover:bg-white/10 transition-all duration-300">
+                <Link to="/stack">
+                  🧠 View Tech Stack
+                </Link>
+              </Button>
+            </div>
+          </div>
 
- <blockquote className="text-center lg:text-left italic font-medium text-sm relative z-10 pl-6" style={{ color:'var(--color-text-secondary)'}}>
- &quot;{content.quote || ABOUT_FALLBACK.quote}&quot;
- </blockquote>
- </div>
- </Badge>
+          <ProfileImage photoUrl={content.photo_url} yearsOfExperience={Math.floor(YearExperienceDecimal)} />
+        </div>
 
- <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full">
- <div data-aos="fade-up" data-aos-duration="800" className="w-full sm:w-auto">
- <DropdownMenu>
- <DropdownMenuTrigger asChild>
- <div className="w-full sm:w-auto">
- <PublicCtaButton
- text="Download CV"
- icon={ChevronDown}
- className="w-full sm:w-auto"
- />
- </div>
- </DropdownMenuTrigger>
- <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[14rem] mt-2">
- <DropdownMenuItem asChild className="cursor-pointer py-3">
- <a href={getDownloadUrl(content.cv_en_url || ABOUT_FALLBACK.cv_url,'_EN')} download="CV_AsepSutrisna_FullStackDeveloper_EN.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
- <Download className="w-4 h-4 text-indigo-400" />
- <span>Bahasa Inggris</span>
- </a>
- </DropdownMenuItem>
- <DropdownMenuItem asChild className="cursor-pointer py-3">
- <a href={getDownloadUrl(content.cv_id_url || ABOUT_FALLBACK.cv_url,'_ID')} download="CV_AsepSutrisna_FullStackDeveloper_ID.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
- <Download className="w-4 h-4 text-emerald-400" />
- <span>Bahasa Indonesia</span>
- </a>
- </DropdownMenuItem>
- </DropdownMenuContent>
- </DropdownMenu>
- </div>
- <div data-aos="fade-up" data-aos-duration="1000" className="w-full sm:w-auto">
- <PublicCtaButton
- href="#Portofolio"
- text="View Projects"
- icon={Code}
- className="w-full sm:w-auto"
- />
- </div>
- </div>
- </div>
-
- <ProfileImage photoUrl={content.photo_url} />
- </div>
-
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
- {statsData.map((stat) => (
- <StatCard key={stat.label} {...stat} />
- ))}
- </div>
- </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 lg:mt-24">
+          {statsData.map((stat) => (
+            <StatCard key={stat.label} {...stat} />
+          ))}
+        </div>
+      </div>
 
  <style>{`
  @keyframes float {

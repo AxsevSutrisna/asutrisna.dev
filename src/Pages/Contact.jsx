@@ -109,8 +109,8 @@ const ContactPage = () => {
 };
 
  return (
- <div className="px-[5%] sm:px-[5%] lg:px-[10%]" >
- <div className="text-center lg:mt-[5%] mt-10 mb-2 sm:px-0 px-[5%]">
+ <div className="px-[5%] sm:px-[5%] lg:px-[10%] py-24 md:py-32" id="Contact">
+ <div className="text-center mb-12 sm:px-0 px-[5%]">
  <h2
  data-aos="fade-down"
  data-aos-duration="1000"
@@ -121,16 +121,13 @@ const ContactPage = () => {
  <p
  data-aos="fade-up"
  data-aos-duration="1100"
- className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2"
+ className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-4"
  >
  Punya pertanyaan? Kirimi saya pesan, dan saya akan segera membalasnya.
  </p>
  </div>
 
- <div
- className="h-auto py-10 flex items-center justify-center 2xl:pr-[3.1%] lg:pr-[3.8%] md:px-0"
- id="Contact"
- >
+ <div className="flex items-center justify-center 2xl:pr-[3.1%] lg:pr-[3.8%] md:px-0">
  <div className="container px-[1%] grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-[45%_55%] 2xl:grid-cols-[35%_65%] gap-12" >
  <Card className="p-5 py-10 sm:p-10 transform transition-all duration-500">
  <div className="flex justify-between items-start mb-8">
