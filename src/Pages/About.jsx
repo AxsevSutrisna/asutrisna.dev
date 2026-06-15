@@ -303,13 +303,13 @@ const AboutPage = () => {
 
   return (
     <div
-      className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0"
+      className="h-auto pt-32 pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%]"
       id="About"
       itemScope
       itemType="https://schema.org/Person"
     >
-      <div className="w-full mx-auto pt-8 sm:pt-12 relative">
-        <div className="flex flex-col-reverse lg:grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
+      <div className="w-full mx-auto relative">
+        <div className="flex flex-col lg:grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
           
           <div className="space-y-6 text-left">
             {/* Small Badge About Me */}

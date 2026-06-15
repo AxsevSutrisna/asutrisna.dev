@@ -8,16 +8,18 @@ import Comments from'./dashboard/Comments'
 import About from'./dashboard/About'
 import TechStacks from'./dashboard/TechStacks'
 import WorkExperience from'./dashboard/WorkExperience'
+import Educations from'./dashboard/Educations'
 import HeroContent from'./dashboard/HeroContent'
 import SocialLinks from'./dashboard/SocialLinks'
 import ThemeManager from'./dashboard/ThemeManager'
 import Courses from'./dashboard/Courses'
-import { FolderGit2, Award, MessageSquare, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen} from'lucide-react'
+import { FolderGit2, Award, MessageSquare, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap} from'lucide-react'
 
 const NAV_ITEMS = [
- { to:'projects', label:'Projects', icon: FolderGit2},
- { to:'work-experience', label:'Work Experience', icon: Briefcase},
- { to:'courses', label:'Courses', icon: BookOpen},
+  { to:'projects', label:'Projects', icon: FolderGit2},
+  { to:'work-experience', label:'Work Experience', icon: Briefcase},
+  { to:'educations', label:'Educations', icon: GraduationCap},
+  { to:'courses', label:'Courses', icon: BookOpen},
  { to:'hero-content', label:'Hero Content', icon: Zap},
  { to:'about', label:'About', icon: Sparkles},
  { to:'tech-stacks', label:'Tech Stack', icon: Boxes},
@@ -146,6 +148,7 @@ export default function Dashboard() {
  <Route index element={<Navigate to="projects" replace />} />
  <Route path="projects" element={<Projects />} />
  <Route path="work-experience" element={<WorkExperience />} />
+ <Route path="educations" element={<Educations />} />
  <Route path="courses" element={<Courses />} />
  <Route path="hero-content" element={<HeroContent />} />
  <Route path="about" element={<About />} />
