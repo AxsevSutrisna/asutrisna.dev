@@ -1,63 +1,63 @@
-import { Home, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/button';
+import { Home, ArrowLeft} from'lucide-react';
+import { Link} from'react-router-dom';
+import { Button} from'../components/ui/button';
 
 export default function NotFoundPage() {
-  const handleGoBack = () => {
-    window.history.back();
-  };
+ const handleGoBack = () => {
+ window.history.back();
+};
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
-      <div className="text-center">
-        {/* 404 Number */}
-        <div className="mb-8">
-          <h1 className="text-9xl font-bold text-gray-800 mb-4 animate-bounce">
-            404
-          </h1>
-          <div className="w-24 h-1 bg-indigo-500 mx-auto rounded-full"></div>
-        </div>
+ return (
+ <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-4">
+ <div className="text-center">
+ {/* 404 Number */}
+ <div className="mb-8">
+ <h1 className="text-9xl font-bold text-gray-800 mb-4 animate-bounce">
+ 404
+ </h1>
+ <div className="w-24 h-1 bg-indigo-500 mx-auto rounded-full"></div>
+ </div>
 
-        {/* Message */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-semibold text-gray-700 mb-4">
-            Oops! Halaman Tidak Ditemukan
-          </h2>
-          <p className="text-lg text-gray-600 max-w-md mx-auto leading-relaxed">
-            Halaman yang Anda cari mungkin telah dipindahkan, dihapus, atau tidak pernah ada.
-          </p>
-        </div>
+ {/* Message */}
+ <div className="mb-8">
+ <h2 className="text-3xl font-semibold text-gray-700 mb-4">
+ Oops! Halaman Tidak Ditemukan
+ </h2>
+ <p className="text-lg text-gray-600 max-w-md mx-auto leading-relaxed">
+ Halaman yang Anda cari mungkin telah dipindahkan, dihapus, atau tidak pernah ada.
+ </p>
+ </div>
 
-        {/* Illustration */}
-        <div className="mb-8">
-          <div className="w-32 h-32 mx-auto bg-indigo-100 rounded-full flex items-center justify-center mb-6">
-            <div className="text-6xl">🔍</div>
-          </div>
-        </div>
+ {/* Illustration */}
+ <div className="mb-8">
+ <div className="w-32 h-32 mx-auto bg-indigo-100 rounded-full flex items-center justify-center mb-6">
+ <div className="text-6xl">🔍</div>
+ </div>
+ </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button
-            onClick={handleGoBack}
-            variant="ghost"
-            size="default"
-            className="flex items-center gap-2 px-6 py-3"
-          >
-            <ArrowLeft size={20} />
-            Kembali
-          </Button>
+ {/* Action Buttons */}
+ <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+ <Button
+ onClick={handleGoBack}
+ variant="ghost"
+ size="default"
+ className="flex items-center gap-2 px-6 py-3"
+ >
+ <ArrowLeft size={20} />
+ Kembali
+ </Button>
 
-          <Button asChild variant="default" size="default" className="flex items-center gap-2 px-6 py-3">
-            <Link to="/">
-              <Home size={20} />
-              Beranda
-            </Link>
-          </Button>
-        </div>
+ <Button asChild variant="default" size="default" className="flex items-center gap-2 px-6 py-3">
+ <Link to="/">
+ <Home size={20} />
+ Beranda
+ </Link>
+ </Button>
+ </div>
 
 
 
-      </div>
-    </div>
-  );
+ </div>
+ </div>
+ );
 }
