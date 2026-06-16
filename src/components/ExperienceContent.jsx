@@ -291,9 +291,9 @@ export default function ExperienceContent() {
                           <Sparkles className="w-4 h-4 text-theme-primary-light" />
                           Activities & Societies
                         </h4>
-                        <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                          {edu.activities}
-                        </p>
+                        <div className="text-sm sm:text-base text-gray-300 leading-relaxed">
+                          {renderDescription(edu.activities)}
+                        </div>
                       </div>
                     )}
                   </ExpandableCard>
