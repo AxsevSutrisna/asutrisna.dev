@@ -365,14 +365,16 @@ const AboutPage = () => {
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-4 pt-4" data-aos="fade-right" data-aos-duration="1800">
-              <Button asChild className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--color-primary-main)', color: 'white' }}>
-                <Link to="/contact">👋 Get in touch</Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold border-white/20 bg-[#0f172a] hover:bg-white/10 transition-all duration-300">
-                <Link to="/stack">
-                  🧠 View Tech Stack
-                </Link>
-              </Button>
+              <PublicCtaButton
+                to="/contact"
+                text="👋 Get in touch"
+                className="w-full sm:w-auto px-8"
+              />
+              <PublicCtaButton
+                to="/stack"
+                text="🧠 View Tech Stack"
+                className="w-full sm:w-auto px-8"
+              />
             </div>
           </div>
 

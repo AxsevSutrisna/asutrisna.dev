@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { supabase } from '../supabase';
-import { BookOpen } from 'lucide-react';
-
+import { BookOpen, ExternalLink } from 'lucide-react';
+import PublicCtaButton from '../components/ui/public-cta-button';
 export default function CoursesPage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,14 @@ export default function CoursesPage() {
                    <p className="text-indigo-400 text-sm mb-3">{course.provider} {course.completion_date && `• ${course.completion_date}`}</p>
                    <p className="text-gray-400 text-sm mb-4">{course.description}</p>
                    {course.certificate_link && (
-                     <a href={course.certificate_link} target="_blank" rel="noreferrer" className="text-sm text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg inline-block">View Certificate</a>
+                     <PublicCtaButton 
+                       href={course.certificate_link} 
+                       target="_blank" 
+                       rel="noreferrer" 
+                       text="View Certificate"
+                       icon={ExternalLink}
+                       className="px-4 py-2 text-sm"
+                     />
                    )}
                  </div>
                </div>

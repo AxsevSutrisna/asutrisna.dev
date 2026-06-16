@@ -1,8 +1,8 @@
 import React from"react";
 import PropTypes from"prop-types";
 import { Link} from"react-router-dom";
-import { ExternalLink, ArrowRight} from"lucide-react";
-import { Button} from'@/components/ui/button'
+import { ExternalLink, ArrowRight } from "lucide-react";
+import PublicCtaButton from "@/components/ui/public-cta-button";
 import {
  Card,
  CardContent,
@@ -49,17 +49,15 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
 
  <CardFooter className="p-0 pt-4 flex items-center justify-between mt-auto">
  {ProjectLink ? (
- <Button asChild variant="neutral" size="sm" className="px-4 py-2 text-sm">
- <a
- href={ProjectLink ||"#"}
+ <PublicCtaButton
+ href={ProjectLink || "#"}
+ text="Visit Link"
+ icon={ExternalLink}
  target="_blank"
  rel="noopener noreferrer"
  onClick={handleLiveDemo}
- >
- <span className="text-sm font-medium">Visit Link</span>
- <ExternalLink className="w-4 h-4" />
- </a>
- </Button>
+ className="px-4 py-2 text-sm"
+ />
  ) : (
  <span className="text-gray-500 text-sm">
  Visit Link Not Available
@@ -67,20 +65,18 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
  )}
 
  {id ? (
- <Button asChild variant="neutral" size="sm" className="px-4 py-2 text-sm">
- <Link
+ <PublicCtaButton
  to={`/project/${toSlug(Title)}`}
+ text="Details"
+ icon={ArrowRight}
  onClick={handleDetails}
- >
- <span className="text-sm font-medium">Details</span>
- <ArrowRight className="w-4 h-4" />
- </Link>
- </Button>
+ className="px-4 py-2 text-sm"
+ />
  ) : (
  <span className="text-gray-500 text-sm">
  Details Not Available
  </span>
- )}
+    )}
  </CardFooter>
  </Card>
  );

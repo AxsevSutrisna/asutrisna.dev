@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "../supabase";
 import CardProject from "../components/CardProject";
 import AOS from "aos";
@@ -75,24 +75,25 @@ export default function Portofolio() {
         setShowAllProjects(prev => !prev);
     }, []);
 
-    // Array filter dari gambar referensi
-    const filters = [
-        "All", "Open Source", "Education", "Programming", "Website", 
-        "Machine Learning", "Cloud Computing", "Internet of Things", "Mobile", "Desktop"
-    ];
+    // Dynamic filters based on project categories
+    const filters = useMemo(() => {
+        const categories = projects
+            .map(p => p.category || p.Category)
+            .filter(Boolean);
+        const uniqueCategories = [...new Set(categories)];
+        return ["All", ...uniqueCategories];
+    }, [projects]);
 
     const filteredProjects = projects.filter(project => {
         const title = (project.title || project.Title || "").toLowerCase();
         const description = (project.description || project.Description || "").toLowerCase();
-        const techStackString = Array.isArray(project.tech_stack) ? project.tech_stack.join(' ').toLowerCase() : '';
-        const featuresString = Array.isArray(project.features) ? project.features.join(' ').toLowerCase() : '';
         
         const matchesSearch = title.includes(searchQuery.toLowerCase()) || description.includes(searchQuery.toLowerCase());
         
         if (activeFilter === "All") return matchesSearch;
         
-        const combinedString = `${title} ${description} ${techStackString} ${featuresString}`;
-        const matchesFilter = combinedString.includes(activeFilter.toLowerCase());
+        const projectCategory = project.category || project.Category || "";
+        const matchesFilter = projectCategory === activeFilter;
         
         return matchesSearch && matchesFilter;
     });

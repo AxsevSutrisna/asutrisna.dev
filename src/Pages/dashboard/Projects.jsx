@@ -75,6 +75,10 @@ const validateProjectForm = (form, imageItems = []) => {
  errors.title ="Project Title wajib diisi.";
 }
 
+ if (!form?.category) {
+ errors.category ="Kategori project wajib dipilih.";
+}
+
  if (!Array.isArray(imageItems) || imageItems.length === 0) {
  errors.images ="Minimal 1 image project wajib diupload.";
 }
@@ -103,6 +107,7 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  const imgSrc = project.img || project.Img ||"";
  const liveUrl = project.link || project.Link ||"";
  const githubUrl = project.github || project.Github ||"";
+ const category = project.category || project.Category ||"";
 
  return (
  <div
@@ -176,6 +181,11 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  {/* Content */}
  <div className="flex flex-col flex-1 p-4 gap-3">
  <div>
+ {category && (
+ <span className="inline-block px-2 py-0.5 mb-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-[10px] font-medium tracking-wide">
+ {category}
+ </span>
+ )}
  <h3 className="font-semibold text-white text-sm leading-snug line-clamp-2 group-hover:text-indigo-200 transition-colors duration-300">
  {title}
  </h3>
@@ -415,6 +425,7 @@ const ProjectForm = ({
  );
  const [form, setForm] = useState({
  title: initial?.title || initial?.Title ||"",
+ category: initial?.category || initial?.Category ||"",
  description: initial?.description || initial?.Description ||"",
  techstack: Array.isArray(initial?.tech_stack)
  ? initial.tech_stack.join(",")
@@ -500,6 +511,7 @@ const ProjectForm = ({
  const nextErrors = validateProjectForm(form, imageItems);
  setTouched({
  title: true,
+ category: true,
  link: true,
  github: true,
  images: true,
@@ -510,6 +522,7 @@ const ProjectForm = ({
  const firstInvalidKey = Object.keys(nextErrors)[0];
  const fieldSelectorMap = {
  title:'[data-project-field="title"]',
+ category:'[data-project-field="category"]',
  link:'[data-project-field="link"]',
  github:'[data-project-field="github"]',
  images:'[data-project-field="images"]',
@@ -553,6 +566,32 @@ const ProjectForm = ({
  />
  {getFieldError("title") && (
  <p className="text-xs text-red-300">{getFieldError("title")}</p>
+ )}
+ </div>
+
+ <div className="sm:col-span-2 space-y-1.5">
+ <label className={labelCls}>Category *</label>
+ <select
+ data-project-field="category"
+ value={form.category}
+ onChange={set("category")}
+ onBlur={markTouched("category")}
+ required
+ aria-invalid={Boolean(getFieldError("category"))}
+ className={`${inputCls} appearance-none ${getFieldError("category") ?"border-red-500/50 focus:border-red-500/70 focus:ring-red-500/20" :""}`}
+ >
+ <option value="" disabled>Select Category</option>
+ <option value="Web Development">Web Development</option>
+ <option value="Mobile Development">Mobile Development</option>
+ <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+ <option value="Machine Learning">Machine Learning</option>
+ <option value="Cloud Computing">Cloud Computing</option>
+ <option value="Desktop Application">Desktop Application</option>
+ <option value="UI/UX Design">UI/UX Design</option>
+ <option value="Other">Other</option>
+ </select>
+ {getFieldError("category") && (
+ <p className="text-xs text-red-300">{getFieldError("category")}</p>
  )}
  </div>
 
@@ -817,6 +856,7 @@ export default function Projects() {
  features: form.features.split(",").map((s) => s.trim()).filter(Boolean),
  link: form.link,
  github: form.github,
+ category: form.category,
 });
  setShowCreate(false);
  pushToast("success","Project created successfully!");
@@ -846,6 +886,7 @@ export default function Projects() {
  features: form.features.split(",").map((s) => s.trim()).filter(Boolean),
  link: form.link,
  github: form.github,
+ category: form.category,
 })
  .eq("id", editProject.id);
  setEditProject(null);

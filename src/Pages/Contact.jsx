@@ -3,7 +3,7 @@ import { supabase } from "../supabase";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { ExternalLink, Mail, Linkedin, Github, Instagram, Youtube } from "lucide-react";
-import { Button } from "../components/ui/button";
+import PublicCtaButton from "../components/ui/public-cta-button";
 
 const ICONS = {
     Linkedin,
@@ -109,21 +109,16 @@ const ContactPage = () => {
                                 const linkColor = link.color || 'var(--color-primary-light)';
                                 
                                 return (
-                                    <Button 
+                                    <PublicCtaButton 
                                         key={link.id || index} 
-                                        asChild 
-                                        variant="neutral"
-                                    >
-                                        <a 
-                                            href={link.url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="font-bold"
-                                        >
-                                            <IconComponent style={{ color: linkColor }} />
-                                            {link.display_name}
-                                        </a>
-                                    </Button>
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        text={link.display_name}
+                                        icon={IconComponent}
+                                        iconClassName="w-5 h-5"
+                                        iconStyle={{ color: linkColor }}
+                                    />
                                 );
                             })}
                         </div>
