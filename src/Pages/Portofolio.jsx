@@ -117,20 +117,21 @@ export default function Portofolio() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-aos="fade-up" data-aos-duration="1000">
                 
                 {/* Filter Pills */}
-                <div className="flex flex-wrap gap-2 md:max-w-[70%]">
+                <div className="flex flex-wrap gap-3 md:gap-4 md:max-w-[70%] pb-2">
                     {filters.map((filter) => (
-                        <button
+                        <Button
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
-                            className={`no-neo px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                            variant={activeFilter === filter ? "default" : "neutral"}
+                            size="sm"
+                            className={`rounded-xl transition-all duration-300 ${
                                 activeFilter === filter 
-                                ? "text-white" 
-                                : "bg-transparent border border-white/20 text-slate-300 hover:border-white/40 hover:text-white"
+                                ? "opacity-100 scale-105 shadow-[4px_4px_0_var(--color-shadow-primary)]" 
+                                : "opacity-60 saturate-50 hover:opacity-100 hover:saturate-100"
                             }`}
-                            style={activeFilter === filter ? { backgroundColor: 'var(--color-primary-light)' } : {}}
                         >
                             {filter}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
