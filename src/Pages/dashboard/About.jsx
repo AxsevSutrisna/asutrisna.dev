@@ -1,6 +1,6 @@
 import { useEffect, useState} from'react'
 import ReactDOM from'react-dom'
-import { supabase} from'../../supabase'
+import { supabase } from '../../config/supabase'
 import { useToast} from'../../hooks/useToast'
 import ToastStack from'../../components/ToastStack'
 import {
@@ -13,7 +13,6 @@ import {
  Eye,
  EyeOff,
  Sparkles,
- X,
  Quote,
  CheckCircle2,
  Clock,

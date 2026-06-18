@@ -1,13 +1,14 @@
 import { useEffect, useRef} from"react"
 
+const initialPositions = [
+  { x: -4, y: 0},
+  { x: -4, y: 0},
+  { x: 20, y: -8},
+  { x: 20, y: -8},
+]
+
 const AnimatedBackground = () => {
 	const blobRefs = useRef([])
-	const initialPositions = [
- { x: -4, y: 0},
- { x: -4, y: 0},
- { x: 20, y: -8},
- { x: 20, y: -8},
-	]
 
 	useEffect(() => {
  let currentScroll = 0

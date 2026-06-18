@@ -1,6 +1,6 @@
 import { useEffect, useState} from'react'
 import ReactDOM from'react-dom'
-import { supabase} from'../../supabase'
+import { supabase } from '../../config/supabase'
 import {
  Briefcase,
  Pencil,

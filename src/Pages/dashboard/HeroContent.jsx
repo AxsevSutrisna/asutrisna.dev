@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState} from'react'
-import { supabase} from'../../supabase'
+import { supabase } from '../../config/supabase'
 import { useToast} from'../../hooks/useToast'
 import ToastStack from'../../components/ToastStack'
 import {

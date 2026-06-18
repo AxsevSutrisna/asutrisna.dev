@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { supabase } from '../supabase'
+import { supabase } from '../config/supabase'
 import Projects from './dashboard/Projects'
 import Certificates from './dashboard/Certificates'
 import About from './dashboard/About'
@@ -12,7 +12,7 @@ import HeroContent from './dashboard/HeroContent'
 import SocialLinks from './dashboard/SocialLinks'
 import ThemeManager from './dashboard/ThemeManager'
 import Courses from './dashboard/Courses'
-import { FolderGit2, Award, MessageSquare, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap } from 'lucide-react'
+import { FolderGit2, Award, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap } from 'lucide-react'
 
 const NAV_ITEMS = [
   { to: 'projects', label: 'Projects', icon: FolderGit2 },

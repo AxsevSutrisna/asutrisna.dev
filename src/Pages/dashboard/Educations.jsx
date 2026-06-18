@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { supabase } from '../../supabase'
+import { supabase } from '../../config/supabase'
 import {
   GraduationCap,
   Pencil,
   Plus,
   Trash2,
   Sparkles,
-  MapPin,
   Calendar,
   CheckCircle2,
   Building2,
-  Timer,
   X,
   BookOpen
 } from 'lucide-react'

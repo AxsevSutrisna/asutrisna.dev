@@ -1,5 +1,5 @@
-import { useEffect, useState} from'react'
-import { supabase} from"../../supabase";
+import { useEffect, useState, useCallback } from 'react'
+import { supabase } from "../../config/supabase";
 import { Award, Upload, Trash2, ImageIcon, Plus, Eye, X} from'lucide-react'
 import { useToast} from'../../hooks/useToast'
 import ToastStack from'../../components/ToastStack'
@@ -75,7 +75,7 @@ export default function Certificates() {
  const [lightboxImage, setLightboxImage] = useState(null)
  const { toasts, pushToast, removeToast} = useToast()
 
- const fetchCerts = async () => {
+ const fetchCerts = useCallback(async () => {
  setLoading(true)
  const { data, error} = await supabase.from('certificates').select('*').order('created_at', { ascending: false})
  if (error) {
@@ -85,9 +85,9 @@ export default function Certificates() {
  setCerts(data || [])
 }
  setLoading(false)
-}
+}, [pushToast])
 
- useEffect(() => { fetchCerts()}, [])
+ useEffect(() => { fetchCerts()}, [fetchCerts])
 
  const handleFile = (f) => {
  if (!f) return

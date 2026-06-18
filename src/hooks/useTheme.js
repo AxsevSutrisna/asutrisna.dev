@@ -1,5 +1,5 @@
 import { useEffect} from'react';
-import { supabase} from'../supabase';
+import { supabase } from '../config/supabase';
 import { DEFAULT_THEME} from'../utils/themeManager';
 
 const CSS_VAR_MAP = {

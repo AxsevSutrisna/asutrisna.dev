@@ -1,4 +1,4 @@
-import { supabase} from'../supabase';
+import { supabase } from '../config/supabase';
 
 export const THEME_COLOR_CATEGORIES = {
  primary: {
@@ -181,10 +181,8 @@ export const fetchTheme = async () => {
 
 export const updateTheme = async (colors) => {
  try {
- const {
- background_grid_line_soft: _soft,
- ...validColors
-} = colors
+  const validColors = { ...colors }
+  delete validColors.background_grid_line_soft
 
  const { data, error} = await supabase
  .from('site_theme')

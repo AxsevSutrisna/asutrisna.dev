@@ -6,7 +6,7 @@ import 'aos/dist/aos.css'
 import PublicCtaButton from '@/components/ui/public-cta-button'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { supabase } from '../supabase'
+import { supabase } from '../config/supabase'
 import {
     buildPersonSchema,
     buildWebPageSchema,

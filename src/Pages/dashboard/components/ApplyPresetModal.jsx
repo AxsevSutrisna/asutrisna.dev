@@ -258,12 +258,4 @@ const ApplyPresetModal = ({ preset, onApply, onClose}) => {
  )
 }
 
-function hexToRgb(hex ='#000000') {
- const clean = hex.replace('#','')
- const r = parseInt(clean.slice(0, 2), 16) || 0
- const g = parseInt(clean.slice(2, 4), 16) || 0
- const b = parseInt(clean.slice(4, 6), 16) || 0
- return `${r}, ${g}, ${b}`
-}
-
 export default ApplyPresetModal

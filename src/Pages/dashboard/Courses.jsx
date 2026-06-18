@@ -1,6 +1,6 @@
-import { useEffect, useState} from"react";
+import { useEffect, useState, useCallback } from "react";
 import ReactDOM from"react-dom";
-import { supabase} from"../../supabase";
+import { supabase } from "../../config/supabase";
 import { useToast} from"../../hooks/useToast";
 import ToastStack from"../../components/ToastStack";
 import {
@@ -246,21 +246,21 @@ export default function Courses() {
  const [uploading, setUploading] = useState(false);
  const { toasts, pushToast, removeToast} = useToast();
 
- const fetchCourses = async () => {
- setLoading(true);
- const { data, error} = await supabase.from("courses").select("*").order("created_at", { ascending: false});
- if (error) {
- console.error(error);
- pushToast("error","Failed to fetch courses.");
-} else {
- setCourses(data || []);
-}
- setLoading(false);
-};
+  const fetchCourses = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
+    if (error) {
+      console.error(error);
+      pushToast("error", "Failed to fetch courses.");
+    } else {
+      setCourses(data || []);
+    }
+    setLoading(false);
+  }, [pushToast]);
 
- useEffect(() => {
- fetchCourses();
-}, []);
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
  const uploadImage = async (file) => {
  const fileName = `course-${Date.now()}-${file.name}`;
