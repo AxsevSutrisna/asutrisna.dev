@@ -168,15 +168,19 @@ export default function ExperienceContent() {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20">
         
         {/* Left Column: Navigation Sidebar */}
-        <div className="lg:w-1/3 lg:sticky lg:top-32 h-fit">
-          <div className="mb-8">
-            <h1 className="text-4xl sm:text-5xl font-display font-bold text-white mb-2 leading-tight">
-              Professional <br className="hidden lg:block"/>
-              <span className="text-theme-primary-light">Journey</span>
+        <div className="lg:w-1/3 lg:sticky lg:top-32 h-fit lg:z-30">
+          {/* Page Title & Description */}
+          <div className="mb-8 lg:mb-12">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-white text-left">
+              Professional <span className="text-theme-primary-light">Journey</span>
             </h1>
+            <p className="text-gray-400 mt-4 text-base md:text-lg max-w-2xl text-left">
+              A timeline of my career path, achievements, and educational foundation.
+            </p>
           </div>
 
-          <div className="flex flex-col gap-3 bg-white/5 border border-white/10 rounded-3xl p-4 sm:p-6 backdrop-blur-xl">
+          {/* Sticky Tabs container on mobile, relative inside sticky parent on desktop */}
+          <div className="sticky top-[76px] lg:relative lg:top-0 z-30 flex flex-row lg:flex-col gap-3 bg-white/5 border border-white/10 rounded-3xl p-2.5 sm:p-6 backdrop-blur-xl">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -184,7 +188,7 @@ export default function ExperienceContent() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-500 font-medium text-left no-neo
+                    w-full flex items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-2xl transition-all duration-500 font-medium text-center lg:text-left no-neo
                     ${isActive 
                       ? 'bg-theme-primary text-white scale-[1.02] shadow-xl shadow-theme-primary/30' 
                       : 'text-gray-400 hover:bg-white/5 hover:text-white shadow-none'
