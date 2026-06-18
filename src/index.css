@@ -126,7 +126,7 @@
 html,
 body {
 	overflow-x: hidden;
-	background: radial-gradient(circle at top, rgba(var(--color-backdrop-glow-rgb, 27, 18, 61), 0.6) 0%, var(--color-backdrop-base) 55%);
+	background: var(--color-backdrop-base);
 	font-family: var(--font-sans);
 	color: var(--color-text-primary);
 }
@@ -141,8 +141,7 @@ body {
 	--tw-text-opacity: 1;
 }
 
-background: radial-gradient(circle at top, rgba(var(--color-backdrop-glow-rgb, 27, 18, 61), 0.45) 0%, transparent 42%),
-linear-gradient(180deg, color-mix(in srgb, var(--color-backdrop-base) 90%, #000 10%) 0%, var(--color-backdrop-base) 100%);
+background: var(--color-backdrop-base);
 font-family: var(--font-sans);
 
 /* Map Tailwind text colors to CSS variables - only for non-gradient text */
@@ -510,7 +509,6 @@ select option {
 }
 
 select option:checked {
-	background: linear-gradient(#6366f1, #6366f1);
 	background-color: #6366f1 !important;
 	color: white;
 }

@@ -4,24 +4,26 @@ import { Helmet } from 'react-helmet-async'
 import { supabase } from '../supabase'
 import Projects from './dashboard/Projects'
 import Certificates from './dashboard/Certificates'
-import Comments from './dashboard/Comments'
 import About from './dashboard/About'
 import TechStacks from './dashboard/TechStacks'
 import WorkExperience from './dashboard/WorkExperience'
+import Educations from './dashboard/Educations'
 import HeroContent from './dashboard/HeroContent'
 import SocialLinks from './dashboard/SocialLinks'
 import ThemeManager from './dashboard/ThemeManager'
-import { FolderGit2, Award, MessageSquare, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette } from 'lucide-react'
+import Courses from './dashboard/Courses'
+import { FolderGit2, Award, MessageSquare, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap } from 'lucide-react'
 
 const NAV_ITEMS = [
   { to: 'projects', label: 'Projects', icon: FolderGit2 },
   { to: 'work-experience', label: 'Work Experience', icon: Briefcase },
+  { to: 'educations', label: 'Educations', icon: GraduationCap },
+  { to: 'courses', label: 'Courses', icon: BookOpen },
   { to: 'hero-content', label: 'Hero Content', icon: Zap },
   { to: 'about', label: 'About', icon: Sparkles },
   { to: 'tech-stacks', label: 'Tech Stack', icon: Boxes },
   { to: 'social-links', label: 'Social Media', icon: Share2 },
   { to: 'certificates', label: 'Certificates', icon: Award },
-  { to: 'comments', label: 'Comments', icon: MessageSquare },
   { to: 'theme-manager', label: 'Theme Manager', icon: Palette },
 ]
 
@@ -144,12 +146,13 @@ export default function Dashboard() {
               <Route index element={<Navigate to="projects" replace />} />
               <Route path="projects" element={<Projects />} />
               <Route path="work-experience" element={<WorkExperience />} />
+              <Route path="educations" element={<Educations />} />
+              <Route path="courses" element={<Courses />} />
               <Route path="hero-content" element={<HeroContent />} />
               <Route path="about" element={<About />} />
               <Route path="tech-stacks" element={<TechStacks />} />
               <Route path="social-links" element={<SocialLinks />} />
               <Route path="certificates" element={<Certificates />} />
-              <Route path="comments" element={<Comments />} />
               <Route path="theme-manager" element={<ThemeManager />} />
             </Routes>
           </main>
