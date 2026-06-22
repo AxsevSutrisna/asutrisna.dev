@@ -25,7 +25,7 @@ export function useAboutContent() {
 
   const { YearExperienceDecimal, YearExperienceLabel } = useMemo(() => {
     if (!Array.isArray(workItems) || workItems.length === 0) {
-      const startDate = new Date('2021-11-06');
+      const startDate = new Date('2024-01-15');
       const now = new Date();
       let years = now.getFullYear() - startDate.getFullYear();
       if (now.getMonth() < startDate.getMonth() || (now.getMonth() === startDate.getMonth() && now.getDate() < startDate.getDate())) years -= 1;
