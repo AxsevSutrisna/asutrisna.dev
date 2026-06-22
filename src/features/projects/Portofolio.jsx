@@ -89,7 +89,7 @@ export default function Portofolio() {
             {/* Header section */}
             <div className="text-center pb-8" data-aos="fade-up" data-aos-duration="1000">
                 <h2 className="inline-block text-3xl md:text-5xl font-display font-bold text-center mx-auto text-white flex items-center justify-center gap-3">
-                    <span>🚀 Things I&apos;ve Built</span>
+                    <span>Things I&apos;ve Built</span>
                 </h2>
                 <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-4">
                     Here&apos;s a selection of projects I&apos;ve crafted over time. Many are open-source, so feel free to explore and contribute!

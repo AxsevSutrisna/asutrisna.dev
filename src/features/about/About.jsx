@@ -6,6 +6,7 @@ import'aos/dist/aos.css'
 import { useAboutContent } from "./hooks/useAboutContent"
 import PublicCtaButton from"../../components/ui/public-cta-button"
 import { Badge} from"@/components/ui/badge"
+import DecryptedText from "@/components/ui/DecryptedText"
 
 const ABOUT_FALLBACK = {
  name:"Asep Sutrisna Suhada Putra",
@@ -201,9 +202,24 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1200"
             >
-              <span className="text-white">Hello, My Name is </span>
+              <DecryptedText
+                text="Hello, My Name is "
+                animateOn="inViewHover"
+                revealDirection="start"
+                sequential={true}
+                className="text-white"
+                parentClassName="text-white"
+              />
               <br className="hidden sm:block"/>
-              <span style={{ color: 'var(--color-primary-light)' }}>{content.name}</span>
+              <DecryptedText
+                text={content.name}
+                animateOn="inViewHover"
+                revealDirection="start"
+                sequential={true}
+                className="text-[var(--color-primary-light)]"
+                parentClassName="text-[var(--color-primary-light)]"
+                style={{ color: 'var(--color-primary-light)' }}
+              />
             </h2>
 
             <div
