@@ -7,53 +7,39 @@ import { useAboutContent } from "./hooks/useAboutContent"
 import PublicCtaButton from"../../components/ui/public-cta-button"
 import { Badge} from"@/components/ui/badge"
 import DecryptedText from "@/components/ui/DecryptedText"
+import ProfileCard from "@/components/ui/ProfileCard"
 
 const ABOUT_FALLBACK = {
  name:"Asep Sutrisna Suhada Putra",
  description:
-"Saya adalah mahasiswa Teknik Informatika yang berfokus pada pengembangan Front-End. Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.",
- quote:"Leveraging AI as a professional tool, not a replacement.",
- photo_url:"/Photo.jpg",
+"Full-Stack Web Developer with experience in end-to-end web application development, from design and development to deployment. Proficient in JavaScript, TypeScript, React, and Next.js for the front end, as well as Node.js and Laravel for the back end.",
+ quote:"Use AI as a professional tool, not as a replacement AI as a professional tool, not a replacement.",
+ photo_url:"/AsepSutrisnaSuhadaPutra-PhotoProfile.png",
  cv_url:"https://drive.google.com/file/d/14D0m6vlfyBZ3VZB2q66yCtnVf54iTc3E/view?usp=sharing",
 }
 
-// No normalizeCvPath needed
-
-const ProfileImage = memo(({ photoUrl, yearsOfExperience }) => (
+const ProfileImage = memo(({ name, roleBadges, photoUrl, yearsOfExperience }) => (
   <div className="flex justify-center items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
     <div
       className="relative group w-full max-w-md mx-auto lg:mx-0"
       data-aos="fade-up"
       data-aos-duration="1000"
     >
-      <div className="absolute -inset-4 opacity-[20%] z-0 hidden sm:block">
-        <div className="absolute inset-0 rounded-[2rem] blur-2xl animate-pulse-slow" style={{ background: 'var(--color-primary-light)' }} />
-      </div>
-
-      <div className="relative w-full aspect-[4/5] sm:aspect-[4/5] md:aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl bg-black/20">
-        <img
-          src={photoUrl || ABOUT_FALLBACK.photo_url}
-          alt="Profile"
-          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-          loading="lazy"
-          onError={(event) => {
-            event.currentTarget.src = ABOUT_FALLBACK.photo_url
-          }}
-        />
-        
-        {/* Glow overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/80 via-transparent to-transparent opacity-80" />
-        
-        {/* Floating Badge */}
-        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-[#161b22] border border-white/10 rounded-2xl p-4 shadow-2xl flex flex-col items-center justify-center transform transition-all duration-500 hover:scale-105 hover:border-white/20 hover:shadow-[0_0_20px_rgba(var(--color-primary-light-rgb),0.3)]">
-          <span className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--color-primary-light)' }}>
-            {yearsOfExperience}+
-          </span>
-          <span className="text-[10px] sm:text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">
-            Years Experience
-          </span>
-        </div>
-      </div>
+      <ProfileCard
+        name={name}
+        title={roleBadges ? (roleBadges.split(',')[0].trim() === 'Developer' ? 'Full-Stack Developer' : roleBadges.split(',')[0].trim()) : "Full-Stack Developer"}
+        handle="asutrisnadev"
+        status="Online"
+        contactText="Contact Me"
+        avatarUrl={photoUrl || ABOUT_FALLBACK.photo_url}
+        showUserInfo={false}
+        enableTilt={true}
+        enableMobileTilt={false}
+        behindGlowColor="rgba(125, 190, 255, 0.67)"
+        behindGlowEnabled={true}
+        innerGradient="linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)"
+        yearsOfExperience={yearsOfExperience}
+      />
     </div>
   </div>
 ));
@@ -271,7 +257,12 @@ const AboutPage = () => {
             </div>
           </div>
 
-          <ProfileImage photoUrl={content.photo_url} yearsOfExperience={Math.floor(YearExperienceDecimal)} />
+          <ProfileImage 
+            name={content.name}
+            roleBadges={content.role_badges}
+            photoUrl={content.photo_url} 
+            yearsOfExperience={Math.floor(YearExperienceDecimal)} 
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 lg:mt-24">
