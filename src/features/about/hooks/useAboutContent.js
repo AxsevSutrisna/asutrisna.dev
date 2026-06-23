@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useAboutStore } from '../../../store/useAboutStore';
 import { useProjectStore } from '../../../store/useProjectStore';
 import { useCertificatesStore } from '../../../store/useCertificatesStore';
+import { useTechStackStore } from '../../../store/useTechStackStore';
 
 const ABOUT_FALLBACK = {
   name: "Asep Sutrisna Suhada Putra",
@@ -16,12 +17,14 @@ export function useAboutContent() {
   const { content: aboutContent, workItems, loading, fetchAboutData } = useAboutStore();
   const { projects, fetchProjects } = useProjectStore();
   const { certificates, fetchCertificates } = useCertificatesStore();
+  const { techStacks, fetchTechStacks } = useTechStackStore();
 
   useEffect(() => {
     fetchAboutData();
     fetchProjects();
     fetchCertificates();
-  }, [fetchAboutData, fetchProjects, fetchCertificates]);
+    fetchTechStacks();
+  }, [fetchAboutData, fetchProjects, fetchCertificates, fetchTechStacks]);
 
   const { YearExperienceDecimal, YearExperienceLabel } = useMemo(() => {
     if (!Array.isArray(workItems) || workItems.length === 0) {
@@ -83,6 +86,7 @@ export function useAboutContent() {
     totalProjects,
     totalCertificates,
     YearExperienceDecimal,
-    YearExperienceLabel
+    YearExperienceLabel,
+    techStacks
   };
 }
