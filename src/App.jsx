@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route} from"react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import React, { lazy, Suspense} from"react";
 import { HelmetProvider} from"react-helmet-async";
 import"./index.css";
@@ -6,7 +6,6 @@ import Navbar from"./components/Navbar";
 import Home from"./Pages/Home";
 import AnimatedBackground from"./components/Background";
 import Footer from"./components/Footer";
-import WorkExperienceSection from"./features/experience/components/WorkExperienceSection";
 import { useTheme} from"./hooks/useTheme";
 import PublicLayout from "./components/layouts/PublicLayout";
 
@@ -25,29 +24,25 @@ const ExperienceContent = lazy(() => import("./features/experience/ExperienceCon
 const CoursesPage = lazy(() => import("./features/courses/CoursesPage"));
 const CertificatesPage = lazy(() => import("./features/certificates/CertificatesPage"));
 
-const LandingPage = () => {
- return (
- <>
- <Navbar />
+// Layout untuk halaman Home (ada Navbar & Footer, tanpa padding khusus)
+const MainLayout = () => (
+  <div className="flex flex-col min-h-screen">
+    <Navbar />
+    <main className="flex-1">
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
+);
 
- <Home />
- <WorkExperienceSection />
- <Suspense fallback={<div className="h-20" />}>
- <Portofolio />
- <ContactPage />
- </Suspense>
- <Footer />
- </>
- );
-};
-
-const ProjectPageLayout = () => (
- <>
- <Suspense fallback={<div className="min-h-screen" />}>
- <ProjectDetails />
- </Suspense>
- <Footer />
- </>
+// Layout untuk halaman Detail (tanpa Navbar, dengan Footer)
+const DetailLayout = () => (
+  <div className="flex flex-col min-h-screen">
+    <main className="flex-1">
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
 );
 
 function App() {
@@ -62,10 +57,9 @@ function App() {
  <BrowserRouter>
  <Routes>
   {/* PUBLIC */}
-  <Route
-  path="/"
-  element={<LandingPage />}
-  />
+  <Route element={<MainLayout />}>
+    <Route path="/" element={<Home />} />
+  </Route>
 
   <Route element={<PublicLayout />}>
     <Route path="/about" element={<Suspense fallback={<div className="h-20" />}><About /></Suspense>} />
@@ -77,7 +71,9 @@ function App() {
     <Route path="/contact" element={<Suspense fallback={<div className="h-20" />}><ContactPage /></Suspense>} />
   </Route>
 
-  <Route path="/project/:slug" element={<ProjectPageLayout />} />
+  <Route element={<DetailLayout />}>
+    <Route path="/project/:slug" element={<Suspense fallback={<div className="min-h-screen" />}><ProjectDetails /></Suspense>} />
+  </Route>
 
  {/* AUTH */}
  <Route path="/login" element={<Login />} />

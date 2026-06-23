@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo, useMemo } from "react"
+import { useState, useEffect, useCallback, memo, useMemo, lazy, Suspense } from "react"
 import { Helmet } from "react-helmet-async"
 import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles, Code, Award, Globe } from "lucide-react"
 import AOS from 'aos'
@@ -19,6 +19,23 @@ import LogoLoop from "@/components/ui/LogoLoop"
 import StatCard from "@/components/ui/StatCard"
 import { useTechStackStore } from '../store/useTechStackStore'
 import { useAboutContent } from '../features/about/hooks/useAboutContent'
+
+const ExperienceHighlight = lazy(() => import('../features/home/components/ExperienceHighlight'))
+const FeaturedProjects = lazy(() => import('../features/home/components/FeaturedProjects'))
+const EducationHighlight = lazy(() => import('../features/home/components/EducationHighlight'))
+const HomeCTA = lazy(() => import('../features/home/components/HomeCTA'))
+
+/** Garis pemisah tipis antar section */
+const SectionDivider = () => (
+    <div
+        className="w-full px-4 sm:px-6 md:px-8 lg:px-[10%]"
+        style={{ backgroundColor: 'var(--color-backdrop-base)' }}
+    >
+        <div className="container mx-auto">
+            <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
+        </div>
+    </div>
+)
 
 const TechStack = memo(({ tech }) => (
     <Badge variant="default" className="inline-flex text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1">
@@ -519,11 +536,19 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Tech Stack Logo Loop */}
+
+            {/* ── Experience Highlight ──────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <ExperienceHighlight />
+            </Suspense>
+
+            {/* ── Tech Stack Logo Loop ──────────────────────── */}
+            <SectionDivider />
             {techStacks && techStacks.length > 0 && (
                 <div className="w-full overflow-hidden pt-10 sm:pt-16 pb-20 relative" style={{ backgroundColor: 'var(--color-backdrop-base)' }} data-aos="fade-up" data-aos-duration="1000">
                     <div className="text-center mb-8 px-4 sm:px-6 md:px-8 lg:px-[10%]">
-                        <h3 className="text-3xl font-display font-bold text-white mb-3">Core Technology Stack</h3>
+                        <h2 className="text-3xl font-display font-bold text-white mb-3">Core Technology Stack</h2>
                         <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
                             Expertise across the entire development lifecycle, from cloud infrastructure to frontend animation.
                         </p>
@@ -566,6 +591,26 @@ const Home = () => {
                     />
                 </div>
             )}
+
+            {/* ── Featured Projects ─────────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <FeaturedProjects />
+            </Suspense>
+
+            {/* ── Education: Courses & Certificates ────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <EducationHighlight />
+            </Suspense>
+
+
+
+            {/* ── Call to Action ────────────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <HomeCTA />
+            </Suspense>
         </>
     );
 };
