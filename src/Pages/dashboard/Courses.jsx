@@ -15,6 +15,7 @@ import {
  Calendar,
  Link as LinkIcon,
 } from"lucide-react";
+import AddNewButton from "./components/AddNewButton";
 
 // Modal Component
 const Modal = ({ title, onClose, children}) =>
@@ -339,13 +340,7 @@ export default function Courses() {
  <p className="text-sm text-gray-400">Manage your educational courses and bootcamp certificates</p>
  </div>
  </div>
- <button
- onClick={() => setShowCreate(true)}
- className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition-colors"
- >
- <Plus className="w-4 h-4" />
- Add Course
- </button>
+  <AddNewButton onClick={() => setShowCreate(true)} label="Add Course" />
  </div>
 
  <div className="bg-[#0a0a1a] rounded-2xl border border-white/5 p-4 sm:p-6">

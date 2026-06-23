@@ -44,7 +44,7 @@ export default function Dashboard() {
         <div className="relative">
           <div className="absolute -inset-0.5 rounded-xl blur opacity-50" style={{ background: 'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))' }} />
           <div className="relative w-9 h-9 rounded-xl border border-white/15 flex items-center justify-center" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
-            <LayoutDashboard className="w-4 h-4 text-indigo-400" />
+            <LayoutDashboard className="w-4 h-4" style={{ color: 'var(--color-primary-light)' }} />
           </div>
         </div>
         <div>
@@ -54,9 +54,12 @@ export default function Dashboard() {
       </div>
 
       {/* Badge */}
-      <div className="shrink-0 px-3 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center gap-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-        <span className="text-indigo-300 text-xs font-medium">Portfolio Manager</span>
+      <div 
+        className="shrink-0 px-3 py-2 rounded-full border flex items-center gap-2"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary-dark) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--color-primary-dark) 20%, transparent)' }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-primary-light)' }} />
+        <span className="text-xs font-medium" style={{ color: 'var(--color-primary-light)' }}>Portfolio Manager</span>
       </div>
 
       {/* Nav */}
@@ -69,14 +72,19 @@ export default function Dashboard() {
               key={to}
               to={to}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium shrink-0 border ${active
-                ? 'bg-white text-black border-black shadow-[4px_4px_0_var(--color-shadow-primary)]'
-                : 'text-gray-400 border-white/10 hover:text-white hover:bg-white/5'
-                }`}
+              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium shrink-0 relative overflow-hidden border ${
+                active ? 'border-transparent' : 'border-transparent text-[color:var(--color-text-muted)] hover:bg-white/5 hover:text-white'
+              }`}
+              style={active ? {
+                background: 'linear-gradient(90deg, color-mix(in srgb, var(--color-primary-dark) 15%, transparent), color-mix(in srgb, var(--color-primary-light) 15%, transparent))',
+                borderColor: 'color-mix(in srgb, var(--color-primary-light) 30%, transparent)',
+                color: 'var(--color-primary-light)',
+                boxShadow: '0 0 15px 0 color-mix(in srgb, var(--color-primary-dark) 20%, transparent)'
+              } : {}}
             >
-              <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-black' : ''}`} />
+              <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" style={active ? { color: 'var(--color-primary-light)' } : {}} />
               {label}
-              {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-black" />}
+              {active && <span className="ml-auto w-1.5 h-1.5 rounded-full shadow-[0_0_8px_var(--color-primary-light)]" style={{ backgroundColor: 'var(--color-primary-light)' }} />}
             </Link>
           )
         })}

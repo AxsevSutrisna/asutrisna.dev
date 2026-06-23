@@ -17,6 +17,7 @@ import {
  Palette,
  Settings2,
 } from'lucide-react'
+import AddNewButton from './components/AddNewButton'
 
 /* ── Fallback Icon Mapping ── */
 import {
@@ -595,13 +596,7 @@ export default function SocialLinksDashboard() {
  </div>
  </div>
 
- <button onClick={() => setShowCreate(true)} className="relative group shrink-0">
- <div className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
- <div className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
- <Plus className="w-4 h-4 text-indigo-400" />
- <span className="text-sm font-medium text-gray-200">New Link</span>
- </div>
- </button>
+ <AddNewButton onClick={() => setShowCreate(true)} label="New Link" />
  </div>
 
  {showCreate && (

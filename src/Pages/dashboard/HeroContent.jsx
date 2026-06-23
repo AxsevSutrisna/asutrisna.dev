@@ -11,6 +11,7 @@ import {
  AlertCircle,
  Save,
 } from'lucide-react'
+import FloatingSaveButton from './components/FloatingSaveButton'
 
 const HERO_FALLBACK = {
  badge_text:'Ready to Innovate',
@@ -507,30 +508,13 @@ export default function HeroContentDashboard() {
 
  </div>
  </div>
-
- {/* Save Button: Sleek floating pill */}
- <div className="fixed z-50 bottom-6 right-6 lg:right-12">
- <button
- onClick={handleSave}
- disabled={uploading}
- className="relative group flex items-center justify-center focus:outline-none"
- >
- <div className="absolute -inset-1 rounded-full opacity-60 blur group-hover:opacity-100 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
- <div className="relative flex items-center gap-2 px-6 py-3.5 bg-[#0a0a1a] border border-white/15 rounded-full shadow-2xl transition-all duration-300 group-hover:bg-[#111122]">
- {uploading ? (
- <>
- <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
- <span className="text-sm font-semibold text-white">Saving...</span>
- </>
- ) : (
- <>
- <Save className="w-5 h-5 text-indigo-400" />
- <span className="text-sm font-semibold text-white">Save Changes</span>
- </>
- )}
- </div>
- </button>
- </div>
+ <FloatingSaveButton 
+    onClick={handleSave}
+    saving={uploading}
+    disabled={false}
+    label="Save Changes"
+    icon={Save}
+  />
  </div>
 
  {/* Live Preview Section */}
