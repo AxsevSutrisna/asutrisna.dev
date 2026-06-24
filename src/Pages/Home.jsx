@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback, memo, useMemo } from "react"
+import { useState, useEffect, useCallback, memo, useMemo, lazy, Suspense } from "react"
 import { Helmet } from "react-helmet-async"
-import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
+import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles, Code, Award, Globe } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import PublicCtaButton from '@/components/ui/public-cta-button'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { supabase } from '../supabase'
+import { supabase } from '../config/supabase'
 import {
     buildPersonSchema,
     buildWebPageSchema,
@@ -15,6 +15,27 @@ import {
     resolveSiteUrl,
     serializeJsonLd,
 } from '../utils/seoSchema'
+import LogoLoop from "@/components/ui/LogoLoop"
+import StatCard from "@/components/ui/StatCard"
+import { useTechStackStore } from '../store/useTechStackStore'
+import { useAboutContent } from '../features/about/hooks/useAboutContent'
+
+const ExperienceHighlight = lazy(() => import('../features/home/components/ExperienceHighlight'))
+const FeaturedProjects = lazy(() => import('../features/home/components/FeaturedProjects'))
+const EducationHighlight = lazy(() => import('../features/home/components/EducationHighlight'))
+const HomeCTA = lazy(() => import('../features/home/components/HomeCTA'))
+
+/** Garis pemisah tipis antar section */
+const SectionDivider = () => (
+    <div
+        className="w-full px-4 sm:px-6 md:px-8 lg:px-[10%]"
+        style={{ backgroundColor: 'var(--color-backdrop-base)' }}
+    >
+        <div className="container mx-auto">
+            <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
+        </div>
+    </div>
+)
 
 const TechStack = memo(({ tech }) => (
     <Badge variant="default" className="inline-flex text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1">
@@ -25,7 +46,7 @@ const TechStack = memo(({ tech }) => (
 TechStack.displayName = 'TechStack';
 
 const SocialLink = memo(({ icon: Icon, link, label }) => (
-    <Button asChild variant="neutral" size="icon" className="rounded-xl">
+    <Button asChild variant="neutral" size="icon" className="rounded-xl cursor-target">
         <a href={link} target="_blank" rel="noopener noreferrer" aria-label={label}>
             <Icon className="w-4 h-4" />
         </a>
@@ -137,6 +158,40 @@ const Home = () => {
     const [siteOrigin, setSiteOrigin] = useState(FALLBACK_SITE_ORIGIN)
 
     const { links: socialLinks, loading: socialLoading } = useFetchSocialLinks()
+    const { techStacks, fetchTechStacks } = useTechStackStore()
+    const {
+        totalProjects,
+        totalCertificates,
+        YearExperienceDecimal,
+        YearExperienceLabel
+    } = useAboutContent()
+
+    const statsData = useMemo(() => [
+        {
+            icon: Code,
+            value: totalProjects,
+            label: "Total Projects",
+            description: "Innovative web solutions crafted",
+            animation: "fade-right",
+            href: "/projects",
+        },
+        {
+            icon: Award,
+            value: totalCertificates,
+            label: "Certificates",
+            description: "Professional skills validated",
+            animation: "fade-up",
+            href: "/certificates",
+        },
+        {
+            icon: Globe,
+            value: YearExperienceDecimal,
+            label: "Years of Experience",
+            description: YearExperienceLabel || "Continuous learning journey",
+            animation: "fade-left",
+            href: "/experience",
+        },
+    ], [totalProjects, totalCertificates, YearExperienceDecimal, YearExperienceLabel]);
 
     const pageTitle = useMemo(() => buildPageTitle(heroData), [heroData])
     const pageDescription = useMemo(() => heroData?.description?.trim() || '', [heroData])
@@ -252,6 +307,10 @@ const Home = () => {
     }, [])
 
     useEffect(() => {
+        fetchTechStacks()
+    }, [fetchTechStacks])
+
+    useEffect(() => {
         if (typeof window !== 'undefined') {
             setSiteOrigin(window.location.origin)
         }
@@ -346,7 +405,7 @@ const Home = () => {
                 ))}
             </Helmet>
 
-            <div className="h-auto overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] pt-32 pb-0" id="Hero" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
+            <div className="h-auto overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] pt-32 pb-10 sm:pb-16 lg:pb-24" id="Hero" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
                 <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
                     <div className="container mx-auto">
                         <div className="flex flex-col lg:flex-row md:justify-between gap-10 sm:gap-12 lg:gap-20">
@@ -411,7 +470,7 @@ const Home = () => {
                                     {/* CTA Buttons */}
                                     <div className="flex flex-wrap gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
                                         {Array.isArray(heroData.cta_buttons) && heroData.cta_buttons.map((btn, index) => (
-                                            <div key={index} className={`${index >= 2 ? 'hidden sm:inline-block' : 'block sm:inline-block'}`}>
+                                            <div key={index} className={`${index >= 2 ? 'hidden sm:inline-block' : 'block sm:inline-block'} cursor-target`}>
                                                 <PublicCtaButton
                                                     href={btn.url}
                                                     text={btn.label}
@@ -467,6 +526,91 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Stats Grid */}
+            <div className="w-full overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[5%] xl:px-[5%] pt-8 sm:pt-12 md:pt-16 pb-10 sm:pb-16 relative" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
+                <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {statsData.map((stat) => (
+                        <StatCard key={stat.label} {...stat} />
+                    ))}
+                </div>
+            </div>
+
+
+            {/* ── Experience Highlight ──────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <ExperienceHighlight />
+            </Suspense>
+
+            {/* ── Tech Stack Logo Loop ──────────────────────── */}
+            <SectionDivider />
+            {techStacks && techStacks.length > 0 && (
+                <div className="w-full overflow-hidden pt-10 sm:pt-16 pb-20 relative" style={{ backgroundColor: 'var(--color-backdrop-base)' }} data-aos="fade-up" data-aos-duration="1000">
+                    <div className="text-center mb-8 px-4 sm:px-6 md:px-8 lg:px-[10%]">
+                        <h2 className="text-3xl font-display font-bold text-white mb-3">Core Technology Stack</h2>
+                        <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
+                            Expertise across the entire development lifecycle, from cloud infrastructure to frontend animation.
+                        </p>
+                    </div>
+                    
+                    <LogoLoop
+                        logos={techStacks
+                            .filter(ts => ts.icon_url)
+                            .map(ts => ({ 
+                                src: ts.icon_url, 
+                                alt: ts.name, 
+                                title: ts.name 
+                            }))
+                        }
+                        speed={40}
+                        direction="left"
+                        logoHeight={120}
+                        gap={24}
+                        hoverSpeed={10}
+                        scaleOnHover={false}
+                        fadeOut={true}
+                        fadeOutColor="var(--color-backdrop-base)"
+                        ariaLabel="Technology stack"
+                        renderItem={(item) => (
+                            <div className="flex flex-col items-center justify-center w-28 sm:w-36 h-[100px] sm:h-[120px] bg-white/[0.03] border border-white/10 rounded-2xl hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 shadow-sm cursor-pointer mx-auto">
+                                <div className="flex items-center justify-center w-full h-1/2 mt-2">
+                                    <img 
+                                        src={item.src} 
+                                        alt={item.alt} 
+                                        className="max-h-8 sm:max-h-10 max-w-[32px] sm:max-w-[40px] object-contain opacity-80 group-hover/item:opacity-100 transition-opacity" 
+                                    />
+                                </div>
+                                <div className="flex items-center justify-center w-full h-1/2 mb-2">
+                                    <span className="text-[10px] sm:text-xs font-medium text-white/70 group-hover/item:text-white transition-colors text-center px-2 truncate w-full">
+                                        {item.title}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    />
+                </div>
+            )}
+
+            {/* ── Featured Projects ─────────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <FeaturedProjects />
+            </Suspense>
+
+            {/* ── Education: Courses & Certificates ────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <EducationHighlight />
+            </Suspense>
+
+
+
+            {/* ── Call to Action ────────────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <HomeCTA />
+            </Suspense>
         </>
     );
 };

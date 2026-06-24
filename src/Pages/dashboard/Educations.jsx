@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { supabase } from '../../supabase'
+import { supabase } from '../../config/supabase'
 import {
   GraduationCap,
   Pencil,
   Plus,
   Trash2,
   Sparkles,
-  MapPin,
   Calendar,
   CheckCircle2,
   Building2,
-  Timer,
   X,
   BookOpen
 } from 'lucide-react'
@@ -20,6 +18,7 @@ import {
   compareEducationTimeline,
   formatDateRange,
 } from '../../utils/educations'
+import AddNewButton from './components/AddNewButton'
 
 /* ── Helpers ── */
 const getInitials = (school = '') =>
@@ -496,13 +495,7 @@ export default function Educations() {
             )}
           </div>
         </div>
-        <button onClick={() => { setShowCreate(true); setEditEducation(null) }} className="relative group shrink-0">
-          <div className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300" style={{ background: 'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))' }} />
-          <div className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
-            <Plus className="w-4 h-4 text-indigo-400" />
-            <span className="text-sm font-medium text-gray-200">Add Education</span>
-          </div>
-        </button>
+        <AddNewButton onClick={() => { setShowCreate(true); setEditEducation(null) }} label="Add Education" />
       </div>
 
       {/* ── Modals ── */}
@@ -533,12 +526,9 @@ export default function Educations() {
               <p className="text-gray-300 font-medium text-sm">No education history yet</p>
               <p className="text-gray-600 text-xs mt-1">Add your first educational record</p>
             </div>
-            <button onClick={() => setShowCreate(true)} className="relative group mt-2">
-              <div className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300" style={{ background: 'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))' }} />
-              <div className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-sm font-medium text-gray-200" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
-                <Plus className="w-4 h-4 text-indigo-400" /> Add Education
-              </div>
-            </button>
+            <div className="mt-2">
+              <AddNewButton onClick={() => setShowCreate(true)} label="Add Education" />
+            </div>
           </div>
         </div>
       ) : (

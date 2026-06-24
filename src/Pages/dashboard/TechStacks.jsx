@@ -1,6 +1,6 @@
 import { useEffect, useState} from'react'
 import ReactDOM from'react-dom'
-import { supabase} from'../../supabase'
+import { supabase } from '../../config/supabase'
 import { useToast} from'../../hooks/useToast'
 import ToastStack from'../../components/ToastStack'
 import {
@@ -15,6 +15,7 @@ import {
  EyeOff,
  GripVertical,
 } from'lucide-react'
+import AddNewButton from './components/AddNewButton'
 
 const Card = ({ children, className =''}) => (
  <div className={`relative group ${className}`}>
@@ -558,13 +559,7 @@ export default function TechStacks() {
  </div>
  </div>
 
- <button onClick={() => setShowCreate(true)} className="relative group shrink-0">
- <div className="absolute -inset-0.5 bg-[#0f172a] ] ] rounded-xl opacity-50 blur group-hover:opacity-80 transition duration-300" />
- <div className="relative flex items-center gap-2 px-4 py-2.5 bg-[#030014] rounded-xl border border-white/10">
- <Plus className="w-4 h-4 text-indigo-400" />
- <span className="text-sm text-gray-200">New Tech Stack</span>
- </div>
- </button>
+ <AddNewButton onClick={() => setShowCreate(true)} label="New Tech Stack" />
  </div>
 
  {showCreate && (

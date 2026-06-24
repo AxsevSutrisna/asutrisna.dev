@@ -1,6 +1,6 @@
 import { useEffect, useState} from'react'
 import ReactDOM from'react-dom'
-import { supabase} from'../../supabase'
+import { supabase } from '../../config/supabase'
 import { useToast} from'../../hooks/useToast'
 import ToastStack from'../../components/ToastStack'
 import {
@@ -13,7 +13,6 @@ import {
  Eye,
  EyeOff,
  Sparkles,
- X,
  Quote,
  CheckCircle2,
  Clock,
@@ -114,7 +113,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  alt={item.name}
  className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${imgLoaded ?'opacity-100' :'opacity-0'}`}
  onLoad={() => setImgLoaded(true)}
- onError={(e) => { e.currentTarget.src ='/Photo.jpg'}}
+ onError={(e) => { e.currentTarget.src ='/AsepSutrisnaSuhadaPutra-PhotoProfile.png'}}
  />
  ) : (
  <div className="w-full h-full flex items-center justify-center">
@@ -122,7 +121,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  </div>
  )}
  {/* Gradient overlay on photo */}
- <div className="absolute inset-0 bg-[#0f172a] sm:bg-[#0f172a] sm: sm:" />
+ <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a1a]/80 via-transparent to-transparent pointer-events-none" />
 
  {/* Published badge on photo */}
  <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border backdrop-blur-sm ${item.is_published

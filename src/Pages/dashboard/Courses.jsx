@@ -1,6 +1,6 @@
-import { useEffect, useState} from"react";
+import { useEffect, useState, useCallback } from "react";
 import ReactDOM from"react-dom";
-import { supabase} from"../../supabase";
+import { supabase } from "../../config/supabase";
 import { useToast} from"../../hooks/useToast";
 import ToastStack from"../../components/ToastStack";
 import {
@@ -15,6 +15,7 @@ import {
  Calendar,
  Link as LinkIcon,
 } from"lucide-react";
+import AddNewButton from "./components/AddNewButton";
 
 // Modal Component
 const Modal = ({ title, onClose, children}) =>
@@ -246,21 +247,21 @@ export default function Courses() {
  const [uploading, setUploading] = useState(false);
  const { toasts, pushToast, removeToast} = useToast();
 
- const fetchCourses = async () => {
- setLoading(true);
- const { data, error} = await supabase.from("courses").select("*").order("created_at", { ascending: false});
- if (error) {
- console.error(error);
- pushToast("error","Failed to fetch courses.");
-} else {
- setCourses(data || []);
-}
- setLoading(false);
-};
+  const fetchCourses = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
+    if (error) {
+      console.error(error);
+      pushToast("error", "Failed to fetch courses.");
+    } else {
+      setCourses(data || []);
+    }
+    setLoading(false);
+  }, [pushToast]);
 
- useEffect(() => {
- fetchCourses();
-}, []);
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
  const uploadImage = async (file) => {
  const fileName = `course-${Date.now()}-${file.name}`;
@@ -339,13 +340,7 @@ export default function Courses() {
  <p className="text-sm text-gray-400">Manage your educational courses and bootcamp certificates</p>
  </div>
  </div>
- <button
- onClick={() => setShowCreate(true)}
- className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition-colors"
- >
- <Plus className="w-4 h-4" />
- Add Course
- </button>
+  <AddNewButton onClick={() => setShowCreate(true)} label="Add Course" />
  </div>
 
  <div className="bg-[#0a0a1a] rounded-2xl border border-white/5 p-4 sm:p-6">

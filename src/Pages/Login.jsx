@@ -1,5 +1,5 @@
 import { useState} from'react'
-import { supabase} from"../supabase";
+import { supabase } from "../config/supabase";
 import { useNavigate} from'react-router-dom'
 import { Helmet} from'react-helmet-async'
 import { Mail, Lock, LogIn, Sparkles, Eye, EyeOff} from'lucide-react'

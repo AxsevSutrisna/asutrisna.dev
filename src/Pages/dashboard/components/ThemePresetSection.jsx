@@ -30,7 +30,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo} from'react'
-import { supabase} from'../../../supabase'
+import { supabase } from '../../../config/supabase'
 import { AlertCircle, RefreshCw} from'lucide-react'
 import PresetFilterTabs from'./PresetFilterTabs'
 import PresetCardsGrid from'./PresetCardsGrid'

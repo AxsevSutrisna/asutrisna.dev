@@ -169,6 +169,7 @@ function MenubarSubTrigger({ className, inset, children, ...props}) {
  return (
  <MenubarPrimitive.SubTrigger
  data-slot="menubar-sub-trigger"
+ data-inset={inset}
  className={cn(
 "flex cursor-pointer select-none items-center rounded-lg border-2 border-transparent px-3 py-1.5 text-sm font-medium outline-none focus:border-[color:var(--color-border-light)] focus:bg-white/10 data-[state=open]:bg-white/10 data-[state=open]:border-[color:var(--color-border-light)] data-[inset]:pl-8",
  className
