@@ -169,7 +169,7 @@ const ExperienceHighlight = () => {
             {workExperiences.length > 0 && (
               <Link
                 to="/experience"
-                className="inline-flex items-center gap-1.5 text-sm font-medium shrink-0 transition-opacity hover:opacity-70 whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 text-sm font-medium shrink-0 transition-opacity hover:opacity-70 whitespace-nowrap cursor-target"
                 style={{ color: 'var(--color-primary-light)' }}
               >
                 View all experience

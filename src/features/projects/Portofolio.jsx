@@ -107,7 +107,7 @@ export default function Portofolio() {
                             onClick={() => setActiveFilter(filter)}
                             variant={activeFilter === filter ? "default" : "neutral"}
                             size="sm"
-                            className={`rounded-xl transition-all duration-300 ${
+                            className={`rounded-xl transition-all duration-300 cursor-target ${
                                 activeFilter === filter 
                                 ? "opacity-100 scale-105 shadow-[4px_4px_0_var(--color-shadow-primary)]" 
                                 : "opacity-60 saturate-50 hover:opacity-100 hover:saturate-100"
@@ -126,7 +126,7 @@ export default function Portofolio() {
                         placeholder="Search projects..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-[#111827] border border-white/20 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none transition-colors"
+                        className="w-full bg-[#111827] border border-white/20 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none transition-colors cursor-target"
                         style={{ '--tw-ring-color': 'var(--color-primary-light)' }}
                         onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary-light)'; }}
                         onBlur={(e) => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)'; }}

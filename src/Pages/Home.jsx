@@ -46,7 +46,7 @@ const TechStack = memo(({ tech }) => (
 TechStack.displayName = 'TechStack';
 
 const SocialLink = memo(({ icon: Icon, link, label }) => (
-    <Button asChild variant="neutral" size="icon" className="rounded-xl">
+    <Button asChild variant="neutral" size="icon" className="rounded-xl cursor-target">
         <a href={link} target="_blank" rel="noopener noreferrer" aria-label={label}>
             <Icon className="w-4 h-4" />
         </a>
@@ -470,7 +470,7 @@ const Home = () => {
                                     {/* CTA Buttons */}
                                     <div className="flex flex-wrap gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
                                         {Array.isArray(heroData.cta_buttons) && heroData.cta_buttons.map((btn, index) => (
-                                            <div key={index} className={`${index >= 2 ? 'hidden sm:inline-block' : 'block sm:inline-block'}`}>
+                                            <div key={index} className={`${index >= 2 ? 'hidden sm:inline-block' : 'block sm:inline-block'} cursor-target`}>
                                                 <PublicCtaButton
                                                     href={btn.url}
                                                     text={btn.label}
@@ -528,8 +528,8 @@ const Home = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="w-full overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] pb-10 sm:pb-16 relative" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
-                <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="w-full overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[5%] xl:px-[5%] pt-8 sm:pt-12 md:pt-16 pb-10 sm:pb-16 relative" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
+                <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
                     {statsData.map((stat) => (
                         <StatCard key={stat.label} {...stat} />
                     ))}

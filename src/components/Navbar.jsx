@@ -42,28 +42,17 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
-  const navStyle = isOpen
-    ? { backgroundColor: 'var(--color-backdrop-base)' }
-    : scrolled
-    ? {
-        backgroundColor: 'rgba(var(--color-backdrop-base-rgb), 0.88)',
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
-      }
-    : undefined;
-
   return (
     <nav
-      className={`fixed w-full top-0 z-50 transition-all duration-500 ${!isOpen && !scrolled ? "bg-transparent" : ""}`}
-      style={navStyle}
+      className="fixed w-full top-0 z-50 transition-all duration-500"
     >
-      <div className="mx-auto px-[5%] sm:px-[5%] lg:px-[10%] pt-3">
-        <div className="neo-shell flex items-center justify-between h-16 px-4 sm:px-5" style={{ backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
+      <div className="mx-auto px-[5%] sm:px-[5%] lg:px-[10%] pt-4">
+        <div className={`flex items-center justify-between h-16 px-4 sm:px-6 rounded-full border transition-all duration-300 ${scrolled || isOpen ? "bg-[#0a0a1a]/90 border-white/10 backdrop-blur-md shadow-lg" : "bg-[#0a0a1a] border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]"}`}>
           <div className="flex-shrink-0">
             <Link
               to="/"
               onClick={closeMenu}
-              className="text-lg sm:text-xl font-display font-bold text-white tracking-tight"
+              className="text-lg sm:text-xl font-display font-bold text-white tracking-tight cursor-target"
             >
               asutrisnadev
             </Link>
@@ -78,9 +67,9 @@ const Navbar = () => {
                   <MenubarMenu key={item.label}>
                     <MenubarTrigger
                       asChild
-                      className={`cursor-pointer rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${isActive
+                      className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 cursor-target ${isActive
                         ? "bg-white text-black shadow-[4px_4px_0_var(--color-shadow-primary)]"
-                        : "text-[color:var(--color-text-secondary)] hover:text-white hover:bg-white/10"
+                        : "text-[var(--color-text-secondary)] hover:text-white hover:bg-white/5"
                       }`}
                     >
                       <Link to={item.href}>
@@ -99,12 +88,12 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               variant="ghost"
               size="icon"
-              className={`relative transition-transform duration-300 ease-in-out transform ${isOpen ? "rotate-90 scale-105" : "rotate-0 scale-100"}`}
+              className={`relative transition-transform duration-300 ease-in-out transform rounded-lg border border-white/10 bg-transparent text-white shadow-[2px_2px_0_rgba(255,255,255,0.1)] cursor-target ${isOpen ? "rotate-90 scale-105" : "rotate-0 scale-100"}`}
             >
               {isOpen ? (
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5" />
               )}
             </Button>
           </div>
@@ -118,21 +107,21 @@ const Navbar = () => {
           : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
-        <div className="mx-[5%] mt-3 neo-shell px-4 py-4 space-y-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
+        <div className="mx-[5%] mt-3 rounded-2xl border border-white/10 bg-[#0a0a1a] p-4 space-y-3 shadow-2xl">
           {navItems.map((item, index) => {
             const isActive = location.pathname === item.href;
             return (
               <Button
                 key={item.label}
                 asChild
-                variant={isActive ? "default" : "ghost"}
-                className={`w-full justify-start rounded-2xl px-4 py-3 text-base font-medium transition-all duration-300 ease ${isActive
-                  ? "neo-button-primary text-white"
-                  : "text-[var(--color-text-secondary)] border-white/15"
+                variant="ghost"
+                className={`w-full justify-start rounded-xl px-4 py-4 text-base font-medium transition-all duration-300 ease border cursor-target ${isActive
+                  ? "bg-white/10 text-white border-white/20 shadow-[4px_4px_0_var(--color-shadow-primary)]"
+                  : "bg-transparent text-[var(--color-text-secondary)] border-white/10 shadow-[4px_4px_0_rgba(0,0,0,0.4)] hover:bg-white/5 hover:text-white"
                 }`}
                 style={{
-                  transitionDelay: `${index * 50}ms`,
-                  transform: isOpen ? "translateX(0)" : "translateX(50px)",
+                  transitionDelay: `${index * 40}ms`,
+                  transform: isOpen ? "translateX(0)" : "translateX(30px)",
                   opacity: isOpen ? 1 : 0,
                 }}
               >

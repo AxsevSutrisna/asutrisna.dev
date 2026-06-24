@@ -318,7 +318,7 @@ const FeaturedProjects = () => {
 
             <Link
               to="/projects"
-              className="inline-flex items-center gap-1.5 text-sm font-medium shrink-0 transition-opacity hover:opacity-70 whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 text-sm font-medium shrink-0 transition-opacity hover:opacity-70 whitespace-nowrap cursor-target"
               style={{ color: 'var(--color-primary-light)' }}
               aria-label={`View all ${projects.length} projects`}
             >
@@ -383,22 +383,7 @@ const FeaturedProjects = () => {
         )}
       </div>
 
-      {/* ── Bottom CTA ── */}
-      {!loading && featured.length > 0 && (
-        <div
-          className="flex justify-center mt-8 px-4"
-          data-aos="fade-up"
-          data-aos-duration="700"
-        >
-          <Link
-            to="/projects"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border-2 border-white/10 bg-white/[0.04] text-sm font-semibold text-white hover:border-white/25 hover:bg-white/[0.07] transition-all duration-200 shadow-[4px_4px_0_rgba(255,255,255,0.06)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_rgba(99,102,241,0.15)]"
-          >
-            Browse all {projects.length} projects
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      )}
+
     </section>
   )
 }

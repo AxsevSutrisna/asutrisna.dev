@@ -194,12 +194,12 @@ const AboutPage = () => {
               <PublicCtaButton
                 to="/contact"
                 text="👋 Get in touch"
-                className="w-full sm:w-auto px-8"
+                className="w-full sm:w-auto px-8 cursor-target"
               />
               <PublicCtaButton
                 to="/stack"
                 text="🧠 View Tech Stack"
-                className="w-full sm:w-auto px-8"
+                className="w-full sm:w-auto px-8 cursor-target"
               />
             </div>
           </div>

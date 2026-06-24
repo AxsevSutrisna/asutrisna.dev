@@ -45,12 +45,22 @@ const DetailLayout = () => (
   </div>
 );
 
+import TargetCursor from "./components/ui/TargetCursor";
+
 function App() {
  useTheme();
 
  return (
 
  <HelmetProvider>
+ <TargetCursor 
+    spinDuration={2}
+    hideDefaultCursor
+    parallaxOn
+    hoverDuration={0.2}
+    cursorColor="#ffffff"
+    cursorColorOnTarget="#B497CF"
+ />
  <div className="pointer-events-none">
  <AnimatedBackground />
  </div>

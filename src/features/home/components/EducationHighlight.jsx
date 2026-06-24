@@ -223,11 +223,11 @@ const EducationHighlight = () => {
               {certificates.length > 0 && (
                 <Link
                   to="/certificates"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70 whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70 whitespace-nowrap cursor-target"
                   style={{ color: 'var(--color-primary-light)' }}
                   aria-label="View all certificates"
                 >
-                  All certificates <ArrowRight className="w-3.5 h-3.5" />
+                  View all certificates <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}
             </div>
@@ -288,17 +288,7 @@ const EducationHighlight = () => {
           </div>
         )}
 
-        {/* ── Bottom CTA ── */}
-        {!isLoading && hasCerts && (
-          <div className="mt-12 flex justify-center card-fade-up" style={{ '--delay': '200ms' }}>
-            <Link
-              to="/certificates"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border-2 border-white/10 bg-white/[0.04] text-sm font-semibold text-white hover:border-white/25 hover:bg-white/[0.07] transition-all duration-200 shadow-[4px_4px_0_rgba(255,255,255,0.05)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_rgba(99,102,241,0.14)]"
-            >
-              View All {certificates.length} Certificates <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
+
       </div>
     </section>
   )

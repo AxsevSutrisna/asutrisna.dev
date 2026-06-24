@@ -11,7 +11,7 @@ const StatCard = memo(({ icon: Icon, value, label, description, animation, href 
     <Wrapper
       data-aos={animation}
       data-aos-duration={1300}
-      className="relative group block h-full"
+      className="relative group block h-full cursor-target"
       {...linkProps}
     >
       <div className="relative z-10 p-6 h-full flex flex-col justify-between rounded-xl border-2 border-white/10 bg-white/5 shadow-[6px_6px_0_rgba(255,255,255,0.15)] hover:translate-x-[6px] hover:translate-y-[6px] hover:shadow-none hover:border-white/30 transition-all duration-200">

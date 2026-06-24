@@ -54,7 +54,7 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
  target="_blank"
  rel="noopener noreferrer"
  onClick={handleLiveDemo}
- className="px-4 py-2 text-sm"
+ className="px-4 py-2 text-sm cursor-target"
  />
  ) : (
  <span className="text-gray-500 text-sm">
@@ -68,7 +68,7 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
  text="Details"
  icon={ArrowRight}
  onClick={handleDetails}
- className="px-4 py-2 text-sm"
+ className="px-4 py-2 text-sm cursor-target"
  />
  ) : (
  <span className="text-gray-500 text-sm">
