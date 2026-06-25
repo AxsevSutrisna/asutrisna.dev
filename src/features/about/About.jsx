@@ -10,6 +10,7 @@ import DecryptedText from "@/components/ui/DecryptedText"
 import ProfileCard from "@/components/ui/ProfileCard"
 import StatCard from "@/components/ui/StatCard"
 import LogoLoop from "@/components/ui/LogoLoop"
+import AchievementHighlight from "../home/components/AchievementHighlight"
 
 const ABOUT_FALLBACK = {
  name:"Asep Sutrisna Suhada Putra",
@@ -217,6 +218,10 @@ const AboutPage = () => {
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
+      </div>
+
+      <div className="-mx-[5%] sm:-mx-[5%] lg:-mx-[10%]">
+        <AchievementHighlight />
       </div>
 
  <style>{`

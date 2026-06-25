@@ -124,19 +124,22 @@ const ExpandableCard = ({ title, subtitle, dateRange, location, badges, descript
               
               {/* Smooth Fade Overlay when truncated */}
               {!isExpanded && isTruncated && (
-                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/80 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/60 to-transparent pointer-events-none" />
               )}
             </div>
             
             {isTruncated && (
-              <div className={`mt-4 flex justify-start ${!isExpanded ? 'relative z-10 -mt-6' : ''}`}>
+              <div className={`mt-2 flex justify-start ${!isExpanded ? 'relative z-10 -mt-8' : ''}`}>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="group/btn no-neo flex items-center gap-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-6 py-2.5 transition-all duration-300 backdrop-blur-sm shadow-none"
+                  className="cursor-target group/btn flex items-center gap-2 text-sm font-medium text-theme-primary-light hover:text-white transition-colors duration-300 py-2 focus:outline-none"
                 >
-                  {isExpanded ? 'Show less' : 'Read more'}
+                  <span className="relative overflow-hidden pb-0.5">
+                    {isExpanded ? 'Show less' : 'Read more'}
+                    <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-theme-primary-light transform origin-left scale-x-0 transition-transform duration-300 group-hover/btn:scale-x-100" />
+                  </span>
                   <svg 
-                    className={`w-4 h-4 transition-transform duration-300 text-theme-primary-light ${isExpanded ? 'rotate-180' : ''}`} 
+                    className={`w-4 h-4 transition-transform duration-300 group-hover/btn:translate-y-0.5 ${isExpanded ? 'rotate-180 group-hover/btn:-translate-y-0.5' : ''}`} 
                     fill="none" viewBox="0 0 24 24" stroke="currentColor"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -174,9 +177,6 @@ export default function ExperienceContent() {
             <h1 className="text-4xl md:text-5xl font-display font-bold text-white text-left">
               Professional <span className="text-theme-primary-light">Journey</span>
             </h1>
-            <p className="text-gray-400 mt-4 text-base md:text-lg max-w-2xl text-left">
-              A timeline of my career path, achievements, and educational foundation.
-            </p>
           </div>
 
           {/* Sticky Tabs container on mobile, relative inside sticky parent on desktop */}
@@ -188,7 +188,7 @@ export default function ExperienceContent() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    w-full flex items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-2xl transition-all duration-500 font-medium text-center lg:text-left no-neo
+                    cursor-target w-full flex items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-2xl transition-all duration-500 font-medium text-center lg:text-left no-neo
                     ${isActive 
                       ? 'bg-theme-primary text-white scale-[1.02] shadow-xl shadow-theme-primary/30' 
                       : 'text-gray-400 hover:bg-white/5 hover:text-white shadow-none'

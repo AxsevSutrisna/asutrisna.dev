@@ -159,7 +159,7 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  href={liveUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="w-8 h-8 rounded-lg bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
+ className="cursor-target w-8 h-8 rounded-lg bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
  title="Live Preview"
  >
  <Globe className="w-3.5 h-3.5" />
@@ -170,7 +170,7 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  href={githubUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="w-8 h-8 rounded-lg bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
+ className="cursor-target w-8 h-8 rounded-lg bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
  title="GitHub Repo"
  >
  <Github className="w-3.5 h-3.5" />
@@ -240,7 +240,7 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  href={liveUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="p-1.5 rounded-lg border border-white/8 text-gray-500 hover:text-white hover:border-white/20 transition-all hover:bg-white/5"
+ className="cursor-target p-1.5 rounded-lg border border-white/8 text-gray-500 hover:text-white hover:border-white/20 transition-all hover:bg-white/5"
  title="Open live site"
  >
  <ExternalLink className="w-3.5 h-3.5" />
@@ -251,7 +251,7 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  href={githubUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="p-1.5 rounded-lg border border-white/8 text-gray-500 hover:text-white hover:border-white/20 transition-all hover:bg-white/5"
+ className="cursor-target p-1.5 rounded-lg border border-white/8 text-gray-500 hover:text-white hover:border-white/20 transition-all hover:bg-white/5"
  title="Open GitHub"
  >
  <Github className="w-3.5 h-3.5" />
@@ -261,13 +261,13 @@ const ProjectCard = ({ project, onDelete, onEdit}) => {
  <div className="flex gap-2">
  <button
  onClick={() => onEdit(project)}
- className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 text-xs font-medium transition-all duration-200"
+ className="cursor-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 text-xs font-medium transition-all duration-200"
  >
  <Pencil className="w-3 h-3" /> Edit
  </button>
  <button
  onClick={() => onDelete(project.id)}
- className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/8 border border-red-500/20 text-red-400 hover:bg-red-500/18 hover:border-red-500/40 text-xs font-medium transition-all duration-200"
+ className="cursor-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/8 border border-red-500/20 text-red-400 hover:bg-red-500/18 hover:border-red-500/40 text-xs font-medium transition-all duration-200"
  >
  <Trash2 className="w-3 h-3" /> Delete
  </button>
@@ -395,7 +395,7 @@ const Modal = ({ title, onClose, children}) =>
  <button
  type="button"
  onClick={onClose}
- className="p-1 text-gray-500 hover:text-white transition-colors"
+ className="cursor-target p-1 text-gray-500 hover:text-white transition-colors"
  >
  <X className="w-5 h-5" />
  </button>
@@ -544,7 +544,7 @@ const ProjectForm = ({
  </div>
  );
 
- const inputCls ="w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all";
+ const inputCls ="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all";
  const labelCls ="text-xs text-indigo-300/70 uppercase tracking-wider font-medium";
 
  return (
@@ -690,7 +690,7 @@ const ProjectForm = ({
  Project Images (max {MAX_PROJECT_IMAGES}) *
  </label>
  <div className="space-y-3">
- <label data-project-field="images" className={`flex items-center gap-4 w-full bg-[#0d0d22] border border-dashed rounded-xl px-4 py-4 cursor-pointer transition-all ${getFieldError("images") ?"border-red-500/50 hover:border-red-400/70 bg-red-500/5" :"border-white/15 hover:border-indigo-500/40 hover:bg-white/4"}`}>
+ <label data-project-field="images" className={`cursor-target flex items-center gap-4 w-full bg-[#0d0d22] border border-dashed rounded-xl px-4 py-4 cursor-pointer transition-all ${getFieldError("images") ?"border-red-500/50 hover:border-red-400/70 bg-red-500/5" :"border-white/15 hover:border-indigo-500/40 hover:bg-white/4"}`}>
  {imageItems.length > 0 ? (
  <div className="flex -space-x-3">
  {imageItems.slice(0, 3).map((item) => (
@@ -753,7 +753,7 @@ const ProjectForm = ({
  <button
  type="button"
  onClick={() => removeImage(item.id)}
- className="absolute right-2 top-2 w-7 h-7 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm no-neo"
+ className="cursor-target absolute right-2 top-2 w-7 h-7 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm no-neo"
  aria-label="Remove image"
  >
  <X className="w-4 h-4" />
@@ -770,11 +770,11 @@ const ProjectForm = ({
  <button
  type="button"
  onClick={onCancel}
- className="px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo"
+ className="cursor-target px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo"
  >
  Cancel
  </button>
- <button type="submit" disabled={uploading} className="relative group/s">
+ <button type="submit" disabled={uploading} className="cursor-target relative group/s">
  <div className="absolute -inset-0.5 rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center gap-2 px-6 py-2.5 rounded-xl border border-white/10" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
  {uploading ? (

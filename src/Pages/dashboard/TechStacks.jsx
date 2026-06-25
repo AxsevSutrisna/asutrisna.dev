@@ -35,7 +35,7 @@ const Modal = ({ title, onClose, children}) =>
  <div className="relative bg-[#0a0a1a] border border-white/12 rounded-2xl flex flex-col overflow-hidden">
  <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
  <h2 className="text-base font-semibold text-white">{title}</h2>
- <button type="button" onClick={onClose} className="p-1 text-gray-500 hover:text-white transition-colors">
+ <button type="button" onClick={onClose} className="cursor-target p-1 text-gray-500 hover:text-white transition-colors">
  <X className="w-5 h-5" />
  </button>
  </div>
@@ -57,7 +57,7 @@ const InputField = ({ label, value, onChange, placeholder, type ='text', require
  placeholder={placeholder}
  required={required}
  min={type ==='number' ?'0' : undefined}
- className="w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all"
+ className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all"
  />
  </div>
 )
@@ -69,17 +69,28 @@ const toSlug = (value) =>
  .replace(/\s+/g,'-')
  .replace(/[^a-z0-9-]/g,'')
 
-const validateTechStackForm = (form, iconFile, initial) => {
+const TECH_CATEGORIES = [
+ 'Programming Language',
+ 'Frontend & UI',
+ 'Backend',
+ 'Mobile',
+ 'Database',
+ 'Cloud & DevOps',
+ 'Version Control',
+ 'Tools & Workflow'
+]
+
+const validateTechStackForm = (form, iconFile) => {
  const errors = {}
 
  if (!String(form.name ||'').trim()) {
  errors.name ='Name wajib diisi.'
-}
+ }
 
- const hasIcon = Boolean(iconFile || initial?.icon_url)
+ const hasIcon = Boolean(iconFile || form.icon_url)
  if (!hasIcon) {
- errors.icon ='Icon wajib diupload.'
-}
+ errors.icon ='Icon wajib diupload atau masukkan URL.'
+ }
 
  return errors
 }
@@ -104,21 +115,21 @@ const TechStackCard = ({ item, onEdit, onDelete, onToggleActive}) => (
  <div className="flex gap-2">
  <button
  onClick={() => onToggleActive(item)}
- className="p-2 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:border-white/20 transition-colors"
+ className="cursor-target p-2 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:border-white/20 transition-colors"
  title={item.is_active ?'Deactivate' :'Activate'}
  >
  {item.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
  </button>
  <button
  onClick={() => onEdit(item)}
- className="p-2 rounded-lg border border-indigo-500/25 text-indigo-400 hover:bg-indigo-500/10 transition-colors"
+ className="cursor-target p-2 rounded-lg border border-indigo-500/25 text-indigo-400 hover:bg-indigo-500/10 transition-colors"
  title="Edit"
  >
  <Pencil className="w-4 h-4" />
  </button>
  <button
  onClick={() => onDelete(item.id)}
- className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+ className="cursor-target p-2 rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
  title="Delete"
  >
  <Trash2 className="w-4 h-4" />
@@ -154,15 +165,17 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
  const [form, setForm] = useState({
  name: initial?.name ||'',
  slug: initial?.slug ||'',
- category: initial?.category ||'',
+ category: initial?.category ||'Frontend & UI',
  description: initial?.description ||'',
  sort_order: initial?.sort_order ??'',
  is_active: initial?.is_active ?? true,
+ icon_url: initial?.icon_url ||'',
 })
  const [iconFile, setIconFile] = useState(null)
  const [preview, setPreview] = useState(initial?.icon_url || null)
  const [autoGenerateSlug, setAutoGenerateSlug] = useState(!initial)
  const [errors, setErrors] = useState({})
+ const [showAdvanced, setShowAdvanced] = useState(false)
 
  const set = (key) => (event) => {
  const value = key ==='is_active' ? event.target.checked : event.target.value
@@ -202,6 +215,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
  if (!file) return
  setIconFile(file)
  setPreview(URL.createObjectURL(file))
+ setForm(curr => ({ ...curr, icon_url:'' }))
  setErrors((current) => {
  if (!current.icon) return current
  const next = { ...current}
@@ -210,10 +224,24 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
 })
 }
 
+ const fetchSimpleIcon = (e) => {
+ e.preventDefault()
+ if (!form.name) {
+   setErrors(curr => ({ ...curr, name: 'Isi nama terlebih dahulu untuk auto-fetch' }))
+   return
+ }
+ const slug = toSlug(form.name)
+ const url = `https://cdn.simpleicons.org/${slug}`
+ setIconFile(null)
+ setPreview(url)
+ setForm(curr => ({ ...curr, icon_url: url }))
+ setErrors(curr => { const n = {...curr}; delete n.icon; return n })
+ }
+
  const handleSubmit = (event) => {
  event.preventDefault()
 
- const nextErrors = validateTechStackForm(form, iconFile, initial)
+ const nextErrors = validateTechStackForm(form, iconFile)
  setErrors(nextErrors)
 
  if (Object.keys(nextErrors).length > 0) {
@@ -224,11 +252,11 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
 }
 
  const inputClass = (field) =>
- `w-full bg-[#0d0d22] border rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all ${errors[field] ?'border-red-500/50 focus:border-red-500/60 focus:ring-red-500/20' :'border-white/10'
+ `cursor-target w-full bg-[#0d0d22] border rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all ${errors[field] ?'border-red-500/50 focus:border-red-500/60 focus:ring-red-500/20' :'border-white/10'
 }`
 
  const uploadClass =
- `flex items-center gap-4 w-full bg-[#0d0d22] border rounded-xl px-4 py-4 cursor-pointer transition-all ${errors.icon
+ `cursor-target flex items-center gap-4 w-full bg-[#0d0d22] border rounded-xl px-4 py-4 cursor-pointer transition-all ${errors.icon
  ?'border-red-500/50 hover:border-red-500/70'
  :'border-dashed border-white/15 hover:border-indigo-500/40 hover:bg-white/4'
 }`
@@ -240,7 +268,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
  className="p-5 sm:p-6 space-y-4"
  >
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
- <div className="space-y-1.5">
+ <div className="space-y-1.5 sm:col-span-2">
  <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">Name *</label>
  <input
  type="text"
@@ -251,37 +279,36 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
  />
  <FieldError message={errors.name} />
  </div>
- <div className="space-y-1.5">
- <InputField label="Slug" value={form.slug} onChange={set('slug')} placeholder="Auto-generated from name" />
- <p className="text-[11px] text-gray-500">Optional. If left empty, slug will be generated from the name.</p>
- </div>
- <InputField label="Category" value={form.category} onChange={set('category')} placeholder="e.g. frontend" />
- <InputField label="Sort Order" type="number" value={form.sort_order} onChange={set('sort_order')} placeholder="Leave empty to place at the bottom" />
- <p className="-mt-2 text-[11px] text-gray-500 sm:col-span-2">Optional. If left empty, the new tech stack will be placed after the current last order.</p>
 
- <div className="sm:col-span-2 space-y-1.5">
- <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">Description</label>
- <textarea
- value={form.description}
- onChange={set('description')}
- rows={3}
- className="w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none"
- placeholder="Optional description"
- />
+ <div className="space-y-1.5 sm:col-span-2">
+ <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">Category *</label>
+ <select
+ value={form.category}
+ onChange={set('category')}
+ className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all appearance-none"
+ >
+ {TECH_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+ <option value="Other">Other</option>
+ </select>
  </div>
 
  <div className="sm:col-span-2 space-y-1.5">
+ <div className="flex items-center justify-between">
  <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">Icon *</label>
+ <button type="button" onClick={fetchSimpleIcon} className="text-[11px] text-indigo-400 hover:text-indigo-300 transition-colors cursor-target font-medium">
+ Auto-fetch Icon
+ </button>
+ </div>
  <label className={uploadClass}>
- <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center">
+ <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center shrink-0">
  {preview ? (
  <img src={preview} alt="preview" className="w-full h-full object-contain p-2" />
  ) : (
  <ImageIcon className="w-5 h-5 text-gray-600" />
  )}
  </div>
- <div>
- <p className="text-sm text-gray-300">{iconFile ? iconFile.name :'Click to upload icon'}</p>
+ <div className="flex-1 min-w-0">
+ <p className="text-sm text-gray-300 truncate">{iconFile ? iconFile.name : (form.icon_url ? form.icon_url :'Click to upload icon file')}</p>
  <p className="text-xs text-gray-600 mt-0.5">PNG, SVG, WEBP recommended</p>
  </div>
  <input type="file" accept="image/*" onChange={handleFile} className="hidden" />
@@ -289,17 +316,51 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading}) => {
  <FieldError message={errors.icon} />
  </div>
 
- <label className="flex items-center gap-3 sm:col-span-2 text-sm text-gray-300">
- <input type="checkbox" checked={form.is_active} onChange={set('is_active')} className="accent-indigo-500 w-4 h-4" />
+ <label className="cursor-target w-fit flex items-center gap-3 sm:col-span-2 text-sm text-gray-300">
+ <input type="checkbox" checked={form.is_active} onChange={set('is_active')} className="cursor-target accent-indigo-500 w-4 h-4" />
  Active and visible on portfolio
  </label>
+
+ <div className="sm:col-span-2">
+ <button 
+ type="button" 
+ onClick={() => setShowAdvanced(!showAdvanced)}
+ className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1 cursor-target mt-2"
+ >
+ {showAdvanced ? '▼ Hide Advanced Settings' : '▶ Show Advanced Settings'}
+ </button>
  </div>
 
- <div className="flex justify-end gap-2 pt-1">
- <button type="button" onClick={onCancel} className="px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo">
+ {showAdvanced && (
+ <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border border-white/10 rounded-xl bg-white/5 mt-2 transition-all">
+ <div className="space-y-1.5">
+ <InputField label="Slug" value={form.slug} onChange={set('slug')} placeholder="Auto-generated" />
+ <p className="text-[11px] text-gray-500">Auto-generated if left empty.</p>
+ </div>
+ <div className="space-y-1.5">
+ <InputField label="Sort Order" type="number" value={form.sort_order} onChange={set('sort_order')} placeholder="Auto (at bottom)" />
+ <p className="text-[11px] text-gray-500">Auto-assigned if left empty.</p>
+ </div>
+ <div className="sm:col-span-2 space-y-1.5">
+ <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">Description</label>
+ <textarea
+ value={form.description}
+ onChange={set('description')}
+ rows={3}
+ className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none"
+ placeholder="Optional description"
+ />
+ </div>
+ </div>
+ )}
+
+ </div>
+
+ <div className="flex justify-end gap-2 pt-4">
+ <button type="button" onClick={onCancel} className="cursor-target px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo">
  Cancel
  </button>
- <button type="submit" disabled={uploading} className="relative group/s">
+ <button type="submit" disabled={uploading} className="cursor-target relative group/s">
  <div className="absolute -inset-0.5 bg-[#0f172a] ] ] rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" />
  <div className="relative flex items-center gap-2 px-5 py-2 bg-[#030014] rounded-xl border border-white/10">
  {uploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Upload className="w-4 h-4 text-indigo-400" />}
@@ -457,7 +518,7 @@ export default function TechStacks() {
  setUploading(true)
  try {
  const slug = await checkSlugUnique(form.slug || form.name)
- const iconUrl = iconFile ? await uploadIcon(iconFile) : null
+ const iconUrl = iconFile ? await uploadIcon(iconFile) : form.icon_url
  const sortOrder = resolveSortOrder(form.sort_order)
 
  const { error} = await supabase.from('tech_stacks').insert({
@@ -488,7 +549,7 @@ export default function TechStacks() {
  setUploading(true)
  try {
  const slug = await checkSlugUnique(form.slug || form.name, editItem.id)
- const iconUrl = iconFile ? await uploadIcon(iconFile) : editItem.icon_url
+ const iconUrl = iconFile ? await uploadIcon(iconFile) : form.icon_url
  const sortOrder = resolveSortOrder(form.sort_order)
 
  const { error} = await supabase

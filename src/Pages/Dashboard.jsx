@@ -12,18 +12,20 @@ import HeroContent from './dashboard/HeroContent'
 import SocialLinks from './dashboard/SocialLinks'
 import ThemeManager from './dashboard/ThemeManager'
 import Courses from './dashboard/Courses'
-import { FolderGit2, Award, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap } from 'lucide-react'
+import Achievements from './dashboard/Achievements'
+import { FolderGit2, Award, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap, Trophy } from 'lucide-react'
 
 const NAV_ITEMS = [
   { to: 'projects', label: 'Projects', icon: FolderGit2 },
   { to: 'work-experience', label: 'Work Experience', icon: Briefcase },
   { to: 'educations', label: 'Educations', icon: GraduationCap },
-  { to: 'courses', label: 'Courses', icon: BookOpen },
+  // { to: 'courses', label: 'Courses', icon: BookOpen },
   { to: 'hero-content', label: 'Hero Content', icon: Zap },
   { to: 'about', label: 'About', icon: Sparkles },
   { to: 'tech-stacks', label: 'Tech Stack', icon: Boxes },
   { to: 'social-links', label: 'Social Media', icon: Share2 },
   { to: 'certificates', label: 'Certificates', icon: Award },
+  { to: 'achievements', label: 'Achievements', icon: Trophy },
   { to: 'theme-manager', label: 'Theme Manager', icon: Palette },
 ]
 
@@ -72,7 +74,7 @@ export default function Dashboard() {
               key={to}
               to={to}
               onClick={() => setSidebarOpen(false)}
-              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium shrink-0 relative overflow-hidden border ${
+              className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium shrink-0 relative overflow-hidden border cursor-target ${
                 active ? 'border-transparent' : 'border-transparent text-[color:var(--color-text-muted)] hover:bg-white/5 hover:text-white'
               }`}
               style={active ? {
@@ -94,7 +96,7 @@ export default function Dashboard() {
       <button
         type="button"
         onClick={handleLogout}
-        className="shrink-0 flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-500/5 border border-transparent hover:border-red-500/15 transition-all duration-200 text-sm"
+        className="shrink-0 flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-500/5 border border-transparent hover:border-red-500/15 transition-all duration-200 text-sm cursor-target"
       >
         <LogOut className="w-4 h-4 shrink-0" />
         Sign Out
@@ -155,12 +157,13 @@ export default function Dashboard() {
               <Route path="projects" element={<Projects />} />
               <Route path="work-experience" element={<WorkExperience />} />
               <Route path="educations" element={<Educations />} />
-              <Route path="courses" element={<Courses />} />
+              {/* <Route path="courses" element={<Courses />} /> */}
               <Route path="hero-content" element={<HeroContent />} />
               <Route path="about" element={<About />} />
               <Route path="tech-stacks" element={<TechStacks />} />
               <Route path="social-links" element={<SocialLinks />} />
               <Route path="certificates" element={<Certificates />} />
+              <Route path="achievements" element={<Achievements />} />
               <Route path="theme-manager" element={<ThemeManager />} />
             </Routes>
           </main>

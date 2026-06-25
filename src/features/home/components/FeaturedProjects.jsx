@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, FolderOpen, ExternalLink } from 'lucide-react'
 import { useProjects } from '../../projects/hooks/useProjects'
 import { toSlug } from '../../../utils/slug'
+import CardProject from '../../projects/components/CardProject'
 
 /* ─── Config ────────────────────────────────────────────────────── */
 const CARD_WIDTH_DESKTOP = 300   // px
@@ -26,114 +27,21 @@ const ProjectCard = memo(({ project, cardWidth }) => {
   const description = project.description || project.Description || ''
   const img         = project.img         || project.Img
   const link        = project.link        || project.Link
-  const categories  = getCategories(project)
-  const slug        = toSlug(title)
+  const id          = project.id
 
   return (
     <article
-      className="group relative shrink-0 flex flex-col"
-      style={{ width: cardWidth, height: 420 }}
+      className="group relative shrink-0 flex flex-col pb-2 pr-2"
+      style={{ width: cardWidth, height: 460 }}
       aria-label={title}
     >
-      <div className="relative flex flex-col h-full rounded-[18px] border-2 border-white/10 bg-[#0b0b18] overflow-hidden shadow-[5px_5px_0_rgba(255,255,255,0.06)] group-hover:translate-x-[-3px] group-hover:translate-y-[-3px] group-hover:shadow-[8px_8px_0_rgba(99,102,241,0.2)] group-hover:border-white/25 transition-all duration-200">
-
-        {/* Thumbnail */}
-        <div className="relative shrink-0 overflow-hidden" style={{ height: 200 }}>
-          {img ? (
-            <img
-              src={img}
-              alt={`Screenshot of ${title}`}
-              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-              decoding="async"
-              draggable={false}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-white/[0.03]">
-              <FolderOpen className="w-10 h-10 opacity-15 text-white" />
-            </div>
-          )}
-
-          {/* Fade gradient into card body */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, #0b0b18 0%, transparent 100%)' }}
-          />
-
-          {/* External link hover badge */}
-          {link && (
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visit ${title} live`}
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-white" />
-            </a>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-col flex-1 px-4 pb-4 pt-3 gap-2 min-h-0">
-
-          {/* Category tags */}
-          {categories.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 shrink-0">
-              {categories.slice(0, 2).map((cat) => (
-                <span
-                  key={cat}
-                  className="text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded border border-white/10 bg-white/[0.04]"
-                  style={{ color: 'var(--color-primary-light)' }}
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Title — fixed 2-line slot */}
-          <h3
-            className="text-sm font-bold text-white leading-snug line-clamp-2 shrink-0"
-            style={{ minHeight: '2.6em' }}
-          >
-            {title}
-          </h3>
-
-          {/* Description — flex-1 clamped */}
-          <p
-            className="text-xs leading-relaxed line-clamp-3 flex-1 overflow-hidden"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            {description || 'No description available.'}
-          </p>
-
-          {/* Footer: Details link */}
-          <div className="shrink-0 pt-1 border-t border-white/[0.06]">
-            {slug ? (
-              <Link
-                to={`/project/${slug}`}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold transition-all duration-150 hover:gap-2.5"
-                style={{ color: 'var(--color-primary-light)' }}
-                aria-label={`View details for ${title}`}
-              >
-                Details
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            ) : (
-              <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                Details unavailable
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Hover glow overlay */}
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity duration-300 pointer-events-none"
-          style={{ background: 'linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-light))' }}
-        />
-      </div>
+      <CardProject 
+        Img={img}
+        Title={title}
+        Description={description}
+        Link={link}
+        id={id}
+      />
     </article>
   )
 })

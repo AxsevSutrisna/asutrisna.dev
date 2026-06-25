@@ -44,7 +44,7 @@ const ExperienceCard = memo(({ experience, index }) => {
 
   return (
     <div
-      className={`relative group flex-1 min-w-0 card-fade-up ${
+      className={`relative group flex-1 min-w-0 card-fade-up cursor-target ${
         isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 'col-span-1'
       }`}
       style={{ '--delay': `${index * 100}ms` }}

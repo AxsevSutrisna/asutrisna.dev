@@ -18,7 +18,7 @@ export default function FloatingSaveButton({
       <button
         onClick={onClick}
         disabled={disabled || saving}
-        className="relative group flex items-center justify-center focus:outline-none transition-all hover:scale-105 active:scale-95"
+        className="cursor-target relative group flex items-center justify-center focus:outline-none transition-all hover:scale-105 active:scale-95"
         style={{
           opacity: disabled || saving ? 0.5 : 1,
           cursor: disabled || saving ? 'not-allowed' : 'pointer'

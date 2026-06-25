@@ -118,7 +118,7 @@ const ApplyPresetModal = ({ preset, onApply, onClose}) => {
 
  <button
  onClick={onClose}
- className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition shrink-0"
+ className="cursor-target p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition shrink-0 no-neo"
  aria-label="Close modal"
  >
  <X className="w-4 h-4" />
@@ -238,13 +238,13 @@ const ApplyPresetModal = ({ preset, onApply, onClose}) => {
  >
  <button
  onClick={onClose}
- className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-gray-300 text-sm font-medium hover:bg-white/8 hover:border-white/20 hover:text-white transition"
+ className="cursor-target flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-gray-300 text-sm font-medium hover:bg-white/8 hover:border-white/20 hover:text-white transition no-neo"
  >
  Cancel
  </button>
  <button
  onClick={() => onApply(preset)}
- className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 active:scale-[0.98]"
+ className="cursor-target flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 active:scale-[0.98] no-neo"
  style={{
  background: `linear-gradient(135deg, ${primary}, ${light})`,
  boxShadow: `0 4px 20px ${primary}60`,

@@ -74,7 +74,7 @@ const Certificate = ({ ImgSertif}) => {
 
  {/* Hover Overlay */}
  <Box
- className="overlay"
+ className="overlay cursor-target"
  sx={{
  position:"absolute",
  top: 0,
@@ -159,6 +159,7 @@ const Certificate = ({ ImgSertif}) => {
 }}>
  {/* Close Button */}
  <IconButton
+ className="cursor-target"
  onClick={handleClose}
  sx={{
  position:"absolute",
@@ -179,6 +180,7 @@ const Certificate = ({ ImgSertif}) => {
 
  {/* Modal Image */}
  <img
+ className="cursor-target"
  src={ImgSertif}
  alt="Certificate Full View"
  style={{

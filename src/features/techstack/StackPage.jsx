@@ -26,7 +26,7 @@ const TechCategoryCard = ({ category, stacks, animation }) => {
 
   return (
     <div 
-      className="rounded-3xl border border-white/10 bg-white/5 hover:border-white/20 transition-all duration-300 relative overflow-hidden group shadow-lg"
+      className="cursor-target rounded-3xl border border-white/10 bg-white/5 hover:border-white/20 transition-all duration-300 relative overflow-hidden group shadow-lg"
       data-aos={animation}
       data-aos-duration="1200"
     >
@@ -67,7 +67,7 @@ const TechCategoryCard = ({ category, stacks, animation }) => {
             <div 
               key={stack.id} 
               title={stack.name} 
-              className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center p-2.5 hover:bg-white/10 hover:scale-110 transition-all duration-300 shadow-sm"
+              className="cursor-target w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center p-2.5 hover:bg-white/10 hover:scale-110 transition-all duration-300 shadow-sm"
             >
               {stack.icon_url ? (
                 <img src={stack.icon_url} alt={stack.name} className="w-full h-full object-contain drop-shadow-md" loading="lazy" />

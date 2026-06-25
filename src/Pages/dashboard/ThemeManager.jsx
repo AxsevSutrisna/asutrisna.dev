@@ -158,7 +158,7 @@ export default function ThemeManager() {
  {/* Large clickable color preview */}
  <div
  onClick={() => setPickerOpen(fieldKey)}
- className="w-14 h-10 rounded-lg cursor-pointer border-2 border-white/20 hover:border-indigo-400/50 transition-all hover:scale-110 shrink-0 shadow-lg hover:shadow-indigo-500/20"
+ className="cursor-target w-14 h-10 rounded-lg cursor-pointer border-2 border-white/20 hover:border-indigo-400/50 transition-all hover:scale-110 shrink-0 shadow-lg hover:shadow-indigo-500/20 no-neo"
  style={{ backgroundColor: value}}
  title="Click to open color picker"
  />
@@ -169,7 +169,7 @@ export default function ThemeManager() {
  value={value}
  onChange={(e) => handleColorChange(fieldKey, e.target.value.toUpperCase())}
  placeholder="#000000"
- className={`flex-1 px-3 py-2 bg-white/5 border rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none transition font-mono ${isInvalid ?'border-red-500/50 focus:border-red-500' :'border-white/10 focus:border-indigo-500'
+ className={`cursor-target flex-1 px-3 py-2 bg-white/5 border rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none transition font-mono ${isInvalid ?'border-red-500/50 focus:border-red-500' :'border-white/10 focus:border-indigo-500'
 }`}
  />
 
@@ -177,7 +177,7 @@ export default function ThemeManager() {
  <button
  type="button"
  onClick={() => handleCopyToClipboard(value, fieldKey)}
- className="p-2 text-gray-400 hover:text-white transition shrink-0"
+ className="cursor-target p-2 text-gray-400 hover:text-white transition shrink-0 no-neo"
  title="Copy color code"
  >
  {copiedField === fieldKey ? (
@@ -191,7 +191,7 @@ export default function ThemeManager() {
  <button
  type="button"
  onClick={() => handleResetField(fieldKey)}
- className="p-2 text-gray-400 hover:text-white transition shrink-0"
+ className="cursor-target p-2 text-gray-400 hover:text-white transition shrink-0 no-neo"
  title="Reset to default"
  >
  <RotateCcw className="w-4 h-4" />
@@ -230,7 +230,7 @@ export default function ThemeManager() {
  <h3 className="text-white font-semibold">{label}</h3>
  <button
  onClick={() => setPickerOpen(null)}
- className="p-1 text-gray-400 hover:text-white transition"
+ className="cursor-target p-1 text-gray-400 hover:text-white transition no-neo"
  onMouseDown={(e) => e.stopPropagation()}
  >
  <X className="w-5 h-5" />
@@ -267,7 +267,7 @@ export default function ThemeManager() {
  onMouseDown={(e) => e.stopPropagation()}
  onTouchStart={(e) => e.stopPropagation()}
  placeholder="#000000"
- className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-indigo-500 transition"
+ className="cursor-target w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-indigo-500 transition"
  />
  </div>
  <div>
@@ -291,14 +291,14 @@ export default function ThemeManager() {
  <button
  onClick={() => handleResetField(fieldKey)}
  onMouseDown={(e) => e.stopPropagation()}
- className="flex-1 px-3 py-2 text-sm"
+ className="cursor-target flex-1 px-3 py-2 text-sm no-neo"
  >
  Reset to Default
  </button>
  <button
  onClick={() => setPickerOpen(null)}
  onMouseDown={(e) => e.stopPropagation()}
- className="flex-1 px-3 py-2 text-sm font-medium"
+ className="cursor-target flex-1 px-3 py-2 text-sm font-medium no-neo"
  >
  Done
  </button>
@@ -323,7 +323,7 @@ export default function ThemeManager() {
  </div>
  <button
  onClick={handleReset}
- className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-red-400 transition border border-red-500/20"
+ className="cursor-target flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-red-400 transition border border-red-500/20 no-neo"
  >
  <RotateCcw className="w-4 h-4" />
  Reset All

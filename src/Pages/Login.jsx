@@ -66,7 +66,7 @@ export default function Login() {
  value={email}
  onChange={e => setEmail(e.target.value)}
  required
- className="w-full bg-transparent px-3 py-3 text-gray-100 placeholder-gray-500 text-sm outline-none"
+ className="w-full bg-transparent px-3 py-3 text-gray-100 placeholder-gray-500 text-sm outline-none cursor-target"
  />
  </div>
  </div>
@@ -81,12 +81,12 @@ export default function Login() {
  value={password}
  onChange={e => setPassword(e.target.value)}
  required
- className="w-full bg-transparent px-3 py-3 text-gray-100 placeholder-gray-500 text-sm outline-none"
+ className="w-full bg-transparent px-3 py-3 text-gray-100 placeholder-gray-500 text-sm outline-none cursor-target"
  />
  <button
  type="button"
  onClick={() => setShowPassword(prev => !prev)}
- className="mr-4 shrink-0 text-gray-500 hover:text-gray-300 transition-colors"
+ className="mr-4 shrink-0 text-gray-500 hover:text-gray-300 transition-colors cursor-target"
  >
  {showPassword ? (
  <EyeOff className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function Login() {
  </div>
  </div>
 
- <Button type="submit" disabled={loading} className="w-full mt-1 group/btn h-12">
+ <Button type="submit" disabled={loading} className="w-full mt-1 group/btn h-12 cursor-target">
  {loading ? (
  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
  ) : (

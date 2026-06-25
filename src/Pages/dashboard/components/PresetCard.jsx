@@ -136,13 +136,13 @@ const PresetCard = ({ preset, isActive = false, onPreview, onApply}) => {
  <div className="flex gap-2 mt-auto pt-1">
  <button
  onClick={() => onPreview(preset)}
- className="flex-1 px-3 py-2 rounded-xl text-xs font-medium border border-white/10 text-gray-300 hover:bg-white/8 hover:border-white/25 hover:text-white transition-all duration-200"
+ className="cursor-target flex-1 px-3 py-2 rounded-xl text-xs font-medium border border-white/10 text-gray-300 hover:bg-white/8 hover:border-white/25 hover:text-white transition-all duration-200 no-neo"
  >
  Preview
  </button>
  <button
  onClick={() => onApply(preset)}
- className="flex-1 px-3 py-2 rounded-xl text-xs font-semibold text-white transition-all duration-200"
+ className="cursor-target flex-1 px-3 py-2 rounded-xl text-xs font-semibold text-white transition-all duration-200 no-neo"
  style={{
  background: isActive
  ? `linear-gradient(135deg, ${primary}, ${accent})`

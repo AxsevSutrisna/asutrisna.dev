@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react';
 
 export default function AddNewButton({ onClick, label }) {
   return (
-    <button onClick={onClick} className="relative group shrink-0">
+    <button onClick={onClick} className="relative group shrink-0 cursor-target no-neo">
       {/* Glow / gradient background effect using dynamic CSS variables */}
       <div 
         className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-100 transition duration-300"

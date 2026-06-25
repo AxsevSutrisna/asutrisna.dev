@@ -62,7 +62,7 @@ const Modal = ({ title, onClose, children}) =>
  <div className="relative bg-[#0a0a1a] border border-white/10 rounded-2xl flex flex-col overflow-hidden">
  <div className="flex items-center justify-between px-6 py-4 border-b border-white/8 shrink-0">
  <h2 className="text-base font-semibold text-white">{title}</h2>
- <button type="button" onClick={onClose} className="p-1.5 text-gray-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors no-neo">
+ <button type="button" onClick={onClose} className="cursor-target p-1.5 text-gray-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors no-neo">
  <X className="w-5 h-5" />
  </button>
  </div>
@@ -84,7 +84,7 @@ const InputField = ({ label, value, onChange, placeholder, type ='text', require
  placeholder={placeholder}
  required={required}
  min={min}
- className={`w-full bg-[#0d0d22] border rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all ${error ?'border-red-500/50 focus:border-red-500/60 focus:ring-red-500/20' :'border-white/10'}`}
+ className={`cursor-target w-full bg-[#0d0d22] border rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all ${error ?'border-red-500/50 focus:border-red-500/60 focus:ring-red-500/20' :'border-white/10'}`}
  />
  <FieldError message={error} />
  </div>
@@ -183,7 +183,7 @@ const SocialLinkCard = ({ item, onEdit, onDelete, onToggleActive, onSetPrimary, 
  {/* URL Pill */}
  <div className="mt-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 w-fit max-w-full">
  <Link2 className="w-3.5 h-3.5 text-gray-400 shrink-0" />
- <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-300 hover:text-white truncate transition-colors">
+ <a href={item.url} target="_blank" rel="noopener noreferrer" className="cursor-target text-xs text-gray-300 hover:text-white truncate transition-colors">
  {urlDomain}
  </a>
  </div>
@@ -198,16 +198,16 @@ const SocialLinkCard = ({ item, onEdit, onDelete, onToggleActive, onSetPrimary, 
  </div>
 
  <div className="flex gap-1.5 opacity-60 group-hover/card:opacity-100 transition-opacity">
- <button onClick={() => onSetPrimary(item)} title="Primary" className={`p-1.5 rounded-md border transition-colors ${item.is_primary ?'bg-yellow-500/10 border-yellow-500/30 text-yellow-500' :'border-white/10 text-gray-400 hover:text-white hover:bg-white/5'}`}>
+ <button onClick={() => onSetPrimary(item)} title="Primary" className={`cursor-target p-1.5 rounded-md border transition-colors no-neo ${item.is_primary ?'bg-yellow-500/10 border-yellow-500/30 text-yellow-500' :'border-white/10 text-gray-400 hover:text-white hover:bg-white/5'}`}>
  <Star className="w-3.5 h-3.5" />
  </button>
- <button onClick={() => onToggleActive(item)} title="Toggle Visibility" className="p-1.5 rounded-md border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+ <button onClick={() => onToggleActive(item)} title="Toggle Visibility" className="cursor-target p-1.5 rounded-md border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-colors no-neo">
  {item.is_active ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
  </button>
- <button onClick={() => onEdit(item)} title="Edit" className="p-1.5 rounded-md border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors">
+ <button onClick={() => onEdit(item)} title="Edit" className="cursor-target p-1.5 rounded-md border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors no-neo">
  <Pencil className="w-3.5 h-3.5" />
  </button>
- <button onClick={() => onDelete(item.id)} title="Delete" className="p-1.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">
+ <button onClick={() => onDelete(item.id)} title="Delete" className="cursor-target p-1.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors no-neo">
  <Trash2 className="w-3.5 h-3.5" />
  </button>
  </div>
@@ -314,7 +314,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  {Object.values(PLATFORM_PRESETS).map(preset => (
  <button
  key={preset.platform} type="button" onClick={() => applyPreset(preset)}
- className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all no-neo ${normalizePlatformKey(form.platform) === normalizePlatformKey(preset.platform) ?'border-indigo-500/50 bg-indigo-500/15 text-indigo-200' :'border-white/10 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+ className={`cursor-target shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all no-neo ${normalizePlatformKey(form.platform) === normalizePlatformKey(preset.platform) ?'border-indigo-500/50 bg-indigo-500/15 text-indigo-200' :'border-white/10 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
  >
  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: preset.color}} />
  {preset.platform}
@@ -335,7 +335,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  {/* Left: Icon Upload */}
  <div className="space-y-1.5">
  <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">Icon</label>
- <label className="flex items-center gap-3 w-full bg-[#0d0d22] border border-dashed border-white/15 rounded-xl px-4 py-3 cursor-pointer hover:border-indigo-500/40 hover:bg-white/4 transition-all">
+ <label className="cursor-target flex items-center gap-3 w-full bg-[#0d0d22] border border-dashed border-white/15 rounded-xl px-4 py-3 cursor-pointer hover:border-indigo-500/40 hover:bg-white/4 transition-all">
  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
  {iconPreview && iconPreview.includes('/') ? <img src={iconPreview} alt="preview" className="w-6 h-6 object-contain" /> : <Link2 className="w-5 h-5 text-gray-500" />}
  </div>
@@ -347,7 +347,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  </label>
  <input
  type="text" value={form.icon} onChange={set('icon')} placeholder="Fallback key: e.g. Linkedin"
- className="w-full bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-xs outline-none focus:border-indigo-500/50"
+ className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-xs outline-none focus:border-indigo-500/50"
  />
  </div>
 
@@ -357,7 +357,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  <div className="flex gap-2 flex-wrap">
  {COLOR_PALETTE.slice(0, 8).map(color => (
  <button key={color} type="button" onClick={() => setForm(f => ({ ...f, color}))}
- className={`w-8 h-8 rounded-full border-2 transition-transform no-neo ${form.color === color ?'border-white scale-110' :'border-transparent hover:scale-105'}`}
+ className={`cursor-target w-8 h-8 rounded-full border-2 transition-transform no-neo ${form.color === color ?'border-white scale-110' :'border-transparent hover:scale-105'}`}
  style={{ backgroundColor: color}} />
  ))}
  </div>
@@ -365,7 +365,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  <div className="w-8 h-8 rounded-lg border border-white/10" style={{ backgroundColor: form.color ||'#333'}} />
  <input
  type="text" value={form.color} onChange={set('color')} placeholder="#HEX"
- className="flex-1 bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-sm outline-none"
+ className="cursor-target flex-1 bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-sm outline-none"
  />
  </div>
  </div>
@@ -377,7 +377,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
  {GRADIENT_PRESETS.map(preset => (
  <button key={preset.label} type="button" onClick={() => setForm(f => ({ ...f, gradient: preset.value}))}
- className={`shrink-0 w-24 h-12 rounded-lg relative overflow-hidden border transition-all no-neo ${form.gradient === preset.value ?'border-white ring-2 ring-indigo-500/40' :'border-white/10 hover:border-white/30'}`}
+ className={`cursor-target shrink-0 w-24 h-12 rounded-lg relative overflow-hidden border transition-all no-neo ${form.gradient === preset.value ?'border-white ring-2 ring-indigo-500/40' :'border-white/10 hover:border-white/30'}`}
  >
  <div className={`absolute inset-0 bg-[#0f172a] ${preset.value} opacity-80`} />
  <span className="absolute bottom-1 left-1.5 text-[9px] font-bold text-white drop-shadow-md">{preset.label}</span>
@@ -386,7 +386,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  </div>
  <input
  type="text" value={form.gradient} onChange={set('gradient')} placeholder="e.g. ] ]"
- className="w-full bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-sm outline-none"
+ className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-sm outline-none"
  />
  </div>
 
@@ -395,22 +395,25 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading}) => {
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
  <InputField label="Sort Order" type="number" value={form.sort_order} onChange={set('sort_order')} placeholder="Empty = bottom" min="0" />
  <div className="space-y-3 pt-6">
- <label className="flex items-center gap-3 text-sm text-gray-300 cursor-pointer">
- <input type="checkbox" checked={form.is_primary} onChange={set('is_primary')} className="accent-indigo-500 w-4 h-4 rounded" />
+ <label className="cursor-target flex items-center gap-3 text-sm text-gray-300 cursor-pointer">
+ <input type="checkbox" checked={form.is_primary} onChange={set('is_primary')} className="cursor-target accent-indigo-500 w-4 h-4 rounded" />
  Mark as Primary Link
  </label>
- <label className="flex items-center gap-3 text-sm text-gray-300 cursor-pointer">
- <input type="checkbox" checked={form.is_active} onChange={set('is_active')} className="accent-indigo-500 w-4 h-4 rounded" />
+ <label className="cursor-target flex items-center gap-3 text-sm text-gray-300 cursor-pointer">
+ <input type="checkbox" checked={form.is_active} onChange={set('is_active')} className="cursor-target accent-indigo-500 w-4 h-4 rounded" />
  Active & Visible
  </label>
  </div>
  </div>
 
  <div className="flex justify-end gap-2 pt-3 border-t border-white/5">
- <button type="button" onClick={onCancel} className="px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo">
+ {Object.keys(errors).length > 0 && (
+ <p className="mr-auto self-center text-sm text-red-400">Masih ada field wajib yang belum diisi.</p>
+ )}
+ <button type="button" onClick={onCancel} className="cursor-target px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo">
  Cancel
  </button>
- <button type="submit" disabled={uploading} className="relative group/s">
+ <button type="submit" disabled={uploading} className="cursor-target relative group/s no-neo">
  <div className="absolute -inset-0.5 rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center gap-2 px-6 py-2.5 rounded-xl border border-white/10" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
  {uploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Plus className="w-4 h-4 text-indigo-400" />}

@@ -108,7 +108,7 @@ const Modal = ({ title, onClose, children}) =>
  <div className="relative bg-[#0a0a1a] border border-white/12 rounded-2xl flex flex-col overflow-hidden">
  <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
  <h2 className="text-base font-semibold text-white">{title}</h2>
- <button type="button" onClick={onClose} className="p-1 text-gray-500 hover:text-white transition-colors">
+ <button type="button" onClick={onClose} className="cursor-target p-1 text-gray-500 hover:text-white transition-colors">
  <X className="w-5 h-5" />
  </button>
  </div>
@@ -192,7 +192,7 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting}) => {
  )
 
  const labelCls ='text-xs text-indigo-300/70 uppercase tracking-wider font-medium'
- const inputCls ='w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all'
+ const inputCls ='cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all'
  const selectCls = inputCls +' cursor-pointer'
 
  const getInputClass = (field) =>
@@ -274,7 +274,7 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting}) => {
 
  {/* Modern Toggle for Currently Working Here */}
  <div className="sm:col-span-2 mt-1">
- <label className="flex items-center gap-3 cursor-pointer group w-fit p-1 -ml-1">
+ <label className="cursor-target flex items-center gap-3 cursor-pointer group w-fit p-1 -ml-1">
  <div className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${form.is_current ?'bg-indigo-500' :'bg-white/10'}`}>
  <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-300 ${form.is_current ?'translate-x-5' :'translate-x-0'}`} />
  </div>
@@ -322,7 +322,7 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting}) => {
  {techStack.map((item) => (
  <span key={item} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 text-xs">
  {item}
- <button type="button" onClick={() => removeTech(item)} className="text-indigo-300/60 hover:text-white transition-colors">
+ <button type="button" onClick={() => removeTech(item)} className="cursor-target text-indigo-300/60 hover:text-white transition-colors">
  <X className="w-3 h-3" />
  </button>
  </span>
@@ -336,7 +336,7 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting}) => {
  onKeyDown={handleKeyDown}
  onBlur={addTech}
  placeholder={techStack.length === 0 ?'Type a technology and press Enter (e.g. React, Node.js)' :'Add another...'}
- className="w-full bg-transparent text-gray-200 placeholder-gray-600 text-sm outline-none"
+ className="cursor-target w-full bg-transparent text-gray-200 placeholder-gray-600 text-sm outline-none"
  />
  </div>
  <p className="text-[10px] text-gray-500">Press Enter or comma to add each technology to the stack.</p>
@@ -348,10 +348,10 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting}) => {
  {Object.keys(errors).length > 0 && (
  <p className="mr-auto self-center text-sm text-red-400">Masih ada field wajib yang belum diisi.</p>
  )}
- <button type="button" onClick={onCancel} className="px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo">
+ <button type="button" onClick={onCancel} className="cursor-target px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors no-neo">
  Cancel
  </button>
- <button type="submit" disabled={submitting} className="relative group/s">
+ <button type="submit" disabled={submitting} className="cursor-target relative group/s">
  <div className="absolute -inset-0.5 rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center gap-2 px-6 py-2.5 rounded-xl border border-white/10" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
  {submitting ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Briefcase className="w-4 h-4 text-indigo-400" />}
@@ -514,11 +514,11 @@ const ExperienceCard = ({ experience, onEdit, onDelete, isLast}) => {
  </span>
  <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity duration-200">
  <button type="button" onClick={() => onEdit(experience)}
- className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 text-xs font-medium transition-all">
+ className="cursor-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 text-xs font-medium transition-all">
  <Pencil className="w-3 h-3" /> Edit
  </button>
  <button type="button" onClick={() => onDelete(experience.id)}
- className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 text-xs font-medium transition-all">
+ className="cursor-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 text-xs font-medium transition-all">
  <Trash2 className="w-3 h-3" /> Delete
  </button>
  </div>

@@ -24,6 +24,7 @@ const ExperienceHighlight = lazy(() => import('../features/home/components/Exper
 const FeaturedProjects = lazy(() => import('../features/home/components/FeaturedProjects'))
 const EducationHighlight = lazy(() => import('../features/home/components/EducationHighlight'))
 const HomeCTA = lazy(() => import('../features/home/components/HomeCTA'))
+const AchievementHighlight = lazy(() => import('../features/home/components/AchievementHighlight'))
 
 /** Garis pemisah tipis antar section */
 const SectionDivider = () => (
@@ -602,6 +603,12 @@ const Home = () => {
             <SectionDivider />
             <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
                 <EducationHighlight />
+            </Suspense>
+
+            {/* ── Achievements ────────────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <AchievementHighlight />
             </Suspense>
 
 
