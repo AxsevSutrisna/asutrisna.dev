@@ -254,7 +254,7 @@ const ProjectDetails = () => {
  onClick={() => navigate(-1)}
  variant="ghost"
  size="sm"
- className="px-4"
+ className="px-4 cursor-target"
  >
  Go Back
  </Button>
@@ -337,7 +337,7 @@ const ProjectDetails = () => {
  onClick={() => setFullScreenImage(null)}
  >
  <button
- className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors no-neo"
+ className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors no-neo cursor-target"
  onClick={() => setFullScreenImage(null)}
  >
  <X className="w-6 h-6" />
@@ -368,7 +368,7 @@ const ProjectDetails = () => {
  onClick={() => navigate(-1)}
  variant="neutral"
  size="sm"
- className="group inline-flex items-center justify-center space-x-1.5 md:space-x-2 px-3 md:px-5 py-2 md:py-2.5 text-sm md:text-base w-fit shrink-0"
+ className="group inline-flex items-center justify-center space-x-1.5 md:space-x-2 px-3 md:px-5 py-2 md:py-2.5 text-sm md:text-base w-fit shrink-0 cursor-target"
  >
  <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 group-hover:-translate-x-1 transition-transform" />
  <span>Back</span>
@@ -418,7 +418,7 @@ const ProjectDetails = () => {
  asChild
  variant="neutral"
  size="default"
- className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden"
+ className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
  >
  <a href={project.Link} target="_blank" rel="noopener noreferrer" className="group relative inline-flex items-center space-x-1.5 md:space-x-2">
  <ExternalLink className="relative w-4 h-4 md:w-5 md:h-5 group-hover:rotate-12 transition-transform" />
@@ -430,7 +430,7 @@ const ProjectDetails = () => {
  asChild
  variant="neutral"
  size="default"
- className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden"
+ className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
  >
  <a
  href={project.Github}
@@ -471,7 +471,7 @@ const ProjectDetails = () => {
  <div className="space-y-6 md:space-y-10 animate-slideInRight">
  <div className="space-y-4">
  <div
- className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl group bg-white/5 cursor-pointer"
+ className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl group bg-white/5 cursor-pointer cursor-target"
  onClick={() => heroImage && setFullScreenImage(heroImage)}
  >
  <div className="absolute inset-0 bg-[#0f172a] ] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -495,7 +495,7 @@ const ProjectDetails = () => {
  <div
  key={`${image}-${index}`}
  onClick={() => setFullScreenImage(image)}
- className="group relative cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/5 aspect-[16/10] min-w-0"
+ className="group relative cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/5 aspect-[16/10] min-w-0 cursor-target"
  >
  <img
  src={image}

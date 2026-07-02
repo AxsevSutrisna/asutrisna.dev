@@ -13,7 +13,8 @@ import SocialLinks from './dashboard/SocialLinks'
 import ThemeManager from './dashboard/ThemeManager'
 import Courses from './dashboard/Courses'
 import Achievements from './dashboard/Achievements'
-import { FolderGit2, Award, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap, Trophy } from 'lucide-react'
+import Messages from './dashboard/Messages'
+import { FolderGit2, Award, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap, Trophy, MessageSquare } from 'lucide-react'
 
 const NAV_ITEMS = [
   { to: 'projects', label: 'Projects', icon: FolderGit2 },
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { to: 'social-links', label: 'Social Media', icon: Share2 },
   { to: 'certificates', label: 'Certificates', icon: Award },
   { to: 'achievements', label: 'Achievements', icon: Trophy },
+  { to: 'messages', label: 'Messages', icon: MessageSquare },
   { to: 'theme-manager', label: 'Theme Manager', icon: Palette },
 ]
 
@@ -164,6 +166,7 @@ export default function Dashboard() {
               <Route path="social-links" element={<SocialLinks />} />
               <Route path="certificates" element={<Certificates />} />
               <Route path="achievements" element={<Achievements />} />
+              <Route path="messages" element={<Messages />} />
               <Route path="theme-manager" element={<ThemeManager />} />
             </Routes>
           </main>
