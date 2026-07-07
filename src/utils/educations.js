@@ -35,19 +35,4 @@ export const compareEducationTimeline = (a, b) => {
   return (b.start_month || 0) - (a.start_month || 0)
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-export const formatDateRange = (startMonth, startYear, endMonth, endYear, isCurrent) => {
-  const formatMonthYear = (m, y) => {
-    if (!y) return ''
-    if (!m) return y.toString()
-    return `${MONTHS[m - 1]} ${y}`
-  }
-
-  const start = formatMonthYear(startMonth, startYear)
-  const end = isCurrent ? 'Present' : formatMonthYear(endMonth, endYear)
-
-  if (!start && !end) return ''
-  if (!end) return start
-  return `${start} - ${end}`
-}
+export { formatDateRange } from './dateUtils';

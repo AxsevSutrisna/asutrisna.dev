@@ -37,7 +37,7 @@ const InputField = ({ label, value, onChange, placeholder, type ='text', require
  onChange={onChange}
  placeholder={placeholder}
  required={required}
- className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all"
+ className="cursor-target w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all"
  />
  {hint && <p className="text-[11px] text-gray-500">{hint}</p>}
  </div>
@@ -52,7 +52,7 @@ const TextAreaField = ({ label, value, onChange, placeholder, rows = 4, required
  placeholder={placeholder}
  rows={rows}
  required={required}
- className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none"
+ className="cursor-target w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none"
  />
  {hint && <p className="text-[11px] text-gray-500">{hint}</p>}
  </div>
@@ -92,7 +92,7 @@ const TagInput = ({ label, value, onChange, placeholder, hint}) => {
  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 text-xs"
  >
  {item}
- <button type="button" onClick={() => removeItem(item)} className="text-indigo-200/70 hover:text-white">
+ <button type="button" onClick={() => removeItem(item)} className="cursor-target text-indigo-200/70 hover:text-white">
  <X className="w-3 h-3" />
  </button>
  </span>
@@ -121,7 +121,7 @@ const TagInput = ({ label, value, onChange, placeholder, hint}) => {
 }
 }}
  placeholder={placeholder}
- className="w-full bg-transparent text-gray-200 placeholder-gray-600 text-sm outline-none"
+ className="cursor-target w-full bg-transparent text-gray-200 placeholder-gray-600 text-sm outline-none"
  />
  </div>
  {hint ? <p className="text-[11px] text-gray-500">{hint}</p> : null}
@@ -404,7 +404,7 @@ export default function HeroContentDashboard() {
  cta_buttons: [...(current.cta_buttons || []), { label:'', url:''}],
 }))
 }}
- className="px-3 py-1.5 text-xs bg-indigo-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all flex items-center gap-1.5"
+ className="cursor-target px-3 py-1.5 text-xs bg-indigo-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all flex items-center gap-1.5"
  >
  <span>+</span> Add CTA
  </button>
@@ -430,7 +430,7 @@ export default function HeroContentDashboard() {
  cta_buttons: current.cta_buttons.filter((_, i) => i !== idx),
 }))
 }}
- className="text-gray-500 hover:text-red-400 transition-colors p-1"
+ className="cursor-target text-gray-500 hover:text-red-400 transition-colors p-1"
  >
  <X className="w-4 h-4" />
  </button>
@@ -484,7 +484,7 @@ export default function HeroContentDashboard() {
 
  <div>
  <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium mb-2 block">Hero Image</label>
- <label className="flex items-center gap-4 w-full bg-black/20 border border-dashed border-white/15 rounded-xl px-4 py-6 cursor-pointer hover:border-indigo-500/40 hover:bg-black/40 transition-all">
+ <label className="cursor-target flex items-center gap-4 w-full bg-black/20 border border-dashed border-white/15 rounded-xl px-4 py-6 cursor-pointer hover:border-indigo-500/40 hover:bg-black/40 transition-all">
  {imagePreview ? (
  <img
  src={imagePreview}

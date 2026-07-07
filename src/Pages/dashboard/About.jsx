@@ -67,7 +67,7 @@ const Modal = ({ title, onClose, children}) =>
  <div className="relative bg-[#0a0a1a] border border-white/12 rounded-2xl flex flex-col overflow-hidden">
  <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
  <h2 className="text-base font-semibold text-white">{title}</h2>
- <button type="button" onClick={onClose} className="p-1 text-gray-500 hover:text-white transition-colors">
+ <button type="button" onClick={onClose} className="cursor-target p-1 text-gray-500 hover:text-white transition-colors no-neo">
  <span className="text-xl leading-none">×</span>
  </button>
  </div>
@@ -157,7 +157,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  <button
  onClick={() => onTogglePublish(item)}
  title={item.is_published ?'Unpublish' :'Publish'}
- className={`p-2 rounded-lg border text-xs transition-all duration-200 ${item.is_published
+ className={`cursor-target p-2 rounded-lg border text-xs transition-all duration-200 no-neo ${item.is_published
  ?'border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/15'
  :'border-white/10 text-gray-500 hover:text-white hover:border-white/20 hover:bg-white/5'
 }`}
@@ -167,14 +167,14 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  <button
  onClick={() => onEdit(item)}
  title="Edit"
- className="p-2 rounded-lg border border-indigo-500/25 bg-indigo-500/8 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all duration-200"
+ className="cursor-target p-2 rounded-lg border border-indigo-500/25 bg-indigo-500/8 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all duration-200 no-neo"
  >
  <Pencil className="w-3.5 h-3.5" />
  </button>
  <button
  onClick={() => onDelete(item.id)}
  title="Delete"
- className="p-2 rounded-lg border border-red-500/20 bg-red-500/8 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-200"
+ className="cursor-target p-2 rounded-lg border border-red-500/20 bg-red-500/8 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-200 no-neo"
  >
  <Trash2 className="w-3.5 h-3.5" />
  </button>
@@ -216,7 +216,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  {item.cv_en_url && (
  <button
  onClick={() => onViewCv(item.cv_en_url)}
- className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-300 bg-white/5 hover:bg-indigo-500/10 border border-white/8 hover:border-indigo-500/25 rounded-lg px-3 py-1.5 transition-all duration-200"
+ className="cursor-target flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-300 bg-white/5 hover:bg-indigo-500/10 border border-white/8 hover:border-indigo-500/25 rounded-lg px-3 py-1.5 transition-all duration-200 no-neo"
  >
  <Download className="w-3 h-3" /> CV (EN)
  </button>
@@ -224,7 +224,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  {item.cv_id_url && (
  <button
  onClick={() => onViewCv(item.cv_id_url)}
- className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-300 bg-white/5 hover:bg-indigo-500/10 border border-white/8 hover:border-indigo-500/25 rounded-lg px-3 py-1.5 transition-all duration-200"
+ className="cursor-target flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-300 bg-white/5 hover:bg-indigo-500/10 border border-white/8 hover:border-indigo-500/25 rounded-lg px-3 py-1.5 transition-all duration-200 no-neo"
  >
  <Download className="w-3 h-3" /> CV (ID)
  </button>
@@ -310,13 +310,13 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
 })
 }
 
- const inputCls ='w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all'
+ const inputCls ='cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all'
  const labelCls ='text-xs text-indigo-300/70 uppercase tracking-wider font-medium'
  const getInputClass = (field) =>
  `${inputCls} ${errors[field] ?'border-red-500/50 focus:border-red-500/60 focus:ring-red-500/20' :''}`
 
  const getUploadClass = (field) =>
- `flex items-center gap-4 w-full bg-[#0d0d22] border rounded-xl px-4 py-3.5 cursor-pointer transition-all group/cv ${errors[field]
+ `cursor-target flex items-center gap-4 w-full bg-[#0d0d22] border rounded-xl px-4 py-3.5 cursor-pointer transition-all group/cv ${errors[field]
  ?'border-red-500/50 hover:border-red-500/70'
  :'border-dashed border-white/12 hover:border-indigo-500/40 hover:bg-white/3'
 }`
@@ -347,7 +347,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  <div className="flex gap-4 items-start">
  {/* Photo uploader */}
  <div className="space-y-1.5 shrink-0">
- <label className="relative shrink-0 cursor-pointer group/photo block">
+ <label className="cursor-target relative shrink-0 cursor-pointer group/photo block">
  <div className={`w-24 h-24 rounded-2xl overflow-hidden border-2 border-dashed transition-colors bg-white/5 ${errors.photo ?'border-red-500/50 group-hover/photo:border-red-500/70' :'border-white/15 group-hover/photo:border-indigo-500/50'}`}>
  {photoPreview ? (
  <img src={photoPreview} alt="preview" className="w-full h-full object-cover" />
@@ -474,7 +474,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  </label>
  {isEditing && initial?.cv_en_url && !cvFileEn && (
  <button type="button" onClick={() => onViewCv(initial.cv_en_url)}
- className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors mt-1">
+ className="cursor-target inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors mt-1 no-neo">
  <Eye className="w-3 h-3" /> View current EN CV
  </button>
  )}
@@ -503,7 +503,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  <FieldError message={errors.cv} />
  {isEditing && initial?.cv_id_url && !cvFileId && (
  <button type="button" onClick={() => onViewCv(initial.cv_id_url)}
- className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors mt-1">
+ className="cursor-target inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors mt-1 no-neo">
  <Eye className="w-3 h-3" /> View current ID CV
  </button>
  )}
@@ -519,7 +519,7 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
  <button
  type="button"
  onClick={() => setForm((f) => ({ ...f, is_published: !f.is_published}))}
- className={`relative w-11 h-6 rounded-full border transition-all duration-300 no-neo ${form.is_published ?'bg-indigo-500 border-indigo-400' :'bg-white/10 border-white/15'
+ className={`cursor-target relative w-11 h-6 rounded-full border transition-all duration-300 no-neo ${form.is_published ?'bg-indigo-500 border-indigo-400' :'bg-white/10 border-white/15'
 }`}
  >
  <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-300 ${form.is_published ?'left-[22px]' :'left-0.5'
@@ -529,11 +529,14 @@ const AboutCard = ({ item, onEdit, onDelete, onTogglePublish, onViewCv}) => {
 
  {/* ── Actions ── */}
  <div className="flex justify-end gap-2 pt-1 border-t border-white/6">
+ {Object.keys(errors).length > 0 && (
+ <p className="mr-auto self-center text-sm text-red-400">Masih ada field wajib yang belum diisi.</p>
+ )}
  <button type="button" onClick={onCancel}
- className="px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/20 text-sm transition-all no-neo">
+ className="cursor-target px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/20 text-sm transition-all no-neo">
  Cancel
  </button>
- <button type="submit" disabled={uploading} className="relative group/s">
+ <button type="submit" disabled={uploading} className="cursor-target relative group/s no-neo">
  <div className="absolute -inset-0.5 rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center gap-2 px-5 py-2 rounded-xl border border-white/10" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
  {uploading
@@ -732,7 +735,7 @@ export default function About() {
  </div>
  </div>
 
- <button onClick={() => setShowCreate(true)} className="relative group shrink-0">
+ <button onClick={() => setShowCreate(true)} className="cursor-target relative group shrink-0 no-neo">
  <div className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
  <Plus className="w-4 h-4 text-indigo-400" />
@@ -769,7 +772,7 @@ export default function About() {
  <p className="text-gray-300 font-medium text-sm">No about content yet</p>
  <p className="text-gray-600 text-xs mt-1">Create your first about profile to show on your portfolio</p>
  </div>
- <button onClick={() => setShowCreate(true)} className="relative group mt-2">
+ <button onClick={() => setShowCreate(true)} className="cursor-target relative group mt-2 no-neo">
  <div className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-sm font-medium text-gray-200" style={{ backgroundColor:'var(--color-backdrop-base)'}}>
  <Plus className="w-4 h-4 text-indigo-400" /> Create About Profile

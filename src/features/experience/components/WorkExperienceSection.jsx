@@ -107,7 +107,7 @@ const ExperienceCard = ({ experience }) => {
   }, [experience.description])
 
   return (
-    <div className="relative group">
+    <div className="relative group cursor-target">
       <div className="absolute -inset-0.5 bg-[#0f172a] rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-500" />
       <Card className="relative h-full p-5 sm:p-6 group-hover:border-white/30 transition-all duration-500">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -170,9 +170,18 @@ const ExperienceCard = ({ experience }) => {
             {isTruncated && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-3 text-sm text-theme-primary-light hover:text-white transition-colors flex items-center gap-1 font-medium focus:outline-none relative z-10"
+                className="mt-3 text-sm text-theme-primary-light hover:text-white transition-colors flex items-center gap-1.5 font-medium focus:outline-none relative z-10 group/btn"
               >
-                {isExpanded ? 'Show less' : 'Read more'}
+                <span className="relative overflow-hidden pb-0.5">
+                  {isExpanded ? 'Show less' : 'Read more'}
+                  <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-theme-primary-light transform origin-left scale-x-0 transition-transform duration-300 group-hover/btn:scale-x-100" />
+                </span>
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-300 group-hover/btn:translate-y-0.5 ${isExpanded ? 'rotate-180 group-hover/btn:-translate-y-0.5' : ''}`} 
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
             )}
           </div>

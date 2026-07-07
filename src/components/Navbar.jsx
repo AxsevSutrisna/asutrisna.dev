@@ -8,9 +8,10 @@ const navItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/stack", label: "Stack" },
+  // { href: "/cv", label: "CV" },
   { href: "/experience", label: "Experience" },
   { href: "/projects", label: "Projects" },
-  { href: "/courses", label: "Courses" },
+  // { href: "/courses", label: "Courses" },
   { href: "/certificates", label: "Certificates" },
   { href: "/contact", label: "Contact" },
 ];
@@ -70,7 +71,7 @@ const Navbar = () => {
                       className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 cursor-target ${isActive
                         ? "bg-white text-black shadow-[4px_4px_0_var(--color-shadow-primary)]"
                         : "text-[var(--color-text-secondary)] hover:text-white hover:bg-white/5"
-                      }`}
+                        }`}
                     >
                       <Link to={item.href}>
                         {item.label}
@@ -105,7 +106,7 @@ const Navbar = () => {
         className={`md:hidden transition-all duration-300 ease-in-out ${isOpen
           ? "max-h-screen opacity-100"
           : "max-h-0 opacity-0 overflow-hidden"
-        }`}
+          }`}
       >
         <div className="mx-[5%] mt-3 rounded-2xl border border-white/10 bg-[#0a0a1a] p-4 space-y-3 shadow-2xl">
           {navItems.map((item, index) => {
@@ -118,7 +119,7 @@ const Navbar = () => {
                 className={`w-full justify-start rounded-xl px-4 py-4 text-base font-medium transition-all duration-300 ease border cursor-target ${isActive
                   ? "bg-white/10 text-white border-white/20 shadow-[4px_4px_0_var(--color-shadow-primary)]"
                   : "bg-transparent text-[var(--color-text-secondary)] border-white/10 shadow-[4px_4px_0_rgba(0,0,0,0.4)] hover:bg-white/5 hover:text-white"
-                }`}
+                  }`}
                 style={{
                   transitionDelay: `${index * 40}ms`,
                   transform: isOpen ? "translateX(0)" : "translateX(30px)",

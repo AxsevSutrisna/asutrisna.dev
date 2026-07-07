@@ -262,7 +262,7 @@ const ThemePresetSection = ({ onPresetApply, currentColors}) => {
  {!loading && !error && (
  <button
  onClick={fetchPresets}
- className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-gray-300 hover:bg-white/5 border border-transparent hover:border-white/10 transition"
+ className="cursor-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-gray-300 hover:bg-white/5 border border-transparent hover:border-white/10 transition no-neo"
  title="Refresh presets"
  >
  <RefreshCw className="w-3 h-3" />
@@ -281,7 +281,7 @@ const ThemePresetSection = ({ onPresetApply, currentColors}) => {
  </div>
  <button
  onClick={fetchPresets}
- className="shrink-0 px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-300 text-xs font-medium transition"
+ className="cursor-target shrink-0 px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-300 text-xs font-medium transition no-neo"
  >
  Retry
  </button>

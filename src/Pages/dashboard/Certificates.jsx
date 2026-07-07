@@ -45,14 +45,14 @@ const CertCard = ({ cert, onDelete, onView}) => {
  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
  <button
  onClick={() => onView(cert.img)}
- className="w-10 h-10 rounded-full bg-white/10 hover:bg-indigo-500/40 text-white flex items-center justify-center border border-white/20 transition-all hover:scale-110 shadow-lg"
+ className="cursor-target w-10 h-10 rounded-full bg-white/10 hover:bg-indigo-500/40 text-white flex items-center justify-center border border-white/20 transition-all hover:scale-110 shadow-lg no-neo"
  title="View Full Image"
  >
  <Eye className="w-4 h-4" />
  </button>
  <button
  onClick={() => onDelete(cert.id)}
- className="w-10 h-10 rounded-full bg-red-500/20 hover:bg-red-500/50 text-red-100 flex items-center justify-center border border-red-500/30 transition-all hover:scale-110 shadow-lg"
+ className="cursor-target w-10 h-10 rounded-full bg-red-500/20 hover:bg-red-500/50 text-red-100 flex items-center justify-center border border-red-500/30 transition-all hover:scale-110 shadow-lg no-neo"
  title="Delete Certificate"
  >
  <Trash2 className="w-4 h-4" />
@@ -172,7 +172,7 @@ export default function Certificates() {
  onDragOver={e => { e.preventDefault(); setDragOver(true)}}
  onDragLeave={() => setDragOver(false)}
  onDrop={e => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0])}}
- className={`flex flex-col items-center justify-center w-full min-h-[200px] rounded-xl border-2 border-dashed cursor-pointer transition-all duration-300 ${dragOver ?'border-indigo-500/60 bg-indigo-500/10' :'border-white/10 bg-black/20 hover:border-indigo-500/40 hover:bg-black/40'
+ className={`cursor-target flex flex-col items-center justify-center w-full min-h-[200px] rounded-xl border-2 border-dashed cursor-pointer transition-all duration-300 ${dragOver ?'border-indigo-500/60 bg-indigo-500/10' :'border-white/10 bg-black/20 hover:border-indigo-500/40 hover:bg-black/40'
 }`}
  >
  {preview ? (
@@ -202,14 +202,14 @@ export default function Certificates() {
  <div className="flex gap-3 shrink-0 w-full sm:w-auto">
  <button 
  onClick={() => { setFile(null); setPreview(null)}}
- className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-sm transition-colors font-medium"
+ className="cursor-target flex-1 sm:flex-none px-4 py-2 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-sm transition-colors font-medium no-neo"
  >
  Cancel
  </button>
  <button 
  onClick={uploadImage} 
  disabled={uploading} 
- className="relative group/btn flex-1 sm:flex-none focus:outline-none"
+ className="cursor-target relative group/btn flex-1 sm:flex-none focus:outline-none no-neo"
  >
  <div className="absolute -inset-0.5 rounded-lg opacity-60 blur group-hover/btn:opacity-100 transition duration-300" style={{ background:'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))'}} />
  <div className="relative flex items-center justify-center gap-2 px-6 py-2 rounded-lg bg-[#0a0a1a] border border-white/15 transition-colors group-hover/btn:bg-[#111122]">
@@ -269,7 +269,7 @@ export default function Certificates() {
  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200">
  <button 
  onClick={() => setLightboxImage(null)}
- className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors border border-white/20"
+ className="cursor-target absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors border border-white/20 no-neo"
  >
  <X className="w-6 h-6" />
  </button>

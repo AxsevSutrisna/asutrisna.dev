@@ -44,7 +44,7 @@ const ExperienceCard = memo(({ experience, index }) => {
 
   return (
     <div
-      className={`relative group flex-1 min-w-0 card-fade-up ${
+      className={`relative group flex-1 min-w-0 card-fade-up cursor-target ${
         isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 'col-span-1'
       }`}
       style={{ '--delay': `${index * 100}ms` }}
@@ -169,11 +169,13 @@ const ExperienceHighlight = () => {
             {workExperiences.length > 0 && (
               <Link
                 to="/experience"
-                className="inline-flex items-center gap-1.5 text-sm font-medium shrink-0 transition-opacity hover:opacity-70 whitespace-nowrap cursor-target"
+                className="group inline-flex items-center gap-1.5 text-sm font-medium shrink-0 whitespace-nowrap cursor-target"
                 style={{ color: 'var(--color-primary-light)' }}
               >
-                View all experience
-                <ArrowRight className="w-4 h-4" />
+                <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:w-0 group-hover:after:w-full after:transition-all after:duration-300 after:h-[1.5px] after:bg-current">
+                  View all experience
+                </span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             )}
           </div>

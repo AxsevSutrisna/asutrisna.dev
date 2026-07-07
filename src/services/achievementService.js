@@ -1,11 +1,11 @@
 import { supabase } from '../config/supabase';
 
-export const projectService = {
+export const achievementService = {
   async fetchAll() {
     const { data, error } = await supabase
-      .from("projects")
+      .from("achievements")
       .select("*")
-      .order('order_index', { ascending: true })
+      .order('sort_order', { ascending: true })
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);

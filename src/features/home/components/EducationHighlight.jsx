@@ -223,11 +223,14 @@ const EducationHighlight = () => {
               {certificates.length > 0 && (
                 <Link
                   to="/certificates"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70 whitespace-nowrap cursor-target"
+                  className="group inline-flex items-center gap-1.5 text-sm font-medium whitespace-nowrap cursor-target"
                   style={{ color: 'var(--color-primary-light)' }}
                   aria-label="View all certificates"
                 >
-                  View all certificates <ArrowRight className="w-3.5 h-3.5" />
+                  <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:w-0 group-hover:after:w-full after:transition-all after:duration-300 after:h-[1.5px] after:bg-current">
+                    View all certificates
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               )}
             </div>

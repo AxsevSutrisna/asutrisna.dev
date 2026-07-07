@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useContactInfo } from "./hooks/useContactInfo";
+import { contactService } from "../../services/contactService";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { ExternalLink, Mail, Linkedin, Github, Instagram, Youtube } from "lucide-react";
-import PublicCtaButton from "../../components/ui/public-cta-button";
+import { ExternalLink, Mail, Linkedin, Github, Instagram, Youtube, Send, Sparkles } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const ICONS = {
     Linkedin,
@@ -22,9 +26,13 @@ const ContactPage = () => {
     const location = useLocation();
     const isSubpage = location.pathname === '/contact';
 
-    useEffect(() => {
-        AOS.init({ once: false });
-    }, []);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const roles = [
         "Software Engineer", 
@@ -35,105 +43,239 @@ const ContactPage = () => {
         "Project Lead"
     ];
 
+    useEffect(() => {
+        AOS.init({ once: false });
+    }, []);
+
     const getIconComponent = (iconName, platformName) => {
         const nameToUse = iconName || platformName || '';
-        // Find matching key case-insensitively
         const matchedKey = Object.keys(ICONS).find(
             key => key.toLowerCase() === nameToUse.toLowerCase()
         );
         return matchedKey ? ICONS[matchedKey] : ExternalLink;
     };
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const swalConfig = {
+        background: 'var(--color-backdrop-base)',
+        color: 'var(--color-text-primary)',
+        buttonsStyling: false,
+        customClass: {
+            popup: 'border-2 border-[color:var(--color-button-outline)] rounded-xl bg-[var(--color-backdrop-base)]',
+            title: 'font-display font-bold text-2xl text-[var(--color-text-primary)] mb-2',
+            htmlContainer: 'text-[var(--color-text-muted)]',
+            confirmButton: 'inline-flex items-center justify-center rounded-xl border-2 border-[color:var(--color-button-outline)] text-sm font-medium transition-all bg-[color:var(--color-button-secondary-from)] text-[color:var(--color-text-primary)] px-8 py-3 mt-4 cursor-target hover:bg-white/5 !shadow-none !ring-0 !outline-none focus:outline-none focus:ring-0',
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            Swal.fire({
+                ...swalConfig,
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill in all required fields!',
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await contactService.sendMessage(formData);
+            
+            // Mengirim email via FormSubmit di background
+            const formSubmitUrl = 'https://formsubmit.co/ajax/asepsutrisnasp@gmail.com';
+            const submitData = {
+                name: formData.name,
+                email: formData.email,
+                message: formData.message,
+                _subject: formData.subject || 'Pesan Baru dari Website Portfolio',
+                _captcha: 'false',
+                _template: 'table'
+            };
+
+            await axios.post(formSubmitUrl, submitData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+            
+            Swal.fire({
+                ...swalConfig,
+                icon: 'success',
+                title: 'Terkirim!',
+                text: 'Pesan Anda telah berhasil dikirim langsung ke email.',
+            });
+
+            setFormData({ name: '', email: '', subject: '', message: '' });
+        } catch (error) {
+            console.error('Error sending message:', error);
+            Swal.fire({
+                ...swalConfig,
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to send message. Please try again later.',
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
-        <div className={`px-[5%] sm:px-[5%] lg:px-[10%] ${isSubpage ? "pt-12 pb-12 md:pt-0 md:pb-24" : "py-12 md:py-24"}`} id="Contact">
-            <div className="flex items-center justify-center">
-                <div 
-                    data-aos="fade-up"
-                    data-aos-duration="1000"
-                    className="neo-shell w-full max-w-4xl p-8 md:p-16 relative overflow-hidden" 
-                    style={{ boxShadow: '8px 8px 0 var(--color-shadow-primary)' }}
-                >
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                        <div 
-                            data-aos="fade-down"
-                            data-aos-delay="100"
-                            className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6 border-2"
-                            style={{ 
-                                backgroundColor: 'color-mix(in srgb, var(--color-primary-light) 10%, transparent)', 
-                                color: 'var(--color-primary-light)', 
-                                borderColor: 'var(--color-border-light)' 
-                            }}
-                        >
-                            LET&apos;S BUILD SOMETHING GREAT
+        <div className={`px-[5%] sm:px-[5%] lg:px-[10%] overflow-hidden ${isSubpage ? "pb-12 md:pb-24" : "py-12 md:py-24"}`} id="Contact">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 lg:gap-16 items-start">
+                
+                {/* Left Column: Info & Socials */}
+                <div className="flex flex-col gap-6 lg:sticky lg:top-32 w-full max-w-xl mx-auto lg:mx-0" data-aos="fade-right" data-aos-duration="1000">
+                    <div>
+                        <div className="inline-block animate-float mb-6">
+                            <div className="relative group">
+                                <div className="absolute -inset-0.5 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000" style={{ background: 'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))' }}></div>
+                                <Badge variant="default" className="relative px-4 sm:px-5 py-2.5 sm:text-sm text-xs bg-white/5 border border-white/10">
+                                    <Sparkles className="sm:w-4 sm:h-4 w-3.5 h-3.5" style={{ color: 'var(--color-primary-light)' }} />
+                                    Currently active for opportunities
+                                </Badge>
+                            </div>
                         </div>
                         
                         <h2 
-                            data-aos="fade-up"
-                            data-aos-delay="200"
-                            className="text-4xl md:text-5xl font-bold mb-6"
-                            style={{ color: 'var(--color-text-primary)' }}
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-display"
+                            style={{ color: 'var(--color-text-primary)', lineHeight: '1.1' }}
                         >
-                            Ready to <span style={{ color: 'var(--color-primary-light)' }}>Collaborate?</span>
+                            Let's build something <br className="hidden md:block"/>
+                            <span style={{ color: 'var(--color-primary-light)' }}>great together.</span>
                         </h2>
                         
                         <p 
-                            data-aos="fade-up"
-                            data-aos-delay="300"
-                            className="max-w-2xl mx-auto text-base md:text-lg mb-10"
+                            className="text-base md:text-lg max-w-lg mb-8"
                             style={{ color: 'var(--color-text-muted)' }}
                         >
-                            Whether you have a professional inquiry, a community initiative, or just want to say hi, my inbox is always open.
+                            I'm currently available for freelance projects, technical consulting, and full-time opportunities. Drop me a line if you're looking for a developer who productizes code.
                         </p>
-
-                        <div 
-                            data-aos="fade-up"
-                            data-aos-delay="400"
-                            className="flex flex-wrap justify-center gap-4 mb-14"
-                        >
+                        
+                        <div className="flex flex-wrap gap-4 mb-10">
                             {socialLinks.map((link, index) => {
                                 const IconComponent = getIconComponent(link.icon, link.platform);
-                                const linkColor = link.color || 'var(--color-primary-light)';
-                                
                                 return (
-                                    <PublicCtaButton 
-                                        key={link.id || index} 
-                                        href={link.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        text={link.display_name}
-                                        icon={IconComponent}
-                                        iconClassName="w-5 h-5"
-                                        iconStyle={{ color: linkColor }}
-                                    />
+                                    <Button key={link.id || index} asChild variant="neutral" size="icon" className="rounded-xl cursor-target w-12 h-12 md:w-14 md:h-14">
+                                        <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.display_name}>
+                                            <IconComponent className="w-5 h-5" />
+                                        </a>
+                                    </Button>
                                 );
                             })}
                         </div>
 
-                        <div 
-                            data-aos="fade-up"
-                            data-aos-delay="500"
-                            className="w-full pt-10 border-t-2"
-                            style={{ borderColor: 'var(--color-border-light)' }}
-                        >
-                            <h3 className="text-xs font-bold uppercase tracking-widest mb-6" style={{ color: 'var(--color-text-muted)' }}>
+
+
+                        <div className="w-full pt-8 border-t border-white/10">
+                            <h3 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--color-text-muted)' }}>
                                 Available Roles for Collaboration
                             </h3>
-                            <div className="flex flex-wrap justify-center gap-3">
+                            <div className="flex flex-wrap gap-3">
                                 {roles.map(role => (
-                                    <div 
-                                        key={role} 
-                                        className="px-4 py-2 border-2 rounded-full text-sm font-bold cursor-default shadow-[2px_2px_0_var(--color-shadow-primary)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-                                        style={{ 
-                                            backgroundColor: 'var(--color-backdrop-base)',
-                                            color: 'var(--color-text-secondary)',
-                                            borderColor: 'var(--color-border-light)'
-                                        }}
-                                    >
+                                    <Badge key={role} variant="default" className="inline-flex text-xs sm:text-sm px-3 py-1.5 bg-[#0f172a] border border-white/10 text-white/80 rounded-md">
+                                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--color-primary-light)' }} />
                                         {role}
-                                    </div>
+                                    </Badge>
                                 ))}
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Form */}
+                <div data-aos="fade-left" data-aos-duration="1000" className="w-full max-w-xl mx-auto lg:mx-0 lg:max-w-none">
+                    <div 
+                        className="relative z-10 rounded-xl border-2 border-white/10 bg-white/5 p-6 sm:p-8 md:p-10 w-full shadow-[6px_6px_0_rgba(255,255,255,0.15)] transition-all duration-200"
+                    >
+                        <div 
+                            className="absolute -z-10 inset-0 opacity-10 rounded-xl pointer-events-none" 
+                            style={{ background: 'linear-gradient(to bottom right, var(--color-primary-dark), var(--color-primary-light))' }}
+                        />
+
+                        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                            <div className="space-y-2">
+                                <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Name <span className="text-red-500">*</span></label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="Your Name"
+                                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Email <span className="text-red-500">*</span></label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="you@email.com"
+                                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="subject" className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Subject</label>
+                                <input
+                                    type="text"
+                                    id="subject"
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleChange}
+                                    placeholder="Project Title or Inquiry"
+                                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Message <span className="text-red-500">*</span></label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    required
+                                    rows="5"
+                                    placeholder="Tell me about your project, needs, or timeline..."
+                                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all resize-none cursor-target"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                ></textarea>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                variant="neutral"
+                                className="w-full px-8 h-12 flex items-center justify-center gap-2 font-bold cursor-target"
+                            >
+                                {isSubmitting ? (
+                                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                    <>
+                                        Send via Email <Send className="w-4 h-4" />
+                                    </>
+                                )}
+                            </Button>
+                        </form>
                     </div>
                 </div>
             </div>

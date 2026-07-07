@@ -11,10 +11,9 @@ import {
 } from"@/components/ui/card"
 import { toSlug} from"../../../utils/slug";
 
-const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
+const CardProject = ({ img, title, description, link: ProjectLink, id}) => {
  const handleLiveDemo = (e) => {
  if (!ProjectLink) {
- console.log("ProjectLink kosong");
  e.preventDefault();
  alert("Visit Link link is not available");
 }
@@ -22,7 +21,6 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
 
  const handleDetails = (e) => {
  if (!id) {
- console.log("ID kosong");
  e.preventDefault();
  alert("Project details are not available");
 }
@@ -32,16 +30,16 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
  <Card className="group relative w-full overflow-hidden p-5 flex flex-col justify-between h-full">
  <div className="relative overflow-hidden rounded-lg mb-4 border-2 border-black/40">
  <img
- src={Img}
- alt={Title}
+ src={img}
+ alt={title}
  className="w-full h-full object-cover aspect-[16/8] transform group-hover:scale-105 transition-transform duration-500"
  />
  </div>
 
  <CardHeader className="p-0 space-y-3 flex-1">
- <CardTitle>{Title}</CardTitle>
+ <CardTitle>{title}</CardTitle>
  <CardDescription className="line-clamp-3">
- {Description}
+ {description}
  </CardDescription>
  </CardHeader>
 
@@ -64,7 +62,7 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
 
  {id ? (
  <PublicCtaButton
- to={`/project/${toSlug(Title)}`}
+ to={`/project/${toSlug(title)}`}
  text="Details"
  icon={ArrowRight}
  onClick={handleDetails}
@@ -81,10 +79,10 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id}) => {
 };
 
 CardProject.propTypes = {
- Img: PropTypes.string.isRequired,
- Title: PropTypes.string.isRequired,
- Description: PropTypes.string,
- Link: PropTypes.string,
+ img: PropTypes.string.isRequired,
+ title: PropTypes.string.isRequired,
+ description: PropTypes.string,
+ link: PropTypes.string,
  id: PropTypes.number.isRequired,
 };
 

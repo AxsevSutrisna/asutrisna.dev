@@ -1,43 +1,13 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useProjects } from "./hooks/useProjects";
-import CardProject from "./components/CardProject";
+import ProjectCard from "./components/ProjectCard";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useLocation } from "react-router-dom";
 
-const ToggleButton = ({ onClick, isShowingMore }) => (
-    <Button
-        onClick={onClick}
-        variant="ghost"
-        size="sm"
-        className="group relative flex items-center gap-2 overflow-hidden rounded-xl px-3 py-1.5 text-sm font-medium"
-    >
-        <span className="relative z-10 flex items-center gap-2">
-            {isShowingMore ? "See Less" : "See More"}
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`
- transition-transform 
- duration-300 
- ${isShowingMore ? "group-hover:-translate-y-0.5" : "group-hover:translate-y-0.5"}
- `}
-            >
-                <polyline points={isShowingMore ? "18 15 12 9 6 15" : "6 9 12 15 18 9"}></polyline>
-            </svg>
-        </span>
-        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500/50 transition-all duration-300 group-hover:w-full"></span>
-    </Button>
-);
+import ShowMoreButton from "../../components/ui/ShowMoreButton";
 
 export default function Portofolio() {
     const { projects } = useProjects();
@@ -47,8 +17,15 @@ export default function Portofolio() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeFilter, setActiveFilter] = useState("All");
 
-    const isMobile = window.innerWidth < 768;
+    const [isMobile, setIsMobile] = useState(false);
     const initialItems = isMobile ? 4 : 6;
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         AOS.init({ once: false });
@@ -84,7 +61,7 @@ export default function Portofolio() {
     const displayedProjects = showAllProjects ? filteredProjects : filteredProjects.slice(0, initialItems);
 
     return (
-        <div className={`md:px-[10%] px-[5%] w-full overflow-hidden ${isSubpage ? "pt-12 pb-12 md:pt-0 md:pb-24" : "py-12 md:py-24"}`} id="Portofolio" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
+        <div className={`md:px-[10%] px-[5%] w-full overflow-hidden ${isSubpage ? "pt-12 pb-12 md:pt-0 md:pb-24" : "py-12 md:py-24"}`} id="Portfolio" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
             
             {/* Header section */}
             <div className="text-center pb-8" data-aos="fade-up" data-aos-duration="1000">
@@ -144,11 +121,11 @@ export default function Portofolio() {
                                 data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                                 data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                             >
-                                <CardProject
-                                    Img={project.img || project.Img}
-                                    Title={project.title || project.Title}
-                                    Description={project.description || project.Description}
-                                    Link={project.link || project.Link}
+                                <ProjectCard
+                                    img={project.img || project.Img}
+                                    title={project.title || project.Title}
+                                    description={project.description || project.Description}
+                                    link={project.link || project.Link}
                                     id={project.id}
                                 />
                             </div>
@@ -164,7 +141,7 @@ export default function Portofolio() {
             {/* Show More/Less Button */}
             {filteredProjects.length > initialItems && (
                 <div className="mt-8 w-full flex justify-center">
-                    <ToggleButton
+                    <ShowMoreButton
                         onClick={toggleShowMore}
                         isShowingMore={showAllProjects}
                     />
