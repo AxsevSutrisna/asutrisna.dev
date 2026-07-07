@@ -454,20 +454,10 @@ export default function TechStacks() {
 }
 
  const persistOrder = async (orderedItems) => {
- const updates = orderedItems.map((item, index) =>
- supabase
- .from('tech_stacks')
- .update({ sort_order: index + 1})
- .eq('id', item.id)
- )
-
- const results = await Promise.all(updates)
- const failed = results.find((result) => result.error)
- if (failed?.error) {
- throw failed.error
-}
-
- setItems(orderedItems.map((item, index) => ({ ...item, sort_order: index + 1})))
+ const updates = orderedItems.map((item, index) => ({ ...item, sort_order: index + 1 }))
+ const { error } = await supabase.from('tech_stacks').upsert(updates)
+ if (error) throw error
+ setItems(updates)
 }
 
  const handleDragStart = (id) => setDraggingId(id)

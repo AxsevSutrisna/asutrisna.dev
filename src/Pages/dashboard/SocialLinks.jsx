@@ -473,10 +473,10 @@ export default function SocialLinksDashboard() {
 }
 
  const persistOrder = async (orderedItems) => {
- const updates = orderedItems.map((item, i) => supabase.from('social_links').update({ sort_order: i + 1}).eq('id', item.id))
- const results = await Promise.all(updates)
- if (results.some(r => r.error)) throw new Error('Reordering failed')
- setItems(orderedItems.map((item, i) => ({ ...item, sort_order: i + 1})))
+ const updates = orderedItems.map((item, i) => ({ ...item, sort_order: i + 1 }))
+ const { error } = await supabase.from('social_links').upsert(updates)
+ if (error) throw new Error('Reordering failed: ' + error.message)
+ setItems(updates)
 }
 
  const handleDragStart = (id) => setDraggingId(id)

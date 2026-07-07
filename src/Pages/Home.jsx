@@ -19,12 +19,15 @@ import LogoLoop from "@/components/ui/LogoLoop"
 import StatCard from "@/components/ui/StatCard"
 import { useTechStackStore } from '../store/useTechStackStore'
 import { useAboutContent } from '../features/about/hooks/useAboutContent'
+import { useContactStore } from '../store/useContactStore'
+import { heroContentService } from '../services/heroContentService'
 
 const ExperienceHighlight = lazy(() => import('../features/home/components/ExperienceHighlight'))
 const FeaturedProjects = lazy(() => import('../features/home/components/FeaturedProjects'))
 const EducationHighlight = lazy(() => import('../features/home/components/EducationHighlight'))
 const HomeCTA = lazy(() => import('../features/home/components/HomeCTA'))
 const AchievementHighlight = lazy(() => import('../features/home/components/AchievementHighlight'))
+const Contact = lazy(() => import('../features/contact/Contact'))
 
 /** Garis pemisah tipis antar section */
 const SectionDivider = () => (
@@ -46,13 +49,33 @@ const TechStack = memo(({ tech }) => (
 ));
 TechStack.displayName = 'TechStack';
 
-const SocialLink = memo(({ icon: Icon, link, label }) => (
-    <Button asChild variant="neutral" size="icon" className="rounded-xl cursor-target">
-        <a href={link} target="_blank" rel="noopener noreferrer" aria-label={label}>
-            <Icon className="w-4 h-4" />
-        </a>
-    </Button>
-));
+const getIcon = (name) => {
+    const normalized = (name || '').toLowerCase()
+    if (normalized.includes('github') || normalized.includes('git')) return Github
+    if (normalized.includes('linkedin') || normalized.includes('link')) return Linkedin
+    if (normalized.includes('instagram') || normalized.includes('insta')) return Instagram
+    if (normalized.includes('facebook') || normalized.includes('fb')) return Facebook
+    if (normalized.includes('youtube') || normalized.includes('yt')) return Youtube
+    if (normalized.includes('twitter') || normalized.includes('x')) return Twitter
+    if (normalized.includes('dribbble')) return Dribbble
+    if (normalized.includes('figma')) return Figma
+    if (normalized.includes('mail') || normalized.includes('email')) return Mail
+    return ExternalLink
+}
+
+const SocialLink = memo(({ icon, platform, name, url, link, display_name }) => {
+    const IconComponent = getIcon(icon || platform || name)
+    const href = url || link || '#'
+    const label = display_name || platform || name || 'Social'
+    
+    return (
+        <Button asChild variant="neutral" size="icon" className="rounded-xl cursor-target">
+            <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                <IconComponent className="w-4 h-4" />
+            </a>
+        </Button>
+    )
+});
 SocialLink.displayName = 'SocialLink';
 
 const TYPING_SPEED = 100;
@@ -94,59 +117,6 @@ const buildPageTitle = (heroData) => {
     return titleParts.join('').trim()
 }
 
-const useFetchSocialLinks = () => {
-    const [state, setState] = useState({ links: [], loading: true })
-
-    useEffect(() => {
-        let mounted = true
-        const fetchLinks = async () => {
-            setState((current) => ({ ...current, loading: true }))
-            try {
-                const { data, error } = await supabase
-                    .from('social_links')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('is_primary', { ascending: false })
-                    .order('sort_order', { ascending: true })
-                    .order('created_at', { ascending: true });
-
-                if (!mounted) return
-
-                if (!error && Array.isArray(data)) {
-                    const mapped = data.map((item) => {
-                        const key = (item.icon || item.platform || item.name || '').toString().toLowerCase()
-                        let Icon = ExternalLink
-                        if (key.includes('git') || key.includes('github')) Icon = Github
-                        else if (key.includes('link') || key.includes('linkedin')) Icon = Linkedin
-                        else if (key.includes('insta') || key.includes('instagram')) Icon = Instagram
-                        else if (key.includes('youtube')) Icon = ExternalLink
-
-                        return {
-                            icon: Icon,
-                            link: item.url || item.link || '#',
-                            label: item.display_name || item.displayName || item.platform || item.name || 'Social'
-                        }
-                    })
-
-                    setState({ links: mapped, loading: false })
-                } else {
-                    setState({ links: [], loading: false })
-                }
-            } catch (err) {
-                if (mounted) {
-                    console.error('Failed to fetch social links for hero:', err)
-                    setState({ links: [], loading: false })
-                }
-            }
-        }
-
-        fetchLinks()
-        return () => { mounted = false }
-    }, [])
-
-    return state
-}
-
 const Home = () => {
     const [text, setText] = useState("")
     const [isTyping, setIsTyping] = useState(true)
@@ -158,7 +128,7 @@ const Home = () => {
     const [heroLoading, setHeroLoading] = useState(true)
     const [siteOrigin, setSiteOrigin] = useState(FALLBACK_SITE_ORIGIN)
 
-    const { links: socialLinks, loading: socialLoading } = useFetchSocialLinks()
+    const { socialLinks, loading: socialLoading, fetchSocialLinks } = useContactStore()
     const { techStacks, fetchTechStacks } = useTechStackStore()
     const {
         totalProjects,
@@ -255,14 +225,9 @@ const Home = () => {
         const fetchHeroContent = async () => {
             setHeroLoading(true)
             try {
-                const { data, error } = await supabase
-                    .from('hero_contents')
-                    .select('*')
-                    .eq('is_active', true)
-                    .limit(1)
-                    .maybeSingle()
+                const data = await heroContentService.fetchActiveHeroContent();
 
-                if (!error && data) {
+                if (data) {
                     setHeroData({
                         badge_text: data.badge_text?.trim() || '',
                         title_line_1: data.title_line_1?.trim() || '',
@@ -286,30 +251,14 @@ const Home = () => {
         }
 
         fetchHeroContent()
-
-        const subscription = supabase
-            .channel('hero_content_changes')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'hero_contents',
-                },
-                () => {
-                    fetchHeroContent()
-                }
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(subscription)
-        }
+        const unsubscribe = heroContentService.subscribeToChanges(fetchHeroContent);
+        return unsubscribe;
     }, [])
 
     useEffect(() => {
         fetchTechStacks()
-    }, [fetchTechStacks])
+        fetchSocialLinks()
+    }, [fetchTechStacks, fetchSocialLinks])
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -612,6 +561,12 @@ const Home = () => {
             </Suspense>
 
 
+
+            {/* ── Contact Section ────────────────────────────── */}
+            <SectionDivider />
+            <Suspense fallback={<div className="h-40" style={{ backgroundColor: 'var(--color-backdrop-base)' }} />}>
+                <Contact />
+            </Suspense>
 
             {/* ── Call to Action ────────────────────────────── */}
             <SectionDivider />

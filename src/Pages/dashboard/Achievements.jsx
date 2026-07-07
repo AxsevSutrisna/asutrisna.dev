@@ -237,20 +237,10 @@ export default function Achievements() {
   };
 
   const persistOrder = async (orderedItems) => {
-    const updates = orderedItems.map((item, index) =>
-      supabase
-        .from("achievements")
-        .update({ sort_order: index + 1 })
-        .eq("id", item.id)
-    );
-
-    const results = await Promise.all(updates);
-    const failed = results.find((result) => result.error);
-    if (failed?.error) {
-      throw failed.error;
-    }
-
-    setAchievements(orderedItems.map((item, index) => ({ ...item, sort_order: index + 1 })));
+    const updates = orderedItems.map((item, index) => ({ ...item, sort_order: index + 1 }));
+    const { error } = await supabase.from("achievements").upsert(updates);
+    if (error) throw error;
+    setAchievements(updates);
   };
 
   const handleDragStart = (id) => setDraggingId(id);

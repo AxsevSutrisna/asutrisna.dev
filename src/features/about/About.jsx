@@ -11,15 +11,7 @@ import ProfileCard from "@/components/ui/ProfileCard"
 import StatCard from "@/components/ui/StatCard"
 import LogoLoop from "@/components/ui/LogoLoop"
 import AchievementHighlight from "../home/components/AchievementHighlight"
-
-const ABOUT_FALLBACK = {
- name:"Asep Sutrisna Suhada Putra",
- description:
-"Full-Stack Web Developer with experience in end-to-end web application development, from design and development to deployment. Proficient in JavaScript, TypeScript, React, and Next.js for the front end, as well as Node.js and Laravel for the back end.",
- quote:"Use AI as a professional tool, not as a replacement AI as a professional tool, not a replacement.",
- photo_url:"/AsepSutrisnaSuhadaPutra-PhotoProfile.png",
- cv_url:"https://drive.google.com/file/d/14D0m6vlfyBZ3VZB2q66yCtnVf54iTc3E/view?usp=sharing",
-}
+import { ABOUT_FALLBACK } from "../../constants/about"
 
 const ProfileImage = memo(({ name, roleBadges, photoUrl, yearsOfExperience }) => (
   <div className="flex justify-center items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">

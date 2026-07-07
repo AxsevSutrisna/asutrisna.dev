@@ -3,20 +3,20 @@ import React, { lazy, Suspense } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import Navbar from "./components/Navbar";
-import Home from "./Pages/Home";
+import Home from "./pages/Home";
 import AnimatedBackground from "./components/Background";
 import Footer from "./components/Footer";
 import { useTheme } from "./hooks/useTheme";
 import PublicLayout from "./components/layouts/PublicLayout";
-
-import Login from "./Pages/Login";
-import Dashboard from "./Pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-const Portofolio = lazy(() => import("./features/projects/Portofolio"));
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+
+const Portfolio = lazy(() => import("./features/projects/Portfolio"));
 const ContactPage = lazy(() => import("./features/contact/Contact"));
 const ProjectDetails = lazy(() => import("./features/projects/ProjectDetail"));
-const NotFoundPage = lazy(() => import("./Pages/404"));
+const NotFoundPage = lazy(() => import("./pages/NotFound"));
 
 const About = lazy(() => import("./features/about/About"));
 const StackPage = lazy(() => import("./features/techstack/StackPage"));
@@ -77,7 +77,7 @@ function App() {
             <Route path="/stack" element={<Suspense fallback={<div className="h-20" />}><StackPage /></Suspense>} />
             <Route path="/cv" element={<Suspense fallback={<div className="h-20" />}><CVPage /></Suspense>} />
             <Route path="/experience" element={<Suspense fallback={<div className="h-20" />}><ExperienceContent /></Suspense>} />
-            <Route path="/projects" element={<Suspense fallback={<div className="h-20" />}><Portofolio /></Suspense>} />
+            <Route path="/projects" element={<Suspense fallback={<div className="h-20" />}><Portfolio /></Suspense>} />
             <Route path="/courses" element={<Suspense fallback={<div className="h-20" />}><CoursesPage /></Suspense>} />
             <Route path="/certificates" element={<Suspense fallback={<div className="h-20" />}><CertificatesPage /></Suspense>} />
             <Route path="/contact" element={<Suspense fallback={<div className="h-20" />}><ContactPage /></Suspense>} />

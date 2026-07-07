@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, FolderOpen, ExternalLink } from 'lucide-react'
 import { useProjects } from '../../projects/hooks/useProjects'
 import { toSlug } from '../../../utils/slug'
-import CardProject from '../../projects/components/CardProject'
+import ProjectCard from '../../projects/components/ProjectCard'
+import ShowMoreButton from '../../../components/ui/ShowMoreButton'
 
 /* ─── Config ────────────────────────────────────────────────────── */
 const CARD_WIDTH_DESKTOP = 300   // px
@@ -21,8 +22,8 @@ const getCategories = (project) => {
   return raw.split(',').map((s) => s.trim().toUpperCase()).filter(Boolean)
 }
 
-/* ─── ProjectCard ───────────────────────────────────────────────── */
-const ProjectCard = memo(({ project, cardWidth }) => {
+/* ─── ProjectCard (Local Wrapper) ───────────────────────────────── */
+const LocalProjectCard = memo(({ project, cardWidth }) => {
   const title       = project.title       || project.Title       || ''
   const description = project.description || project.Description || ''
   const img         = project.img         || project.Img
@@ -35,17 +36,17 @@ const ProjectCard = memo(({ project, cardWidth }) => {
       style={{ width: cardWidth, height: 460 }}
       aria-label={title}
     >
-      <CardProject 
-        Img={img}
-        Title={title}
-        Description={description}
-        Link={link}
+      <ProjectCard 
+        img={img}
+        title={title}
+        description={description}
+        link={link}
         id={id}
       />
     </article>
   )
 })
-ProjectCard.displayName = 'ProjectCard'
+LocalProjectCard.displayName = 'LocalProjectCard'
 
 /* ─── Skeleton card ─────────────────────────────────────────────── */
 const SkeletonCard = ({ cardWidth }) => (
@@ -283,7 +284,7 @@ const FeaturedProjects = () => {
             }}
           >
             {featured.map((project, idx) => (
-              <ProjectCard
+              <LocalProjectCard
                 key={project.id || idx}
                 project={project}
                 cardWidth={cardWidth}

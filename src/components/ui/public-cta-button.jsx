@@ -1,8 +1,6 @@
 import { Button } from './button'
 import { Link } from 'react-router-dom'
 
-const HERO_CTA_CLASS =''
-
 export default function PublicCtaButton({
  href,
  text,
@@ -20,7 +18,7 @@ export default function PublicCtaButton({
 }) {
     if (to) {
         return (
-            <Button asChild variant="neutral" size="default" className={`${HERO_CTA_CLASS} ${className}`.trim()} {...props}>
+            <Button asChild variant="neutral" size="default" className={className} {...props}>
                 <Link to={to} aria-label={text} onClick={onClick}>
                     {text && <span className="font-medium">{text}</span>}
                     {Icon && <Icon className={iconClassName} style={iconStyle} />}
@@ -31,7 +29,7 @@ export default function PublicCtaButton({
 
     if (href) {
         return (
-            <Button asChild variant="neutral" size="default" className={`${HERO_CTA_CLASS} ${className}`.trim()} {...props}>
+            <Button asChild variant="neutral" size="default" className={className} {...props}>
                 <a href={href} aria-label={text} onClick={onClick} target={target} rel={rel}>
                     {text && <span className="font-medium">{text}</span>}
                     {Icon && <Icon className={iconClassName} style={iconStyle} />}
@@ -47,7 +45,7 @@ export default function PublicCtaButton({
  type={type}
  disabled={disabled}
  onClick={onClick}
- className={`${HERO_CTA_CLASS} ${className}`.trim()}
+ className={className}
  {...props}
  >
             <Icon className={iconClassName} style={iconStyle} />

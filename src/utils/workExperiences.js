@@ -2,20 +2,7 @@
  * Normalize work experience data from Supabase
  * Ensures all required fields have default values
  */
-export const MONTH_NAMES = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-]
+export { MONTH_NAMES, formatDateRange } from './dateUtils';
 
 export const MIN_YEAR = 1950
 export const MAX_YEAR = new Date().getFullYear() + 5
@@ -137,18 +124,7 @@ export const compareWorkExperienceTimeline = (a, b) => {
     return (b.start_month || 0) - (a.start_month || 0);
 };
 
-/**
- * Format date range for display
- * Returns"Month YYYY - Month YYYY" or"Month YYYY - Present" if currently working
- */
-export const formatDateRange = (startMonth, startYear, endMonth, endYear, isCurrently) => {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    const start = `${monthNames[startMonth - 1] || 'Jan'} ${startYear}`;
-    const end = isCurrently ? 'Present' : `${monthNames[(endMonth || 1) - 1] || 'Jan'} ${endYear}`;
-
-    return `${start} - ${end}`;
-};
 
 /**
  * Get badge classes based on employment type

@@ -157,13 +157,11 @@ export const useTheme = () => {
  colors[key] = data[key] || DEFAULT_THEME[key];
 });
 
- console.log('[Theme] Initial theme loaded from database:', colors);
  injectCSSVariables(colors);
  localStorage.setItem('theme_colors', JSON.stringify(colors));
 }
 
  // Subscribe to real-time updates
- console.log('[Theme] Setting up realtime subscription...');
  const subscription = supabase
  .channel('site_theme_changes')
  .on(
@@ -175,24 +173,20 @@ export const useTheme = () => {
  filter:'id=eq.1',
 },
  (payload) => {
- console.log('[Theme] Realtime update received:', payload);
  if (payload.new) {
  const colors = {};
  Object.keys(CSS_VAR_MAP).forEach(key => {
  colors[key] = payload.new[key] || DEFAULT_THEME[key];
 });
- console.log('[Theme] Injecting updated CSS variables:', colors);
  injectCSSVariables(colors);
  localStorage.setItem('theme_colors', JSON.stringify(colors));
 }
 }
  )
  .subscribe((status) => {
- console.log('[Theme] Subscription status:', status);
 });
 
  return () => {
- console.log('[Theme] Cleaning up subscription');
  supabase.removeChannel(subscription);
 };
 } catch (error) {
