@@ -1,4 +1,5 @@
 import { X } from "lucide-react"
+import PropTypes from "prop-types"
 import { Button } from "./ui/button"
 
 const TOAST_STYLES = {
@@ -34,4 +35,15 @@ export default function ToastStack({ toasts = [], onDismiss }) {
       ))}
     </div>
   )
+}
+
+ToastStack.propTypes = {
+  toasts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      type: PropTypes.string,
+      message: PropTypes.string,
+    })
+  ),
+  onDismiss: PropTypes.func,
 }

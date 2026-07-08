@@ -2,21 +2,10 @@ import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { useParams, useNavigate } from "react-router-dom"
 import { useProjectStore } from "../../store/useProjectStore"
-import {
-  ArrowLeft,
-  ExternalLink,
-  Github,
-  Code2,
-  Star,
-  Layers,
-  Layout,
-  Globe,
-  Package,
-  Cpu,
-  Code,
-  X,
-} from "lucide-react"
-import Swal from "sweetalert2"
+import { ArrowLeft, ExternalLink, Github, Code2, Star, X } from "lucide-react"
+import { useToast } from "../../hooks/useToast"
+import ToastStack from "../../components/ToastStack"
+import { FALLBACK_SITE_ORIGIN, FALLBACK_GITHUB } from "../../constants/urls"
 import { toSlug } from "../../utils/slug"
 import { normalizeProjectImages } from "../../utils/projectImages"
 import {
@@ -27,6 +16,9 @@ import {
   resolveSiteUrl,
   serializeJsonLd,
 } from "../../utils/seoSchema"
+import TechBadge from "./components/TechBadge"
+import FeatureItem from "./components/FeatureItem"
+import ProjectStats from "./components/ProjectStats"
 import { Button } from "../../components/ui/button"
 import {
   Breadcrumb,
@@ -43,155 +35,6 @@ import {
   CardContent,
 } from "../../components/ui/card"
 
-const TECH_ICONS = {
-  React: Globe,
-  Tailwind: Layout,
-  Express: Cpu,
-  Python: Code,
-  Javascript: Code,
-  HTML: Code,
-  CSS: Code,
-  default: Package,
-}
-
-const TechBadge = ({ tech }) => {
-  const Icon = TECH_ICONS[tech] || TECH_ICONS["default"]
-  return (
-    <div
-      className="group relative overflow-hidden px-3 py-2 md:px-4 md:py-2.5 rounded-xl border hover:border-[color:var(--color-primary-light)] transition-all duration-300 cursor-default"
-      style={{
-        background:
-          "linear-gradient(to right, rgba(var(--color-primary-dark-rgb), 0.1), rgba(var(--color-primary-light-rgb), 0.1))",
-        borderColor: "rgba(var(--color-primary-light-rgb), 0.2)",
-      }}
-    >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
-        style={{
-          background:
-            "linear-gradient(to right, rgba(var(--color-primary-dark-rgb), 0.15), rgba(var(--color-primary-light-rgb), 0.15))",
-        }}
-      />
-      <div className="relative flex items-center gap-1.5 md:gap-2">
-        <Icon
-          className="w-3.5 h-3.5 md:w-4 md:h-4 transition-colors"
-          style={{ color: "var(--color-primary-light)" }}
-        />
-        <span
-          className="text-xs md:text-sm font-medium transition-colors"
-          style={{ color: "var(--color-primary-light)" }}
-        >
-          {tech}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-const FeatureItem = ({ feature }) => {
-  return (
-    <li className="group flex items-start space-x-3 p-2.5 md:p-3.5 rounded-xl hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-[color:var(--color-border-light)]">
-      <div className="relative mt-2">
-        <div className="absolute -inset-1 rounded-full blur group-hover:opacity-30 opacity-0 transition-opacity duration-300 bg-[color:var(--color-text-secondary)]" />
-        <div className="relative w-1.5 h-1.5 md:w-2 md:h-2 rounded-full group-hover:scale-125 transition-transform duration-300 bg-[color:var(--color-text-secondary)]" />
-      </div>
-      <span
-        className="text-sm md:text-base transition-colors group-hover:text-white"
-        style={{ color: "var(--color-text-secondary)" }}
-      >
-        {feature}
-      </span>
-    </li>
-  )
-}
-
-const ProjectStats = ({ project }) => {
-  const techStackCount = project?.TechStack?.length || 0
-  const featuresCount = project?.Features?.length || 0
-
-  return (
-    <div
-      className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 p-3 md:p-4 rounded-xl overflow-hidden relative"
-      style={{ backgroundColor: "var(--color-backdrop-glow)" }}
-    >
-      <div
-        className="absolute inset-0 opacity-50 blur-2xl z-0"
-        style={{
-          background:
-            "linear-gradient(to bottom right, rgba(var(--color-primary-dark-rgb), 0.2), rgba(var(--color-primary-light-rgb), 0.2))",
-        }}
-      />
-      <div className="relative z-10 flex items-center space-x-2 md:space-x-3 bg-white/5 p-2 md:p-3 rounded-lg border border-[color:var(--color-border-light)] transition-all duration-300 hover:scale-105 hover:border-[color:var(--color-primary-light)] hover:shadow-lg">
-        <div
-          className="p-1.5 md:p-2 rounded-full"
-          style={{
-            backgroundColor: "rgba(var(--color-primary-dark-rgb), 0.2)",
-          }}
-        >
-          <Code2
-            className="w-4 h-4 md:w-6 md:h-6"
-            style={{ color: "var(--color-primary-light)" }}
-            strokeWidth={1.5}
-          />
-        </div>
-        <div className="flex-grow">
-          <div className="text-lg md:text-xl font-semibold text-white/90">
-            {techStackCount}
-          </div>
-          <div
-            className="text-[10px] md:text-xs"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            Total Teknologi
-          </div>
-        </div>
-      </div>
-
-      <div className="relative z-10 flex items-center space-x-2 md:space-x-3 bg-white/5 p-2 md:p-3 rounded-lg border border-[color:var(--color-border-light)] transition-all duration-300 hover:scale-105 hover:border-[color:var(--color-primary-light)] hover:shadow-lg">
-        <div
-          className="p-1.5 md:p-2 rounded-full"
-          style={{
-            backgroundColor: "rgba(var(--color-primary-light-rgb), 0.2)",
-          }}
-        >
-          <Layers
-            className="w-4 h-4 md:w-6 md:h-6"
-            style={{ color: "var(--color-primary-light)" }}
-            strokeWidth={1.5}
-          />
-        </div>
-        <div className="flex-grow">
-          <div className="text-lg md:text-xl font-semibold text-white/90">
-            {featuresCount}
-          </div>
-          <div
-            className="text-[10px] md:text-xs"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            Fitur Utama
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const handleGithubClick = (githubLink) => {
-  if (githubLink === "Private") {
-    Swal.fire({
-      icon: "info",
-      title: "Source Code Private",
-      text: "Maaf, source code untuk proyek ini bersifat privat.",
-      confirmButtonText: "Mengerti",
-      confirmButtonColor: "#3085d6",
-      background: "#030014",
-      color: "#ffffff",
-    })
-    return false
-  }
-  return true
-}
-
 const ProjectDetails = () => {
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -200,11 +43,20 @@ const ProjectDetails = () => {
   const [siteOrigin, setSiteOrigin] = useState(
     typeof window !== "undefined"
       ? window.location.origin
-      : "https://asutrisna-porto.vercel.app/"
+      : FALLBACK_SITE_ORIGIN
   )
   const [fullScreenImage, setFullScreenImage] = useState(null)
 
+  const { toasts, pushToast, removeToast } = useToast()
   const { projects, fetchProjects } = useProjectStore()
+
+  const handleGithubClick = (githubLink) => {
+    if (githubLink === "Private") {
+      pushToast("info", "Maaf, source code untuk proyek ini bersifat privat.")
+      return false
+    }
+    return true
+  }
 
   useEffect(() => {
     fetchProjects()
@@ -258,8 +110,7 @@ const ProjectDetails = () => {
         Img: found.img || found.Img || "",
         Images: normalizedImages,
         Link: found.link || found.Link || "#",
-        Github:
-          found.github || found.Github || "https://github.com/AxsevSutrisna",
+        Github: found.github || found.Github || FALLBACK_GITHUB,
         Features: normalizedFeatures,
         TechStack: normalizedTechStack,
       }
@@ -715,6 +566,8 @@ const ProjectDetails = () => {
 }
  `}</style>
       </div>
+
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
     </>
   )
 }

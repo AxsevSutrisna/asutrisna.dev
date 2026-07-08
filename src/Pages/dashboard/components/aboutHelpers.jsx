@@ -7,7 +7,13 @@ export const formatDate = (dateStr) => {
   })
 }
 
-export const validateAboutForm = (form, photoFile, cvFileEn, cvFileId, initial) => {
+export const validateAboutForm = (
+  form,
+  photoFile,
+  cvFileEn,
+  cvFileId,
+  initial
+) => {
   const errors = {}
 
   const hasPhoto = Boolean(photoFile || initial?.photo_url)

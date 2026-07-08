@@ -13,6 +13,7 @@ import {
   FileText,
   Eye,
 } from "lucide-react"
+import { STATIC_PATHS } from "../../../constants/urls"
 import { formatDate } from "./aboutHelpers.jsx"
 
 export default function AboutCard({
@@ -63,8 +64,7 @@ export default function AboutCard({
                 className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
                 onLoad={() => setImgLoaded(true)}
                 onError={(e) => {
-                  e.currentTarget.src =
-                    "/AsepSutrisnaSuhadaPutra-PhotoProfile.png"
+                  e.currentTarget.src = STATIC_PATHS.PHOTO
                 }}
               />
             ) : (

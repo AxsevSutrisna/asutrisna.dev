@@ -26,13 +26,14 @@ import { useExperienceData } from "../experience/hooks/useExperienceData"
 import { useTechStacks } from "../techstack/hooks/useTechStacks"
 import { formatDateRange as formatEducationDate } from "../../utils/educations"
 import { formatDateRange as formatWorkDate } from "../../utils/workExperiences"
+import { GOOGLE_DRIVE_DOWNLOAD_BASE, STATIC_PATHS } from "../../constants/urls"
 
 const FALLBACK_PROFILE = {
   name: "Muhammad Ikhwan Fathulloh",
   description:
     "Software engineer building products, tools, and learning experiences across web and IoT.",
   quote: "Use AI as a professional tool, not as a replacement.",
-  photo_url: "/AsepSutrisnaSuhadaPutra-PhotoProfile.png",
+  photo_url: STATIC_PATHS.PHOTO,
   cv_url: "",
   cv_en_url: "",
   cv_id_url: "",
@@ -81,17 +82,17 @@ const resolveDriveDownloadUrl = (url) => {
     /drive\.google\.com\/file\/d\/([^/]+)\/view/i
   )
   if (directFileMatch) {
-    return `https://drive.google.com/uc?export=download&id=${directFileMatch[1]}`
+    return `${GOOGLE_DRIVE_DOWNLOAD_BASE}&id=${directFileMatch[1]}`
   }
 
   const openMatch = value.match(/drive\.google\.com\/open\?id=([^&]+)/i)
   if (openMatch) {
-    return `https://drive.google.com/uc?export=download&id=${openMatch[1]}`
+    return `${GOOGLE_DRIVE_DOWNLOAD_BASE}&id=${openMatch[1]}`
   }
 
   const ucMatch = value.match(/drive\.google\.com\/uc\?id=([^&]+)/i)
   if (ucMatch) {
-    return `https://drive.google.com/uc?export=download&id=${ucMatch[1]}`
+    return `${GOOGLE_DRIVE_DOWNLOAD_BASE}&id=${ucMatch[1]}`
   }
 
   return value

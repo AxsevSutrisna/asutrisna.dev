@@ -4,7 +4,6 @@ import { supabase } from "../../config/supabase"
 import {
   GraduationCap,
   Pencil,
-  Plus,
   Trash2,
   Sparkles,
   Calendar,

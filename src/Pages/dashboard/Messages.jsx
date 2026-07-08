@@ -102,8 +102,10 @@ const MessageCard = ({
                   <p className="text-sm font-semibold text-white truncate">
                     {item.name}
                   </p>
-                  <p                     className="text-xs text-gray-400 truncate hover:text-indigo-300 transition-colors">
-                    <a href={`mailto:${item.email}`} className="cursor-target">{item.email}</a>
+                  <p className="text-xs text-gray-400 truncate hover:text-indigo-300 transition-colors">
+                    <a href={`mailto:${item.email}`} className="cursor-target">
+                      {item.email}
+                    </a>
                   </p>
                 </div>
               </div>

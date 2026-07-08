@@ -3,15 +3,7 @@ import ReactDOM from "react-dom"
 import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
-import {
-  Trophy,
-  Plus,
-  Trash2,
-  Pencil,
-  X,
-  Save,
-  GripVertical,
-} from "lucide-react"
+import { Trophy, Trash2, Pencil, X, Save, GripVertical } from "lucide-react"
 import AddNewButton from "./components/AddNewButton"
 
 const Modal = ({ title, onClose, children }) =>

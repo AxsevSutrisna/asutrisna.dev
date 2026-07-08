@@ -8,23 +8,11 @@ import {
   Suspense,
 } from "react"
 import { Helmet } from "react-helmet-async"
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ExternalLink,
-  Instagram,
-  Sparkles,
-  Code,
-  Award,
-  Globe,
-} from "lucide-react"
+import { Mail, ExternalLink, Sparkles, Code, Award, Globe } from "lucide-react"
 import AOS from "aos"
 import "aos/dist/aos.css"
 import PublicCtaButton from "@/components/ui/public-cta-button"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { supabase } from "../config/supabase"
 import {
   buildPersonSchema,
   buildWebPageSchema,
@@ -35,10 +23,13 @@ import {
 } from "../utils/seoSchema"
 import LogoLoop from "@/components/ui/LogoLoop"
 import StatCard from "@/components/ui/StatCard"
+import SocialLink from "@/features/home/components/SocialLinks"
+import TechStackBadge from "@/features/home/components/TechStackBadge"
 import { useTechStackStore } from "../store/useTechStackStore"
 import { useAboutContent } from "../features/about/hooks/useAboutContent"
 import { useContactStore } from "../store/useContactStore"
 import { heroContentService } from "../services/heroContentService"
+import { STATIC_PATHS } from "../constants/urls"
 
 const ExperienceHighlight = lazy(
   () => import("../features/home/components/ExperienceHighlight")
@@ -49,7 +40,6 @@ const FeaturedProjects = lazy(
 const EducationHighlight = lazy(
   () => import("../features/home/components/EducationHighlight")
 )
-const HomeCTA = lazy(() => import("../features/home/components/HomeCTA"))
 const AchievementHighlight = lazy(
   () => import("../features/home/components/AchievementHighlight")
 )
@@ -72,63 +62,6 @@ const SectionDivider = () => (
     </div>
   </div>
 )
-
-const TechStack = memo(({ tech }) => (
-  <Badge
-    variant="default"
-    className="inline-flex text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1"
-  >
-    <span
-      className="w-1.5 h-1.5 rounded-full"
-      style={{ backgroundColor: "var(--color-primary-light)" }}
-    />
-    {tech}
-  </Badge>
-))
-TechStack.displayName = "TechStack"
-
-const getIcon = (name) => {
-  const normalized = (name || "").toLowerCase()
-  if (normalized.includes("github") || normalized.includes("git")) return Github
-  if (normalized.includes("linkedin") || normalized.includes("link"))
-    return Linkedin
-  if (normalized.includes("instagram") || normalized.includes("insta"))
-    return Instagram
-  if (normalized.includes("facebook") || normalized.includes("fb"))
-    return Facebook
-  if (normalized.includes("youtube") || normalized.includes("yt"))
-    return Youtube
-  if (normalized.includes("twitter") || normalized.includes("x")) return Twitter
-  if (normalized.includes("dribbble")) return Dribbble
-  if (normalized.includes("figma")) return Figma
-  if (normalized.includes("mail") || normalized.includes("email")) return Mail
-  return ExternalLink
-}
-
-const SocialLink = memo(({ icon, platform, name, url, link, display_name }) => {
-  const IconComponent = getIcon(icon || platform || name)
-  const href = url || link || "#"
-  const label = display_name || platform || name || "Social"
-
-  return (
-    <Button
-      asChild
-      variant="neutral"
-      size="icon"
-      className="rounded-xl cursor-target"
-    >
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={label}
-      >
-        <IconComponent className="w-4 h-4" />
-      </a>
-    </Button>
-  )
-})
-SocialLink.displayName = "SocialLink"
 
 const TYPING_SPEED = 100
 const ERASING_SPEED = 50
@@ -263,7 +196,7 @@ const Home = () => {
       jobTitle: heroData.title_line_2 || "Full-Stack Web Developer",
       url: canonicalUrl || resolveSiteUrl(siteOrigin),
       image: resolveAbsoluteUrl(
-        heroData.hero_image_url || "/Photo.jpg",
+        heroData.hero_image_url || STATIC_PATHS.HERO_FALLBACK,
         canonicalUrl || siteOrigin
       ),
       description:
@@ -287,7 +220,7 @@ const Home = () => {
       url: canonicalUrl || resolveSiteUrl(siteOrigin),
       description: pageDescription || heroData.description || "",
       primaryImageOfPage: resolveAbsoluteUrl(
-        heroData.hero_image_url || "/Meta.png",
+        heroData.hero_image_url || STATIC_PATHS.META_FALLBACK,
         canonicalUrl || siteOrigin
       ),
       about: {
@@ -579,7 +512,7 @@ const Home = () => {
                     data-aos-delay="1200"
                   >
                     {heroData.tech_badges.map((tech, index) => (
-                      <TechStack key={index} tech={tech} />
+                      <TechStackBadge key={index} tech={tech} />
                     ))}
                   </div>
 
@@ -811,19 +744,6 @@ const Home = () => {
         }
       >
         <Contact />
-      </Suspense>
-
-      {/* ── Call to Action ────────────────────────────── */}
-      <SectionDivider />
-      <Suspense
-        fallback={
-          <div
-            className="h-40"
-            style={{ backgroundColor: "var(--color-backdrop-base)" }}
-          />
-        }
-      >
-        <HomeCTA />
       </Suspense>
     </>
   )

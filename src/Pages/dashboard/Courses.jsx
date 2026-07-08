@@ -4,7 +4,6 @@ import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
 import {
-  Plus,
   Trash2,
   Upload,
   BookOpen,
@@ -374,12 +373,16 @@ const CourseCard = ({ course, onEdit, onDelete }) => {
               ? "rgba(255,255,255,0.1)"
               : "rgba(255,255,255,0.05)",
           }}
+          title="Edit"
+          aria-label="Edit course"
         >
           <Pencil className="w-4 h-4" />
         </button>
         <button
           onClick={() => onDelete(course.id)}
           className="cursor-target p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors no-neo border border-red-500/20"
+          title="Delete"
+          aria-label="Delete course"
         >
           <Trash2 className="w-4 h-4" />
         </button>

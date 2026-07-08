@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useMemo } from "react"
+import PropTypes from "prop-types"
 import { gsap } from "gsap"
 
 const getContainingBlock = (element) => {
@@ -400,13 +401,11 @@ const TargetCursor = ({
     if (isMobile || !cursorRef.current || !spinTl.current) return
     if (spinTl.current.isActive()) {
       spinTl.current.kill()
-      spinTl.current = gsap
-        .timeline({ repeat: -1 })
-        .to(cursorRef.current, {
-          rotation: "+=360",
-          duration: spinDuration,
-          ease: "none",
-        })
+      spinTl.current = gsap.timeline({ repeat: -1 }).to(cursorRef.current, {
+        rotation: "+=360",
+        duration: spinDuration,
+        ease: "none",
+      })
     }
   }, [spinDuration, isMobile])
 
@@ -443,6 +442,16 @@ const TargetCursor = ({
       />
     </div>
   )
+}
+
+TargetCursor.propTypes = {
+  targetSelector: PropTypes.string,
+  spinDuration: PropTypes.number,
+  hideDefaultCursor: PropTypes.bool,
+  hoverDuration: PropTypes.number,
+  parallaxOn: PropTypes.bool,
+  cursorColor: PropTypes.string,
+  cursorColorOnTarget: PropTypes.string,
 }
 
 export default TargetCursor

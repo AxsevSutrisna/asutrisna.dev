@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { createPortal } from "react-dom"
 import { X } from "lucide-react"
+import PropTypes from "prop-types"
 
 export default function Modal({ title, onClose, children }) {
   useEffect(() => {
@@ -45,4 +46,10 @@ export default function Modal({ title, onClose, children }) {
     </div>,
     document.body
   )
+}
+
+Modal.propTypes = {
+  title: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+  children: PropTypes.node,
 }

@@ -3,9 +3,9 @@ import ReactDOM from "react-dom"
 import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
+import { SIMPLE_ICONS_BASE } from "../../constants/urls"
 import {
   Boxes,
-  Plus,
   Pencil,
   Trash2,
   Upload,
@@ -267,7 +267,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
       return
     }
     const slug = toSlug(form.name)
-    const url = `https://cdn.simpleicons.org/${slug}`
+    const url = `${SIMPLE_ICONS_BASE}/${slug}`
     setIconFile(null)
     setPreview(url)
     setForm((curr) => ({ ...curr, icon_url: url }))

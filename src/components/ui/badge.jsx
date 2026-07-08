@@ -1,4 +1,5 @@
 import * as React from "react"
+import PropTypes from "prop-types"
 import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority"
 
@@ -33,6 +34,12 @@ function Badge({ className, variant, asChild = false, ...props }) {
       {...props}
     />
   )
+}
+
+Badge.propTypes = {
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(["default", "primary", "neutral"]),
+  asChild: PropTypes.bool,
 }
 
 export { Badge }

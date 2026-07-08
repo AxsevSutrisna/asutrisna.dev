@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useMemo } from "react"
+import { STATIC_PATHS } from "../../constants/urls"
 
 const DEFAULT_INNER_GRADIENT =
   "linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)"
@@ -20,7 +21,7 @@ const DEFAULT_ICON =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjEuMiIgZmlsbD0id2hpdGUiLz48L3N2Zz4="
 
 const ProfileCardComponent = ({
-  avatarUrl = "/AsepSutrisnaSuhadaPutra-PhotoProfile.png",
+  avatarUrl = STATIC_PATHS.PHOTO,
   iconUrl = "",
   grainUrl = "",
   innerGradient,
@@ -533,7 +534,7 @@ const ProfileCardComponent = ({
                 }}
                 onError={(e) => {
                   const t = e.target
-                  t.src = "/AsepSutrisnaSuhadaPutra-PhotoProfile.png"
+                  t.src = STATIC_PATHS.PHOTO
                 }}
               />
               {showUserInfo && (

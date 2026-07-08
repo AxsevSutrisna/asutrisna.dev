@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react"
+import PropTypes from "prop-types"
 import { motion } from "motion/react"
 
 export default function DecryptedText({
@@ -380,4 +381,19 @@ export default function DecryptedText({
       </span>
     </motion.span>
   )
+}
+
+DecryptedText.propTypes = {
+  text: PropTypes.string.isRequired,
+  speed: PropTypes.number,
+  maxIterations: PropTypes.number,
+  sequential: PropTypes.bool,
+  revealDirection: PropTypes.oneOf(["start", "end", "center"]),
+  useOriginalCharsOnly: PropTypes.bool,
+  characters: PropTypes.string,
+  className: PropTypes.string,
+  parentClassName: PropTypes.string,
+  encryptedClassName: PropTypes.string,
+  animateOn: PropTypes.oneOf(["hover", "view"]),
+  clickMode: PropTypes.bool,
 }

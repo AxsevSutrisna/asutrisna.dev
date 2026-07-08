@@ -4,7 +4,6 @@ import { supabase } from "../../config/supabase"
 import {
   Briefcase,
   Pencil,
-  Plus,
   Trash2,
   Sparkles,
   MapPin,

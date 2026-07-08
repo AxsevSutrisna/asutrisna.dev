@@ -3,14 +3,25 @@ import { supabase } from "../../config/supabase"
 import { MAX_PROJECT_IMAGES } from "../../utils/projectImages"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
-import { Plus, FolderGit2, LayoutGrid, List, Eye, CheckCircle2, Clock } from "lucide-react"
+import {
+  Plus,
+  FolderGit2,
+  LayoutGrid,
+  List,
+  Eye,
+  CheckCircle2,
+  Clock,
+} from "lucide-react"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import AddNewButton from "./components/AddNewButton"
 import Modal from "../../components/ui/Modal"
 import ProjectCard from "./components/ProjectCard"
 import ProjectRow from "./components/ProjectRow"
 import ProjectForm from "./components/ProjectForm"
-import { SkeletonCard, validateProjectForm } from "./components/projectHelpers.jsx"
+import {
+  SkeletonCard,
+  validateProjectForm,
+} from "./components/projectHelpers.jsx"
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
@@ -210,7 +221,8 @@ export default function Projects() {
                   <Eye className="w-3 h-3" /> {projects.length} total
                 </span>
                 <span className="flex items-center gap-1 text-[11px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2.5 py-0.5">
-                  <CheckCircle2 className="w-3 h-3" /> {publishedCount} published
+                  <CheckCircle2 className="w-3 h-3" /> {publishedCount}{" "}
+                  published
                 </span>
                 {draftCount > 0 && (
                   <span className="flex items-center gap-1 text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-full px-2.5 py-0.5">

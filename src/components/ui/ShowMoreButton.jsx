@@ -1,3 +1,4 @@
+import PropTypes from "prop-types"
 import { Button } from "./button"
 
 const ShowMoreButton = ({ onClick, isShowingMore }) => (
@@ -33,5 +34,10 @@ const ShowMoreButton = ({ onClick, isShowingMore }) => (
     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500/50 transition-all duration-300 group-hover:w-full"></span>
   </Button>
 )
+
+ShowMoreButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  isShowingMore: PropTypes.bool,
+}
 
 export default ShowMoreButton

@@ -16,11 +16,6 @@ import {
   GripVertical,
   Palette,
   Settings2,
-} from "lucide-react"
-import AddNewButton from "./components/AddNewButton"
-
-/* ── Fallback Icon Mapping ── */
-import {
   Linkedin,
   Instagram,
   Youtube,
@@ -28,8 +23,9 @@ import {
   Twitter,
   Facebook,
   Globe,
-  MessageCircle, // placeholder for WhatsApp/TikTok etc.
+  MessageCircle,
 } from "lucide-react"
+import AddNewButton from "./components/AddNewButton"
 
 const getLucideIcon = (name) => {
   switch (name?.toLowerCase()) {

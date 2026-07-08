@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
+import { STATIC_PATHS } from "../../constants/urls"
 import {
   X,
   ImageIcon,
@@ -25,7 +26,7 @@ const HERO_FALLBACK = {
     { label: "Projects", url: "/#Portofolio" },
     { label: "Contact", url: "/#Contact" },
   ],
-  hero_image_url: "/Animation1.gif",
+  hero_image_url: STATIC_PATHS.HERO_DASHBOARD_DEFAULT,
   hero_image_alt: "Developer illustration",
 }
 
@@ -125,6 +126,7 @@ const TagInput = ({ label, value, onChange, placeholder, hint }) => {
                   type="button"
                   onClick={() => removeItem(item)}
                   className="cursor-target text-indigo-200/70 hover:text-white"
+                  aria-label={`Remove ${item}`}
                 >
                   <X className="w-3 h-3" />
                 </button>
