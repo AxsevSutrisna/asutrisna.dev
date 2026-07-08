@@ -21,6 +21,7 @@
     "@radix-ui/react-menubar": "^1.1.16",
     "@radix-ui/react-slot": "^1.2.4",
     "@supabase/supabase-js": "^2.49.9",
+    "@vercel/analytics": "^2.0.1",
     "aos": "^2.3.4",
     "axios": "^1.18.1",
     "baseline-browser-mapping": "^2.10.0",

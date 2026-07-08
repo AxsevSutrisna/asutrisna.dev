@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 import { HelmetProvider } from "react-helmet-async";
+import { Analytics } from "@vercel/analytics/react";
 import "./index.css";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -54,6 +55,7 @@ function App() {
   return (
 
     <HelmetProvider>
+      <Analytics />
       <TargetCursor
         spinDuration={2}
         hideDefaultCursor
