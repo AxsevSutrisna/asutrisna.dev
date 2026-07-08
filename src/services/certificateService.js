@@ -1,13 +1,13 @@
-import { supabase } from '../config/supabase';
+import { supabase } from "../config/supabase"
 
 export const certificateService = {
   async fetchAll() {
     const { data, error } = await supabase
       .from("certificates")
       .select("*")
-      .order('id', { ascending: false });
+      .order("id", { ascending: false })
 
-    if (error) throw new Error(error.message);
-    return data || [];
-  }
-};
+    if (error) throw new Error(error.message)
+    return data || []
+  },
+}

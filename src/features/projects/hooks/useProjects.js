@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
-import { useProjectStore } from '../../../store/useProjectStore';
+import { useEffect } from "react"
+import { useProjectStore } from "../../../store/useProjectStore"
 
 export function useProjects() {
-  const { projects, loading, fetchProjects } = useProjectStore();
+  const { projects, loading, fetchProjects } = useProjectStore()
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    fetchProjects()
+  }, [fetchProjects])
 
-  const refresh = () => fetchProjects(true);
+  const refresh = () => fetchProjects(true)
 
-  return { projects, loading, refresh };
+  return { projects, loading, refresh }
 }

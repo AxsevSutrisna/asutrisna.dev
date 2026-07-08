@@ -1,28 +1,32 @@
-import { memo, useState, useEffect } from 'react'
-import { supabase } from '../../../config/supabase'
-import { 
-  Github, 
-  Linkedin, 
-  Instagram, 
-  Facebook, 
-  Youtube, 
-  Twitter, 
+import { memo, useState, useEffect } from "react"
+import { supabase } from "../../../config/supabase"
+import {
+  Github,
+  Linkedin,
+  Instagram,
+  Facebook,
+  Youtube,
+  Twitter,
   Dribbble,
   Figma,
-  ExternalLink 
-} from 'lucide-react'
+  ExternalLink,
+} from "lucide-react"
 
 // Icon mapping based on platform/icon name
 const getIcon = (name) => {
-  const normalized = (name || '').toLowerCase()
-  if (normalized.includes('github') || normalized.includes('git')) return Github
-  if (normalized.includes('linkedin') || normalized.includes('link')) return Linkedin
-  if (normalized.includes('instagram') || normalized.includes('insta')) return Instagram
-  if (normalized.includes('facebook') || normalized.includes('fb')) return Facebook
-  if (normalized.includes('youtube') || normalized.includes('yt')) return Youtube
-  if (normalized.includes('twitter') || normalized.includes('x')) return Twitter
-  if (normalized.includes('dribbble')) return Dribbble
-  if (normalized.includes('figma')) return Figma
+  const normalized = (name || "").toLowerCase()
+  if (normalized.includes("github") || normalized.includes("git")) return Github
+  if (normalized.includes("linkedin") || normalized.includes("link"))
+    return Linkedin
+  if (normalized.includes("instagram") || normalized.includes("insta"))
+    return Instagram
+  if (normalized.includes("facebook") || normalized.includes("fb"))
+    return Facebook
+  if (normalized.includes("youtube") || normalized.includes("yt"))
+    return Youtube
+  if (normalized.includes("twitter") || normalized.includes("x")) return Twitter
+  if (normalized.includes("dribbble")) return Dribbble
+  if (normalized.includes("figma")) return Figma
   return ExternalLink
 }
 
@@ -34,18 +38,18 @@ const HomeCTA = () => {
     const fetchLinks = async () => {
       try {
         const { data, error } = await supabase
-          .from('social_links')
-          .select('*')
-          .eq('is_active', true)
-          .order('is_primary', { ascending: false })
-          .order('sort_order', { ascending: true })
-          .order('created_at', { ascending: true })
+          .from("social_links")
+          .select("*")
+          .eq("is_active", true)
+          .order("is_primary", { ascending: false })
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true })
 
         if (!error && data) {
           setSocialLinks(data)
         }
       } catch (error) {
-        console.error('Error fetching social links:', error)
+        console.error("Error fetching social links:", error)
       } finally {
         setLoading(false)
       }
@@ -68,7 +72,7 @@ const HomeCTA = () => {
     <section
       id="HomeCTA"
       className="w-full px-4 sm:px-6 md:px-8 lg:px-[10%] py-10 sm:py-16 pb-20 sm:pb-24"
-      style={{ backgroundColor: 'var(--color-backdrop-base)' }}
+      style={{ backgroundColor: "var(--color-backdrop-base)" }}
       aria-label="Stay Connected"
     >
       <div className="container mx-auto max-w-4xl">
@@ -78,20 +82,26 @@ const HomeCTA = () => {
           data-aos-duration="1000"
         >
           {/* Dynamic color overlay matching Achievement card */}
-          <div 
-            className="absolute -z-10 inset-0 opacity-10 rounded-xl pointer-events-none" 
-            style={{ background: 'linear-gradient(to bottom right, var(--color-primary-dark), var(--color-primary-light))' }}
+          <div
+            className="absolute -z-10 inset-0 opacity-10 rounded-xl pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(to bottom right, var(--color-primary-dark), var(--color-primary-light))",
+            }}
           />
 
           {/* Content */}
           <div className="relative z-10 flex flex-col items-center gap-6">
             <div className="space-y-3">
               <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-wide">
-                Stay <span style={{ color: 'var(--color-primary-light)' }}>Connected</span>
+                Stay{" "}
+                <span style={{ color: "var(--color-primary-light)" }}>
+                  Connected
+                </span>
               </h2>
-              <p 
+              <p
                 className="text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase"
-                style={{ color: 'var(--color-text-muted)' }}
+                style={{ color: "var(--color-text-muted)" }}
               >
                 Follow my journey across platforms
               </p>
@@ -111,9 +121,12 @@ const HomeCTA = () => {
                     aria-label={social.display_name || social.platform}
                     title={social.display_name || social.platform}
                   >
-                    <div 
+                    <div
                       className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                      style={{ background: 'linear-gradient(to bottom right, var(--color-primary-dark), var(--color-primary-light))' }}
+                      style={{
+                        background:
+                          "linear-gradient(to bottom right, var(--color-primary-dark), var(--color-primary-light))",
+                      }}
                     />
                     <IconComponent className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 text-white/70 group-hover:text-white transition-colors duration-300" />
                   </a>
@@ -127,5 +140,5 @@ const HomeCTA = () => {
   )
 }
 
-HomeCTA.displayName = 'HomeCTA'
+HomeCTA.displayName = "HomeCTA"
 export default memo(HomeCTA)

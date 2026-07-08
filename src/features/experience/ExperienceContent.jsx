@@ -1,71 +1,91 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useExperienceData } from './hooks/useExperienceData';
-import { MapPin, CalendarDays, Sparkles } from 'lucide-react';
-import { formatDateRange as formatWorkDate } from '../../utils/workExperiences';
-import { formatDateRange as formatEduDate } from '../../utils/educations';
-import { Card } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
+import React, { useState, useEffect, useRef } from "react"
+import { useExperienceData } from "./hooks/useExperienceData"
+import { MapPin, CalendarDays, Sparkles } from "lucide-react"
+import { formatDateRange as formatWorkDate } from "../../utils/workExperiences"
+import { formatDateRange as formatEduDate } from "../../utils/educations"
+import { Card } from "../../components/ui/card"
+import { Badge } from "../../components/ui/badge"
 
 /* ── UI Helpers ── */
-function renderDescription(text, primaryColor = 'var(--color-primary-light)') {
-  if (!text) return null;
-  const lines = text.split('\n');
-  const blocks = [];
+function renderDescription(text, primaryColor = "var(--color-primary-light)") {
+  if (!text) return null
+  const lines = text.split("\n")
+  const blocks = []
   lines.forEach((raw) => {
-    const line = raw.trim();
-    if (!line) return;
-    const isBullet = /^[-•–]\s+/.test(line);
-    if (isBullet) blocks.push({ type: 'bullet', content: line.replace(/^[-•–]\s+/, '') });
-    else blocks.push({ type: 'text', content: line });
-  });
+    const line = raw.trim()
+    if (!line) return
+    const isBullet = /^[-•–]\s+/.test(line)
+    if (isBullet)
+      blocks.push({ type: "bullet", content: line.replace(/^[-•–]\s+/, "") })
+    else blocks.push({ type: "text", content: line })
+  })
 
-  if (!blocks.length) return null;
+  if (!blocks.length) return null
 
-  const elements = [];
-  let i = 0;
+  const elements = []
+  let i = 0
   while (i < blocks.length) {
-    if (blocks[i].type === 'bullet') {
-      const items = [];
-      while (i < blocks.length && blocks[i].type === 'bullet') {
-        items.push(blocks[i].content);
-        i++;
+    if (blocks[i].type === "bullet") {
+      const items = []
+      while (i < blocks.length && blocks[i].type === "bullet") {
+        items.push(blocks[i].content)
+        i++
       }
       elements.push(
         <ul key={`ul-${i}`} className="space-y-2 list-none mt-3">
           {items.map((item, j) => (
-            <li key={j} className="flex items-start gap-3 text-sm sm:text-base text-gray-300 leading-relaxed">
-              <span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: primaryColor }} aria-hidden="true" />
+            <li
+              key={j}
+              className="flex items-start gap-3 text-sm sm:text-base text-gray-300 leading-relaxed"
+            >
+              <span
+                className="mt-2 w-1.5 h-1.5 rounded-full shrink-0"
+                style={{ backgroundColor: primaryColor }}
+                aria-hidden="true"
+              />
               <span>{item}</span>
             </li>
           ))}
         </ul>
-      );
+      )
     } else {
       elements.push(
-        <p key={`p-${i}`} className="text-sm sm:text-base text-gray-300 leading-relaxed mt-3">
+        <p
+          key={`p-${i}`}
+          className="text-sm sm:text-base text-gray-300 leading-relaxed mt-3"
+        >
           {blocks[i].content}
         </p>
-      );
-      i++;
+      )
+      i++
     }
   }
 
-  return <div className="space-y-1">{elements}</div>;
+  return <div className="space-y-1">{elements}</div>
 }
 
 /* ── Generic Expandable Card ── */
-const ExpandableCard = ({ title, subtitle, dateRange, location, badges, description, isCurrent, children }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isTruncated, setIsTruncated] = useState(false);
-  const contentRef = useRef(null);
+const ExpandableCard = ({
+  title,
+  subtitle,
+  dateRange,
+  location,
+  badges,
+  description,
+  isCurrent,
+  children,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isTruncated, setIsTruncated] = useState(false)
+  const contentRef = useRef(null)
 
   useEffect(() => {
     if (contentRef.current) {
       if (contentRef.current.scrollHeight > 180) {
-        setIsTruncated(true);
+        setIsTruncated(true)
       }
     }
-  }, [description]);
+  }, [description])
 
   return (
     <div className="relative group mb-8 last:mb-0">
@@ -78,7 +98,10 @@ const ExpandableCard = ({ title, subtitle, dateRange, location, badges, descript
                 {title}
               </h3>
               {isCurrent && (
-                <Badge variant="primary" className="text-xs uppercase tracking-wider px-3 py-1 font-semibold">
+                <Badge
+                  variant="primary"
+                  className="text-xs uppercase tracking-wider px-3 py-1 font-semibold"
+                >
                   Current
                 </Badge>
               )}
@@ -86,14 +109,18 @@ const ExpandableCard = ({ title, subtitle, dateRange, location, badges, descript
 
             <div className="text-lg text-gray-300 flex flex-wrap items-center gap-2">
               <span className="font-semibold text-white">{subtitle}</span>
-              {badges && badges.map((badge, idx) => (
-                <React.Fragment key={idx}>
-                  <span className="text-gray-600">•</span>
-                  <Badge variant="neutral" className="text-[10px] uppercase tracking-widest px-2 py-0.5 font-medium bg-white/5 text-gray-300">
-                    {badge}
-                  </Badge>
-                </React.Fragment>
-              ))}
+              {badges &&
+                badges.map((badge, idx) => (
+                  <React.Fragment key={idx}>
+                    <span className="text-gray-600">•</span>
+                    <Badge
+                      variant="neutral"
+                      className="text-[10px] uppercase tracking-widest px-2 py-0.5 font-medium bg-white/5 text-gray-300"
+                    >
+                      {badge}
+                    </Badge>
+                  </React.Fragment>
+                ))}
             </div>
           </div>
 
@@ -114,35 +141,46 @@ const ExpandableCard = ({ title, subtitle, dateRange, location, badges, descript
 
         {description && (
           <div className="mt-6 relative">
-            <div 
+            <div
               ref={contentRef}
               className={`transition-all duration-700 ease-in-out overflow-hidden ${
-                isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-[150px] opacity-90'
+                isExpanded
+                  ? "max-h-[2000px] opacity-100"
+                  : "max-h-[150px] opacity-90"
               }`}
             >
               {renderDescription(description)}
-              
+
               {/* Smooth Fade Overlay when truncated */}
               {!isExpanded && isTruncated && (
                 <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/60 to-transparent pointer-events-none" />
               )}
             </div>
-            
+
             {isTruncated && (
-              <div className={`mt-2 flex justify-start ${!isExpanded ? 'relative z-10 -mt-8' : ''}`}>
+              <div
+                className={`mt-2 flex justify-start ${!isExpanded ? "relative z-10 -mt-8" : ""}`}
+              >
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="cursor-target group/btn flex items-center gap-2 text-sm font-medium text-theme-primary-light hover:text-white transition-colors duration-300 py-2 focus:outline-none"
                 >
                   <span className="relative overflow-hidden pb-0.5">
-                    {isExpanded ? 'Show less' : 'Read more'}
+                    {isExpanded ? "Show less" : "Read more"}
                     <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-theme-primary-light transform origin-left scale-x-0 transition-transform duration-300 group-hover/btn:scale-x-100" />
                   </span>
-                  <svg 
-                    className={`w-4 h-4 transition-transform duration-300 group-hover/btn:translate-y-0.5 ${isExpanded ? 'rotate-180 group-hover/btn:-translate-y-0.5' : ''}`} 
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-300 group-hover/btn:translate-y-0.5 ${isExpanded ? "rotate-180 group-hover/btn:-translate-y-0.5" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
               </div>
@@ -153,54 +191,57 @@ const ExpandableCard = ({ title, subtitle, dateRange, location, badges, descript
         {children}
       </Card>
     </div>
-  );
-};
+  )
+}
 
 /* ── Main Component ── */
 export default function ExperienceContent() {
-  const [activeTab, setActiveTab] = useState('work'); // 'work' or 'education'
-  const { workExperiences, educations, loading } = useExperienceData();
+  const [activeTab, setActiveTab] = useState("work") // 'work' or 'education'
+  const { workExperiences, educations, loading } = useExperienceData()
 
   const TABS = [
-    { id: 'work', label: 'Working Experience', number: '01' },
-    { id: 'education', label: 'Educational History', number: '02' },
-  ];
+    { id: "work", label: "Working Experience", number: "01" },
+    { id: "education", label: "Educational History", number: "02" },
+  ]
 
   return (
     <section className="pb-24 px-[5%] md:px-[10%] min-h-screen">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20">
-        
         {/* Left Column: Navigation Sidebar */}
         <div className="lg:w-1/3 lg:sticky lg:top-32 h-fit lg:z-30">
           {/* Page Title & Description */}
           <div className="mb-8 lg:mb-12">
             <h1 className="text-4xl md:text-5xl font-display font-bold text-white text-left">
-              Professional <span className="text-theme-primary-light">Journey</span>
+              Professional{" "}
+              <span className="text-theme-primary-light">Journey</span>
             </h1>
           </div>
 
           {/* Sticky Tabs container on mobile, relative inside sticky parent on desktop */}
           <div className="sticky top-[76px] lg:relative lg:top-0 z-30 flex flex-row lg:flex-col gap-3 bg-white/5 border border-white/10 rounded-3xl p-2.5 sm:p-6 backdrop-blur-xl">
             {TABS.map((tab) => {
-              const isActive = activeTab === tab.id;
+              const isActive = activeTab === tab.id
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     cursor-target w-full flex items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-2xl transition-all duration-500 font-medium text-center lg:text-left no-neo
-                    ${isActive 
-                      ? 'bg-theme-primary text-white scale-[1.02] shadow-xl shadow-theme-primary/30' 
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white shadow-none'
+                    ${
+                      isActive
+                        ? "bg-theme-primary text-white scale-[1.02] shadow-xl shadow-theme-primary/30"
+                        : "text-gray-400 hover:bg-white/5 hover:text-white shadow-none"
                     }
                   `}
                 >
-                  <span className={`text-sm font-bold opacity-50 ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                  <span
+                    className={`text-sm font-bold opacity-50 ${isActive ? "text-white" : "text-gray-500"}`}
+                  >
                     {tab.number}
                   </span>
                   <span className="text-base sm:text-lg">{tab.label}</span>
                 </button>
-              );
+              )
             })}
           </div>
         </div>
@@ -210,79 +251,101 @@ export default function ExperienceContent() {
           {loading ? (
             <div className="space-y-8">
               {[1, 2].map((i) => (
-                <div key={i} className="rounded-3xl border border-white/10 bg-white/5 p-8 animate-pulse min-h-[300px]" />
+                <div
+                  key={i}
+                  className="rounded-3xl border border-white/10 bg-white/5 p-8 animate-pulse min-h-[300px]"
+                />
               ))}
             </div>
           ) : (
             <div className="space-y-8 transition-all duration-500 ease-in-out">
-              {activeTab === 'work' && (
-                workExperiences.length > 0 ? workExperiences.map((exp) => {
-                  const techStack = Array.isArray(exp.tech_stack) ? exp.tech_stack : [];
-                  return (
+              {activeTab === "work" &&
+                (workExperiences.length > 0 ? (
+                  workExperiences.map((exp) => {
+                    const techStack = Array.isArray(exp.tech_stack)
+                      ? exp.tech_stack
+                      : []
+                    return (
+                      <ExpandableCard
+                        key={exp.id}
+                        title={exp.position}
+                        subtitle={exp.company}
+                        dateRange={formatWorkDate(
+                          exp.start_month,
+                          exp.start_year,
+                          exp.end_month,
+                          exp.end_year,
+                          exp.is_current
+                        )}
+                        location={exp.location}
+                        badges={[exp.employment_type]}
+                        description={exp.description}
+                        isCurrent={exp.is_current}
+                      >
+                        {techStack.length > 0 && (
+                          <div className="mt-8 pt-6 border-t border-white/5">
+                            <div className="flex flex-wrap gap-2">
+                              {techStack.map((tech) => (
+                                <Badge
+                                  key={tech}
+                                  variant="neutral"
+                                  className="text-xs font-medium bg-white/5 hover:bg-theme-primary/20 hover:text-theme-primary-light border-white/10 hover:border-theme-primary/30 transition-all duration-300 px-3 py-1.5"
+                                >
+                                  {tech}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </ExpandableCard>
+                    )
+                  })
+                ) : (
+                  <div className="text-center py-20 text-gray-400">
+                    No working experience found.
+                  </div>
+                ))}
+
+              {activeTab === "education" &&
+                (educations.length > 0 ? (
+                  educations.map((edu) => (
                     <ExpandableCard
-                      key={exp.id}
-                      title={exp.position}
-                      subtitle={exp.company}
-                      dateRange={formatWorkDate(exp.start_month, exp.start_year, exp.end_month, exp.end_year, exp.is_current)}
-                      location={exp.location}
-                      badges={[exp.employment_type]}
-                      description={exp.description}
-                      isCurrent={exp.is_current}
+                      key={edu.id}
+                      title={edu.school}
+                      subtitle={`${edu.degree} ${edu.field_of_study ? `in ${edu.field_of_study}` : ""}`}
+                      dateRange={formatEduDate(
+                        edu.start_month,
+                        edu.start_year,
+                        edu.end_month,
+                        edu.end_year,
+                        edu.is_current
+                      )}
+                      badges={edu.grade ? [`Grade: ${edu.grade}`] : null}
+                      description={edu.description}
+                      isCurrent={edu.is_current}
                     >
-                      {techStack.length > 0 && (
-                        <div className="mt-8 pt-6 border-t border-white/5">
-                          <div className="flex flex-wrap gap-2">
-                            {techStack.map((tech) => (
-                              <Badge
-                                key={tech}
-                                variant="neutral"
-                                className="text-xs font-medium bg-white/5 hover:bg-theme-primary/20 hover:text-theme-primary-light border-white/10 hover:border-theme-primary/30 transition-all duration-300 px-3 py-1.5"
-                              >
-                                {tech}
-                              </Badge>
-                            ))}
+                      {edu.activities && (
+                        <div className="mt-6 pt-6 border-t border-white/5">
+                          <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-theme-primary-light" />
+                            Activities & Societies
+                          </h4>
+                          <div className="text-sm sm:text-base text-gray-300 leading-relaxed">
+                            {renderDescription(edu.activities)}
                           </div>
                         </div>
                       )}
                     </ExpandableCard>
-                  );
-                }) : (
-                  <div className="text-center py-20 text-gray-400">No working experience found.</div>
-                )
-              )}
-
-              {activeTab === 'education' && (
-                educations.length > 0 ? educations.map((edu) => (
-                  <ExpandableCard
-                    key={edu.id}
-                    title={edu.school}
-                    subtitle={`${edu.degree} ${edu.field_of_study ? `in ${edu.field_of_study}` : ''}`}
-                    dateRange={formatEduDate(edu.start_month, edu.start_year, edu.end_month, edu.end_year, edu.is_current)}
-                    badges={edu.grade ? [`Grade: ${edu.grade}`] : null}
-                    description={edu.description}
-                    isCurrent={edu.is_current}
-                  >
-                    {edu.activities && (
-                      <div className="mt-6 pt-6 border-t border-white/5">
-                        <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-theme-primary-light" />
-                          Activities & Societies
-                        </h4>
-                        <div className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                          {renderDescription(edu.activities)}
-                        </div>
-                      </div>
-                    )}
-                  </ExpandableCard>
-                )) : (
-                  <div className="text-center py-20 text-gray-400">No educational history found.</div>
-                )
-              )}
+                  ))
+                ) : (
+                  <div className="text-center py-20 text-gray-400">
+                    No educational history found.
+                  </div>
+                ))}
             </div>
           )}
         </div>
-
       </div>
     </section>
-  );
+  )
 }

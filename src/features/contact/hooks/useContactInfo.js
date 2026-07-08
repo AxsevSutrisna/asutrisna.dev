@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { useContactStore } from '../../../store/useContactStore';
+import { useEffect } from "react"
+import { useContactStore } from "../../../store/useContactStore"
 
 export function useContactInfo() {
-  const { socialLinks, loading, fetchSocialLinks } = useContactStore();
+  const { socialLinks, loading, fetchSocialLinks } = useContactStore()
 
   useEffect(() => {
-    fetchSocialLinks();
-  }, [fetchSocialLinks]);
+    fetchSocialLinks()
+  }, [fetchSocialLinks])
 
-  return { socialLinks, loading };
+  return { socialLinks, loading }
 }

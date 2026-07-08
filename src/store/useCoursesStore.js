@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { courseService } from '../services/courseService';
+import { create } from "zustand"
+import { courseService } from "../services/courseService"
 
 export const useCoursesStore = create((set, get) => ({
   courses: [],
@@ -7,14 +7,14 @@ export const useCoursesStore = create((set, get) => ({
   error: null,
 
   fetchCourses: async () => {
-    if (get().courses.length > 0) return;
+    if (get().courses.length > 0) return
 
-    set({ loading: true, error: null });
+    set({ loading: true, error: null })
     try {
-      const data = await courseService.fetchAll();
-      set({ courses: data, loading: false });
+      const data = await courseService.fetchAll()
+      set({ courses: data, loading: false })
     } catch (err) {
-      set({ error: err.message, loading: false });
+      set({ error: err.message, loading: false })
     }
-  }
-}));
+  },
+}))

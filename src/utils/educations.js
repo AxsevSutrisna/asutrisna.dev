@@ -35,4 +35,4 @@ export const compareEducationTimeline = (a, b) => {
   return (b.start_month || 0) - (a.start_month || 0)
 }
 
-export { formatDateRange } from './dateUtils';
+export { formatDateRange } from "./dateUtils"

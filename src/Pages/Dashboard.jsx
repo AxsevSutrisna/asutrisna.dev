@@ -1,34 +1,57 @@
-import { useState } from 'react'
-import { Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
-import { supabase } from '../config/supabase'
-import Projects from './dashboard/Projects'
-import Certificates from './dashboard/Certificates'
-import About from './dashboard/About'
-import TechStacks from './dashboard/TechStacks'
-import WorkExperience from './dashboard/WorkExperience'
-import Educations from './dashboard/Educations'
-import HeroContent from './dashboard/HeroContent'
-import SocialLinks from './dashboard/SocialLinks'
-import ThemeManager from './dashboard/ThemeManager'
-import Courses from './dashboard/Courses'
-import Achievements from './dashboard/Achievements'
-import Messages from './dashboard/Messages'
-import { FolderGit2, Award, LogOut, LayoutDashboard, Menu, Sparkles, Boxes, Briefcase, Zap, Share2, Palette, BookOpen, GraduationCap, Trophy, MessageSquare } from 'lucide-react'
+import { useState } from "react"
+import {
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom"
+import { Helmet } from "react-helmet-async"
+import { supabase } from "../config/supabase"
+import Projects from "./dashboard/Projects"
+import Certificates from "./dashboard/Certificates"
+import About from "./dashboard/About"
+import TechStacks from "./dashboard/TechStacks"
+import WorkExperience from "./dashboard/WorkExperience"
+import Educations from "./dashboard/Educations"
+import HeroContent from "./dashboard/HeroContent"
+import SocialLinks from "./dashboard/SocialLinks"
+import ThemeManager from "./dashboard/ThemeManager"
+import Courses from "./dashboard/Courses"
+import Achievements from "./dashboard/Achievements"
+import Messages from "./dashboard/Messages"
+import {
+  FolderGit2,
+  Award,
+  LogOut,
+  LayoutDashboard,
+  Menu,
+  Sparkles,
+  Boxes,
+  Briefcase,
+  Zap,
+  Share2,
+  Palette,
+  BookOpen,
+  GraduationCap,
+  Trophy,
+  MessageSquare,
+} from "lucide-react"
 
 const NAV_ITEMS = [
-  { to: 'projects', label: 'Projects', icon: FolderGit2 },
-  { to: 'work-experience', label: 'Work Experience', icon: Briefcase },
-  { to: 'educations', label: 'Educations', icon: GraduationCap },
+  { to: "projects", label: "Projects", icon: FolderGit2 },
+  { to: "work-experience", label: "Work Experience", icon: Briefcase },
+  { to: "educations", label: "Educations", icon: GraduationCap },
   // { to: 'courses', label: 'Courses', icon: BookOpen },
-  { to: 'hero-content', label: 'Hero Content', icon: Zap },
-  { to: 'about', label: 'About', icon: Sparkles },
-  { to: 'tech-stacks', label: 'Tech Stack', icon: Boxes },
-  { to: 'social-links', label: 'Social Media', icon: Share2 },
-  { to: 'certificates', label: 'Certificates', icon: Award },
-  { to: 'achievements', label: 'Achievements', icon: Trophy },
-  { to: 'messages', label: 'Messages', icon: MessageSquare },
-  { to: 'theme-manager', label: 'Theme Manager', icon: Palette },
+  { to: "hero-content", label: "Hero Content", icon: Zap },
+  { to: "about", label: "About", icon: Sparkles },
+  { to: "tech-stacks", label: "Tech Stack", icon: Boxes },
+  { to: "social-links", label: "Social Media", icon: Share2 },
+  { to: "certificates", label: "Certificates", icon: Award },
+  { to: "achievements", label: "Achievements", icon: Trophy },
+  { to: "messages", label: "Messages", icon: MessageSquare },
+  { to: "theme-manager", label: "Theme Manager", icon: Palette },
 ]
 
 export default function Dashboard() {
@@ -38,7 +61,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    navigate('/login')
+    navigate("/login")
   }
 
   const SidebarContent = () => (
@@ -46,9 +69,21 @@ export default function Dashboard() {
       {/* Logo */}
       <div className="flex items-center gap-3 px-1 shrink-0">
         <div className="relative">
-          <div className="absolute -inset-0.5 rounded-xl blur opacity-50" style={{ background: 'linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))' }} />
-          <div className="relative w-9 h-9 rounded-xl border border-white/15 flex items-center justify-center" style={{ backgroundColor: 'var(--color-backdrop-base)' }}>
-            <LayoutDashboard className="w-4 h-4" style={{ color: 'var(--color-primary-light)' }} />
+          <div
+            className="absolute -inset-0.5 rounded-xl blur opacity-50"
+            style={{
+              background:
+                "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
+            }}
+          />
+          <div
+            className="relative w-9 h-9 rounded-xl border border-white/15 flex items-center justify-center"
+            style={{ backgroundColor: "var(--color-backdrop-base)" }}
+          >
+            <LayoutDashboard
+              className="w-4 h-4"
+              style={{ color: "var(--color-primary-light)" }}
+            />
           </div>
         </div>
         <div>
@@ -58,17 +93,32 @@ export default function Dashboard() {
       </div>
 
       {/* Badge */}
-      <div 
+      <div
         className="shrink-0 px-3 py-2 rounded-full border flex items-center gap-2"
-        style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary-dark) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--color-primary-dark) 20%, transparent)' }}
+        style={{
+          backgroundColor:
+            "color-mix(in srgb, var(--color-primary-dark) 10%, transparent)",
+          borderColor:
+            "color-mix(in srgb, var(--color-primary-dark) 20%, transparent)",
+        }}
       >
-        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-primary-light)' }} />
-        <span className="text-xs font-medium" style={{ color: 'var(--color-primary-light)' }}>Portfolio Manager</span>
+        <span
+          className="w-1.5 h-1.5 rounded-full animate-pulse"
+          style={{ backgroundColor: "var(--color-primary-light)" }}
+        />
+        <span
+          className="text-xs font-medium"
+          style={{ color: "var(--color-primary-light)" }}
+        >
+          Portfolio Manager
+        </span>
       </div>
 
       {/* Nav */}
       <nav className="flex flex-col gap-3 flex-1 min-h-0">
-        <p className="text-[10px] text-gray-600 uppercase tracking-widest px-3 mb-2 shrink-0">Menu</p>
+        <p className="text-[10px] text-gray-600 uppercase tracking-widest px-3 mb-2 shrink-0">
+          Menu
+        </p>
         {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
           const active = location.pathname.includes(to)
           return (
@@ -77,18 +127,35 @@ export default function Dashboard() {
               to={to}
               onClick={() => setSidebarOpen(false)}
               className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium shrink-0 relative overflow-hidden border cursor-target ${
-                active ? 'border-transparent' : 'border-transparent text-[color:var(--color-text-muted)] hover:bg-white/5 hover:text-white'
+                active
+                  ? "border-transparent"
+                  : "border-transparent text-[color:var(--color-text-muted)] hover:bg-white/5 hover:text-white"
               }`}
-              style={active ? {
-                background: 'linear-gradient(90deg, color-mix(in srgb, var(--color-primary-dark) 15%, transparent), color-mix(in srgb, var(--color-primary-light) 15%, transparent))',
-                borderColor: 'color-mix(in srgb, var(--color-primary-light) 30%, transparent)',
-                color: 'var(--color-primary-light)',
-                boxShadow: '0 0 15px 0 color-mix(in srgb, var(--color-primary-dark) 20%, transparent)'
-              } : {}}
+              style={
+                active
+                  ? {
+                      background:
+                        "linear-gradient(90deg, color-mix(in srgb, var(--color-primary-dark) 15%, transparent), color-mix(in srgb, var(--color-primary-light) 15%, transparent))",
+                      borderColor:
+                        "color-mix(in srgb, var(--color-primary-light) 30%, transparent)",
+                      color: "var(--color-primary-light)",
+                      boxShadow:
+                        "0 0 15px 0 color-mix(in srgb, var(--color-primary-dark) 20%, transparent)",
+                    }
+                  : {}
+              }
             >
-              <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" style={active ? { color: 'var(--color-primary-light)' } : {}} />
+              <Icon
+                className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110"
+                style={active ? { color: "var(--color-primary-light)" } : {}}
+              />
               {label}
-              {active && <span className="ml-auto w-1.5 h-1.5 rounded-full shadow-[0_0_8px_var(--color-primary-light)]" style={{ backgroundColor: 'var(--color-primary-light)' }} />}
+              {active && (
+                <span
+                  className="ml-auto w-1.5 h-1.5 rounded-full shadow-[0_0_8px_var(--color-primary-light)]"
+                  style={{ backgroundColor: "var(--color-primary-light)" }}
+                />
+              )}
             </Link>
           )
         })}
@@ -114,7 +181,10 @@ export default function Dashboard() {
       </Helmet>
 
       {/* Kunci: TIDAK pakai overflow-hidden di sini supaya scrollbar main bisa diklik */}
-      <div className="dashboard-admin flex text-white" style={{ height: '100dvh' }}>
+      <div
+        className="dashboard-admin flex text-white"
+        style={{ height: "100dvh" }}
+      >
         {/* Mobile overlay */}
         {sidebarOpen && (
           <div
@@ -126,15 +196,16 @@ export default function Dashboard() {
         {/* Sidebar - desktop: sticky, tinggi 100dvh */}
         <aside
           className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/8 bg-white/3 backdrop-blur-xl"
-          style={{ height: '100dvh', position: 'sticky', top: 0 }}
+          style={{ height: "100dvh", position: "sticky", top: 0 }}
         >
           <SidebarContent />
         </aside>
 
         {/* Sidebar - mobile drawer */}
         <aside
-          className={`fixed inset-y-0 left-0 z-30 w-60 flex flex-col border-r border-white/8 bg-[#0a0a1a] backdrop-blur-xl transition-transform duration-300 lg:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}
+          className={`fixed inset-y-0 left-0 z-30 w-60 flex flex-col border-r border-white/8 bg-[#0a0a1a] backdrop-blur-xl transition-transform duration-300 lg:hidden ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           <SidebarContent />
         </aside>

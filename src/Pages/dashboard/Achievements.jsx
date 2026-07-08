@@ -1,10 +1,18 @@
-import { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { supabase } from "../../config/supabase";
-import { useToast } from "../../hooks/useToast";
-import ToastStack from "../../components/ToastStack";
-import { Trophy, Plus, Trash2, Pencil, X, Save, GripVertical } from "lucide-react";
-import AddNewButton from "./components/AddNewButton";
+import { useEffect, useState } from "react"
+import ReactDOM from "react-dom"
+import { supabase } from "../../config/supabase"
+import { useToast } from "../../hooks/useToast"
+import ToastStack from "../../components/ToastStack"
+import {
+  Trophy,
+  Plus,
+  Trash2,
+  Pencil,
+  X,
+  Save,
+  GripVertical,
+} from "lucide-react"
+import AddNewButton from "./components/AddNewButton"
 
 const Modal = ({ title, onClose, children }) =>
   ReactDOM.createPortal(
@@ -40,9 +48,15 @@ const Modal = ({ title, onClose, children }) =>
       </div>
     </div>,
     document.body
-  );
+  )
 
-const AchievementForm = ({ initial, onSubmit, onCancel, submitLabel, saving }) => {
+const AchievementForm = ({
+  initial,
+  onSubmit,
+  onCancel,
+  submitLabel,
+  saving,
+}) => {
   const [form, setForm] = useState({
     title: initial?.title || "",
     deskripsi: initial?.deskripsi || "",
@@ -51,18 +65,19 @@ const AchievementForm = ({ initial, onSubmit, onCancel, submitLabel, saving }) =
     date: initial?.date || "",
     level_competition: initial?.level_competition || "",
     sort_order: initial?.sort_order ?? "",
-  });
+  })
 
-  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(form);
-  };
+    e.preventDefault()
+    onSubmit(form)
+  }
 
   const inputCls =
-    "w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all cursor-target";
-  const labelCls = "text-xs text-indigo-300/70 uppercase tracking-wider font-medium";
+    "w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all cursor-target"
+  const labelCls =
+    "text-xs text-indigo-300/70 uppercase tracking-wider font-medium"
 
   return (
     <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5">
@@ -147,7 +162,8 @@ const AchievementForm = ({ initial, onSubmit, onCancel, submitLabel, saving }) =
             className={inputCls}
           />
           <p className="text-[11px] text-gray-500 mt-1">
-            Optional. If left empty, the achievement will be placed at the bottom automatically.
+            Optional. If left empty, the achievement will be placed at the
+            bottom automatically.
           </p>
         </div>
       </div>
@@ -160,7 +176,11 @@ const AchievementForm = ({ initial, onSubmit, onCancel, submitLabel, saving }) =
         >
           Cancel
         </button>
-        <button type="submit" disabled={saving} className="relative group/s cursor-target">
+        <button
+          type="submit"
+          disabled={saving}
+          className="relative group/s cursor-target"
+        >
           <div
             className="absolute -inset-0.5 rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300"
             style={{
@@ -184,20 +204,20 @@ const AchievementForm = ({ initial, onSubmit, onCancel, submitLabel, saving }) =
         </button>
       </div>
     </form>
-  );
-};
+  )
+}
 
 export default function Achievements() {
-  const [achievements, setAchievements] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreate, setShowCreate] = useState(false);
-  const [editItem, setEditItem] = useState(null);
-  const [saving, setSaving] = useState(false);
+  const [achievements, setAchievements] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showCreate, setShowCreate] = useState(false)
+  const [editItem, setEditItem] = useState(null)
+  const [saving, setSaving] = useState(false)
 
-  const [draggingId, setDraggingId] = useState(null);
-  const [dropTargetId, setDropTargetId] = useState(null);
+  const [draggingId, setDraggingId] = useState(null)
+  const [dropTargetId, setDropTargetId] = useState(null)
 
-  const { toasts, pushToast, removeToast } = useToast();
+  const { toasts, pushToast, removeToast } = useToast()
 
   const fetchAchievements = async () => {
     try {
@@ -205,128 +225,137 @@ export default function Achievements() {
         .from("achievements")
         .select("*")
         .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
 
-      if (error) throw error;
-      setAchievements(data || []);
+      if (error) throw error
+      setAchievements(data || [])
     } catch (err) {
-      pushToast("error", err.message);
+      pushToast("error", err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchAchievements();
-  }, []);
+    fetchAchievements()
+  }, [])
 
   const getNextSortOrder = () => {
     const highestSortOrder = achievements.reduce((highest, item) => {
-      const currentSortOrder = Number(item.sort_order || 0);
-      return currentSortOrder > highest ? currentSortOrder : highest;
-    }, 0);
-    return highestSortOrder + 1;
-  };
+      const currentSortOrder = Number(item.sort_order || 0)
+      return currentSortOrder > highest ? currentSortOrder : highest
+    }, 0)
+    return highestSortOrder + 1
+  }
 
   const resolveSortOrder = (value) => {
     if (value === "" || value === null || value === undefined) {
-      return getNextSortOrder();
+      return getNextSortOrder()
     }
-    const parsedSortOrder = Number(value);
-    return Number.isNaN(parsedSortOrder) ? getNextSortOrder() : parsedSortOrder;
-  };
+    const parsedSortOrder = Number(value)
+    return Number.isNaN(parsedSortOrder) ? getNextSortOrder() : parsedSortOrder
+  }
 
   const persistOrder = async (orderedItems) => {
-    const updates = orderedItems.map((item, index) => ({ ...item, sort_order: index + 1 }));
-    const { error } = await supabase.from("achievements").upsert(updates);
-    if (error) throw error;
-    setAchievements(updates);
-  };
+    const updates = orderedItems.map((item, index) => ({
+      ...item,
+      sort_order: index + 1,
+    }))
+    const { error } = await supabase.from("achievements").upsert(updates)
+    if (error) throw error
+    setAchievements(updates)
+  }
 
-  const handleDragStart = (id) => setDraggingId(id);
-  const handleDragOver = (event) => event.preventDefault();
+  const handleDragStart = (id) => setDraggingId(id)
+  const handleDragOver = (event) => event.preventDefault()
   const handleDragEnter = (id) => {
     if (draggingId && draggingId !== id) {
-      setDropTargetId(id);
+      setDropTargetId(id)
     }
-  };
+  }
   const handleDragLeave = (id, event) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       if (dropTargetId === id) {
-        setDropTargetId(null);
+        setDropTargetId(null)
       }
     }
-  };
+  }
 
   const handleDrop = async (targetId) => {
-    if (!draggingId || draggingId === targetId) return;
+    if (!draggingId || draggingId === targetId) return
 
-    const currentItems = [...achievements];
-    const sourceIndex = currentItems.findIndex((item) => item.id === draggingId);
-    const targetIndex = currentItems.findIndex((item) => item.id === targetId);
+    const currentItems = [...achievements]
+    const sourceIndex = currentItems.findIndex((item) => item.id === draggingId)
+    const targetIndex = currentItems.findIndex((item) => item.id === targetId)
 
-    if (sourceIndex === -1 || targetIndex === -1) return;
+    if (sourceIndex === -1 || targetIndex === -1) return
 
-    const nextItems = [...currentItems];
-    const [movedItem] = nextItems.splice(sourceIndex, 1);
-    nextItems.splice(targetIndex, 0, movedItem);
+    const nextItems = [...currentItems]
+    const [movedItem] = nextItems.splice(sourceIndex, 1)
+    nextItems.splice(targetIndex, 0, movedItem)
 
     try {
-      await persistOrder(nextItems);
+      await persistOrder(nextItems)
     } catch (error) {
-      pushToast("error", error.message || "Failed to reorder achievements");
+      pushToast("error", error.message || "Failed to reorder achievements")
     } finally {
-      setDraggingId(null);
-      setDropTargetId(null);
+      setDraggingId(null)
+      setDropTargetId(null)
     }
-  };
+  }
 
   const handleCreate = async (form) => {
     try {
-      setSaving(true);
-      const sortOrder = resolveSortOrder(form.sort_order);
-      const { error } = await supabase.from("achievements").insert([{ ...form, sort_order: sortOrder }]);
-      if (error) throw error;
-      pushToast("success", "Achievement created!");
-      setShowCreate(false);
-      fetchAchievements();
+      setSaving(true)
+      const sortOrder = resolveSortOrder(form.sort_order)
+      const { error } = await supabase
+        .from("achievements")
+        .insert([{ ...form, sort_order: sortOrder }])
+      if (error) throw error
+      pushToast("success", "Achievement created!")
+      setShowCreate(false)
+      fetchAchievements()
     } catch (err) {
-      pushToast("error", err.message);
+      pushToast("error", err.message)
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
   const handleUpdate = async (form) => {
     try {
-      setSaving(true);
-      const sortOrder = resolveSortOrder(form.sort_order);
+      setSaving(true)
+      const sortOrder = resolveSortOrder(form.sort_order)
       const { error } = await supabase
         .from("achievements")
         .update({ ...form, sort_order: sortOrder })
-        .eq("id", editItem.id);
-      if (error) throw error;
-      pushToast("success", "Achievement updated!");
-      setEditItem(null);
-      fetchAchievements();
+        .eq("id", editItem.id)
+      if (error) throw error
+      pushToast("success", "Achievement updated!")
+      setEditItem(null)
+      fetchAchievements()
     } catch (err) {
-      pushToast("error", err.message);
+      pushToast("error", err.message)
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this achievement?")) return;
+    if (!window.confirm("Are you sure you want to delete this achievement?"))
+      return
     try {
-      const { error } = await supabase.from("achievements").delete().eq("id", id);
-      if (error) throw error;
-      pushToast("success", "Achievement removed.");
-      fetchAchievements();
+      const { error } = await supabase
+        .from("achievements")
+        .delete()
+        .eq("id", id)
+      if (error) throw error
+      pushToast("success", "Achievement removed.")
+      fetchAchievements()
     } catch (err) {
-      pushToast("error", err.message);
+      pushToast("error", err.message)
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -344,16 +373,23 @@ export default function Achievements() {
             Manage your competitive and academic achievements.
           </p>
         </div>
-        <AddNewButton onClick={() => setShowCreate(true)} label="New Achievement" />
+        <AddNewButton
+          onClick={() => setShowCreate(true)}
+          label="New Achievement"
+        />
       </div>
 
       {loading ? (
-        <div className="text-center py-10 text-gray-500">Loading achievements...</div>
+        <div className="text-center py-10 text-gray-500">
+          Loading achievements...
+        </div>
       ) : achievements.length === 0 ? (
         <div className="text-center py-20 rounded-2xl border border-dashed border-white/10 bg-white/5">
           <Trophy className="w-10 h-10 mx-auto text-gray-600 mb-4" />
           <p className="text-gray-400 font-medium">No achievements found</p>
-          <p className="text-sm text-gray-500 mt-1">Add your first achievement to showcase your skills.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Add your first achievement to showcase your skills.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -374,21 +410,25 @@ export default function Achievements() {
                   Drop to place here
                 </div>
               )}
-              
+
               <div className="relative group h-full">
                 <div className="absolute -inset-0.5 bg-[#0f172a] rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-500" />
                 <div className="relative bg-white/5 backdrop-blur-xl border border-white/12 rounded-2xl h-full p-4 flex flex-col gap-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-white text-sm">{item.title}</h3>
+                        <h3 className="font-semibold text-white text-sm">
+                          {item.title}
+                        </h3>
                         {item.badge_text && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] border bg-emerald-500/10 border-emerald-500/20 text-emerald-300">
                             {item.badge_text}
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-500 text-xs">{item.level_competition}</p>
+                      <p className="text-gray-500 text-xs">
+                        {item.level_competition}
+                      </p>
                     </div>
 
                     <div className="flex gap-2">
@@ -421,8 +461,14 @@ export default function Achievements() {
 
                     <div className="space-y-1 text-sm flex-1 min-w-0">
                       <p className="text-gray-300 truncate">{item.date}</p>
-                      <p className="text-gray-500 text-xs">Order: {item.sort_order ?? 0}</p>
-                      {item.place && <p className="text-indigo-400 text-xs truncate">{item.place}</p>}
+                      <p className="text-gray-500 text-xs">
+                        Order: {item.sort_order ?? 0}
+                      </p>
+                      {item.place && (
+                        <p className="text-indigo-400 text-xs truncate">
+                          {item.place}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -433,7 +479,10 @@ export default function Achievements() {
       )}
 
       {showCreate && (
-        <Modal title="Create New Achievement" onClose={() => setShowCreate(false)}>
+        <Modal
+          title="Create New Achievement"
+          onClose={() => setShowCreate(false)}
+        >
           <AchievementForm
             onSubmit={handleCreate}
             onCancel={() => setShowCreate(false)}
@@ -455,5 +504,5 @@ export default function Achievements() {
         </Modal>
       )}
     </div>
-  );
+  )
 }

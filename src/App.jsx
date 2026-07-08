@@ -1,30 +1,36 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import React, { lazy, Suspense } from "react";
-import { HelmetProvider } from "react-helmet-async";
-import { Analytics } from "@vercel/analytics/react";
-import "./index.css";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import AnimatedBackground from "./components/Background";
-import Footer from "./components/Footer";
-import { useTheme } from "./hooks/useTheme";
-import PublicLayout from "./components/layouts/PublicLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom"
+import { lazy, Suspense } from "react"
+import { HelmetProvider } from "react-helmet-async"
+import { Analytics } from "@vercel/analytics/react"
+import ErrorBoundary from "./components/ErrorBoundary"
+import { PageSkeleton } from "./components/ui/Skeleton"
+import "./index.css"
+import Navbar from "./components/Navbar"
+import Home from "./pages/Home"
+import AnimatedBackground from "./components/Background"
+import Footer from "./components/Footer"
+import { useTheme } from "./hooks/useTheme"
+import PublicLayout from "./components/layouts/PublicLayout"
+import ProtectedRoute from "./components/ProtectedRoute"
 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login"
+import Dashboard from "./pages/Dashboard"
 
-const Portfolio = lazy(() => import("./features/projects/Portfolio"));
-const ContactPage = lazy(() => import("./features/contact/Contact"));
-const ProjectDetails = lazy(() => import("./features/projects/ProjectDetail"));
-const NotFoundPage = lazy(() => import("./pages/NotFound"));
+const Portfolio = lazy(() => import("./features/projects/Portfolio"))
+const ContactPage = lazy(() => import("./features/contact/Contact"))
+const ProjectDetails = lazy(() => import("./features/projects/ProjectDetail"))
+const NotFoundPage = lazy(() => import("./pages/NotFound"))
 
-const About = lazy(() => import("./features/about/About"));
-const StackPage = lazy(() => import("./features/techstack/StackPage"));
-const ExperienceContent = lazy(() => import("./features/experience/ExperienceContent"));
-const CoursesPage = lazy(() => import("./features/courses/CoursesPage"));
-const CertificatesPage = lazy(() => import("./features/certificates/CertificatesPage"));
-const CVPage = lazy(() => import("./features/cv/CVPage"));
+const About = lazy(() => import("./features/about/About"))
+const StackPage = lazy(() => import("./features/techstack/StackPage"))
+const ExperienceContent = lazy(
+  () => import("./features/experience/ExperienceContent")
+)
+const CoursesPage = lazy(() => import("./features/courses/CoursesPage"))
+const CertificatesPage = lazy(
+  () => import("./features/certificates/CertificatesPage")
+)
+const CVPage = lazy(() => import("./features/cv/CVPage"))
 
 // Layout untuk halaman Home (ada Navbar & Footer, tanpa padding khusus)
 const MainLayout = () => (
@@ -35,7 +41,7 @@ const MainLayout = () => (
     </main>
     <Footer />
   </div>
-);
+)
 
 // Layout untuk halaman Detail (tanpa Navbar, dengan Footer)
 const DetailLayout = () => (
@@ -45,76 +51,140 @@ const DetailLayout = () => (
     </main>
     <Footer />
   </div>
-);
+)
 
-import TargetCursor from "./components/ui/TargetCursor";
+import TargetCursor from "./components/ui/TargetCursor"
 
 function App() {
-  useTheme();
+  useTheme()
 
   return (
+    <ErrorBoundary>
+      <HelmetProvider>
+        <Analytics />
+        <TargetCursor
+          spinDuration={2}
+          hideDefaultCursor
+          parallaxOn
+          hoverDuration={0.2}
+          cursorColor="#ffffff"
+          cursorColorOnTarget="#B497CF"
+        />
+        <div className="pointer-events-none">
+          <AnimatedBackground />
+        </div>
+        <BrowserRouter>
+          <Routes>
+            {/* PUBLIC */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+            </Route>
 
-    <HelmetProvider>
-      <Analytics />
-      <TargetCursor
-        spinDuration={2}
-        hideDefaultCursor
-        parallaxOn
-        hoverDuration={0.2}
-        cursorColor="#ffffff"
-        cursorColorOnTarget="#B497CF"
-      />
-      <div className="pointer-events-none">
-        <AnimatedBackground />
-      </div>
-      <BrowserRouter>
-        <Routes>
-          {/* PUBLIC */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-          </Route>
+            <Route element={<PublicLayout />}>
+              <Route
+                path="/about"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <About />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/stack"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <StackPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/cv"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <CVPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/experience"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <ExperienceContent />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/projects"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <Portfolio />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/courses"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <CoursesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/certificates"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <CertificatesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <ContactPage />
+                  </Suspense>
+                }
+              />
+            </Route>
 
-          <Route element={<PublicLayout />}>
-            <Route path="/about" element={<Suspense fallback={<div className="h-20" />}><About /></Suspense>} />
-            <Route path="/stack" element={<Suspense fallback={<div className="h-20" />}><StackPage /></Suspense>} />
-            <Route path="/cv" element={<Suspense fallback={<div className="h-20" />}><CVPage /></Suspense>} />
-            <Route path="/experience" element={<Suspense fallback={<div className="h-20" />}><ExperienceContent /></Suspense>} />
-            <Route path="/projects" element={<Suspense fallback={<div className="h-20" />}><Portfolio /></Suspense>} />
-            <Route path="/courses" element={<Suspense fallback={<div className="h-20" />}><CoursesPage /></Suspense>} />
-            <Route path="/certificates" element={<Suspense fallback={<div className="h-20" />}><CertificatesPage /></Suspense>} />
-            <Route path="/contact" element={<Suspense fallback={<div className="h-20" />}><ContactPage /></Suspense>} />
-          </Route>
+            <Route element={<DetailLayout />}>
+              <Route
+                path="/project/:slug"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <ProjectDetails />
+                  </Suspense>
+                }
+              />
+            </Route>
 
-          <Route element={<DetailLayout />}>
-            <Route path="/project/:slug" element={<Suspense fallback={<div className="min-h-screen" />}><ProjectDetails /></Suspense>} />
-          </Route>
+            {/* AUTH */}
+            <Route path="/login" element={<Login />} />
 
-          {/* AUTH */}
-          <Route path="/login" element={<Login />} />
+            {/* ADMIN (PROTECTED) */}
+            <Route
+              path="/dashboard/*"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* ADMIN (PROTECTED) */}
-          <Route
-            path="/dashboard/*"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* 404 */}
-          <Route
-            path="*"
-            element={
-              <Suspense fallback={null}>
-                <NotFoundPage />
-              </Suspense>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </HelmetProvider>
-  );
+            {/* 404 */}
+            <Route
+              path="*"
+              element={
+                <Suspense fallback={null}>
+                  <NotFoundPage />
+                </Suspense>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </HelmetProvider>
+    </ErrorBoundary>
+  )
 }
 
-export default App;
+export default App
