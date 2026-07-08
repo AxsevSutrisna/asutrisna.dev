@@ -47,7 +47,7 @@ const MessageCard = ({
       {/* Header Row (Always Visible) */}
       <div
         onClick={onToggleExpand}
-        className="w-full flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 transition-colors gap-4"
+        className="w-full flex items-center justify-between p-4 cursor-pointer cursor-target hover:bg-white/5 transition-colors gap-4"
       >
         <div className="flex items-center gap-4 min-w-0 flex-1">
           {/* Read Status Dot */}
@@ -102,8 +102,8 @@ const MessageCard = ({
                   <p className="text-sm font-semibold text-white truncate">
                     {item.name}
                   </p>
-                  <p className="text-xs text-gray-400 truncate hover:text-indigo-300 transition-colors">
-                    <a href={`mailto:${item.email}`}>{item.email}</a>
+                  <p                     className="text-xs text-gray-400 truncate hover:text-indigo-300 transition-colors">
+                    <a href={`mailto:${item.email}`} className="cursor-target">{item.email}</a>
                   </p>
                 </div>
               </div>
@@ -116,7 +116,7 @@ const MessageCard = ({
                     onToggleRead(item)
                   }}
                   title={item.is_read ? "Mark as Unread" : "Mark as Read"}
-                  className={`p-2 rounded-lg border text-xs transition-all ${
+                  className={`cursor-target p-2 rounded-lg border text-xs transition-all ${
                     item.is_read
                       ? "border-white/10 text-gray-400 hover:text-white hover:bg-white/10"
                       : "border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/50"
@@ -134,7 +134,7 @@ const MessageCard = ({
                     onDelete(item.id)
                   }}
                   title="Delete"
-                  className="p-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-all"
+                  className="cursor-target p-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-all"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -293,12 +293,12 @@ export default function Messages() {
             placeholder="Search messages..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-gray-600"
+            className="cursor-target w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-gray-600"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+              className="cursor-target absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
             >
               <X className="w-4 h-4" />
             </button>
@@ -312,7 +312,7 @@ export default function Messages() {
             onClick={() =>
               setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))
             }
-            className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-gray-300 transition-all shrink-0"
+            className="cursor-target flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-gray-300 transition-all shrink-0"
             title={sortOrder === "newest" ? "Sort by Oldest" : "Sort by Newest"}
           >
             <ArrowDownUp className="w-4 h-4" />
@@ -325,7 +325,7 @@ export default function Messages() {
           <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl shrink-0">
             <button
               onClick={() => setFilterStatus("all")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+              className={`cursor-target px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                 filterStatus === "all"
                   ? "bg-indigo-500/20 text-indigo-300 shadow-sm"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -335,7 +335,7 @@ export default function Messages() {
             </button>
             <button
               onClick={() => setFilterStatus("unread")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+              className={`cursor-target px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                 filterStatus === "unread"
                   ? "bg-indigo-500/20 text-indigo-300 shadow-sm"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -345,7 +345,7 @@ export default function Messages() {
             </button>
             <button
               onClick={() => setFilterStatus("read")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+              className={`cursor-target px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                 filterStatus === "read"
                   ? "bg-indigo-500/20 text-indigo-300 shadow-sm"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -404,7 +404,7 @@ export default function Messages() {
                   setSearchQuery("")
                   setFilterStatus("all")
                 }}
-                className="mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-gray-300 transition-colors"
+                className="cursor-target mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-gray-300 transition-colors"
               >
                 Clear Filters
               </button>
