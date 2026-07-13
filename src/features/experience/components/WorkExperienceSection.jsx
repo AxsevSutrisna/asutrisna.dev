@@ -1,18 +1,23 @@
-import { useEffect, useMemo, useState, memo, useRef } from 'react'
-import { Briefcase, Sparkles, MapPin, CalendarDays } from 'lucide-react'
-import { useExperienceData } from '../hooks/useExperienceData'
-import {
-  formatDateRange,
-} from '../../../utils/workExperiences'
-import { Card } from '../../../components/ui/card'
-import { Badge } from '../../../components/ui/badge'
+import { useEffect, useMemo, useState, memo, useRef } from "react"
+import { Briefcase, Sparkles, MapPin, CalendarDays } from "lucide-react"
+import { useExperienceData } from "../hooks/useExperienceData"
+import { formatDateRange } from "../../../utils/workExperiences"
+import { Card } from "../../../components/ui/card"
+import { Badge } from "../../../components/ui/badge"
+import renderDescription from "../../../utils/renderDescription"
 
 const SectionHeader = memo(() => (
   <div className="text-center pb-10">
     <Badge variant="default" className="px-4 py-2 text-sm mb-5">
-      <Sparkles className="w-4 h-4" style={{ color: 'var(--color-primary-light)' }} />
+      <Sparkles
+        className="w-4 h-4"
+        style={{ color: "var(--color-primary-light)" }}
+      />
       Career journey and hands-on experience
-      <Sparkles className="w-4 h-4" style={{ color: 'var(--color-primary-light)' }} />
+      <Sparkles
+        className="w-4 h-4"
+        style={{ color: "var(--color-primary-light)" }}
+      />
     </Badge>
 
     <h2 className="text-4xl md:text-5xl font-display font-bold text-white">
@@ -20,82 +25,20 @@ const SectionHeader = memo(() => (
     </h2>
 
     <p className="mt-4 text-gray-400 max-w-3xl mx-auto text-base sm:text-lg leading-relaxed">
-      A summary of roles, responsibilities, and technologies I have used across internships, contract work, and full-time positions.
+      A summary of roles, responsibilities, and technologies I have used across
+      internships, contract work, and full-time positions.
     </p>
   </div>
 ))
-SectionHeader.displayName = 'SectionHeader'
-
-/**
- * Parses a description string into structured blocks:
- * - Lines starting with'-' or'•' → rendered as <ul><li> list (semantic, SEO-friendly)
- * - Blank lines → paragraph break
- * - Other text → rendered as a <p>
- *
- * Groups consecutive bullet lines together into a single <ul>.
- */
-function renderDescription(text) {
-  if (!text) return null
-
-  const lines = text.split('\n')
-  const blocks = [] // array of { type:'bullet'|'text', content: string}
-
-  lines.forEach((raw) => {
-    const line = raw.trim()
-    if (!line) return // skip empty lines
-    const isBullet = /^[-•–]\s+/.test(line)
-    if (isBullet) {
-      blocks.push({ type: 'bullet', content: line.replace(/^[-•–]\s+/, '') })
-    } else {
-      blocks.push({ type: 'text', content: line })
-    }
-  })
-
-  if (!blocks.length) return null
-
-  // Group consecutive bullets into <ul>, interleave with <p> for text
-  const elements = []
-  let i = 0
-  while (i < blocks.length) {
-    if (blocks[i].type === 'bullet') {
-      // Collect all consecutive bullet items
-      const items = []
-      while (i < blocks.length && blocks[i].type === 'bullet') {
-        items.push(blocks[i].content)
-        i++
-      }
-      elements.push(
-        <ul key={`ul-${i}`} className="space-y-1.5 list-none">
-          {items.map((item, j) => (
-            <li key={j} className="flex items-start gap-2 text-sm sm:text-base text-gray-200 leading-relaxed">
-              <span
-                className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
-                style={{ backgroundColor: 'var(--color-primary-light)' }}
-                aria-hidden="true"
-              />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      )
-    } else {
-      elements.push(
-        <p key={`p-${i}`} className="text-sm sm:text-base text-gray-200 leading-relaxed">
-          {blocks[i].content}
-        </p>
-      )
-      i++
-    }
-  }
-
-  return <div className="space-y-2">{elements}</div>
-}
+SectionHeader.displayName = "SectionHeader"
 
 const ExperienceCard = ({ experience }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isTruncated, setIsTruncated] = useState(false)
   const contentRef = useRef(null)
-  const techStack = Array.isArray(experience.tech_stack) ? experience.tech_stack : []
+  const techStack = Array.isArray(experience.tech_stack)
+    ? experience.tech_stack
+    : []
 
   useEffect(() => {
     if (contentRef.current) {
@@ -117,35 +60,49 @@ const ExperienceCard = ({ experience }) => {
                 {experience.position}
               </h3>
               {experience.is_current && (
-                <Badge variant="primary" className="text-[10px] uppercase tracking-[0.2em] px-2 py-0.5">
+                <Badge
+                  variant="primary"
+                  className="text-[10px] uppercase tracking-[0.2em] px-2 py-0.5"
+                >
                   Current
                 </Badge>
               )}
             </div>
 
             <p className="text-gray-300 text-sm sm:text-base flex flex-wrap items-center gap-2">
-              <span className="font-medium text-white">{experience.company}</span>
+              <span className="font-medium text-white">
+                {experience.company}
+              </span>
               <span className="text-gray-600">•</span>
-              <Badge variant="neutral" className="text-[10px] uppercase tracking-[0.1em] px-2 py-0.5 font-normal">
+              <Badge
+                variant="neutral"
+                className="text-[10px] uppercase tracking-[0.1em] px-2 py-0.5 font-normal"
+              >
                 {experience.employment_type}
               </Badge>
             </p>
           </div>
 
           <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
-            <Badge variant="neutral" className="text-xs font-normal hover:bg-[color:var(--color-backdrop-base)] cursor-default transition-colors">
+            <Badge
+              variant="neutral"
+              className="text-xs font-normal hover:bg-[color:var(--color-backdrop-base)] cursor-default transition-colors"
+            >
               <CalendarDays className="text-theme-primary-light" />
               {formatDateRange(
                 experience.start_month,
                 experience.start_year,
                 experience.end_month,
                 experience.end_year,
-                experience.is_current,
+                experience.is_current
               )}
             </Badge>
 
             {experience.location && (
-              <Badge variant="neutral" className="text-xs font-normal hover:bg-[color:var(--color-backdrop-base)] cursor-default transition-colors">
+              <Badge
+                variant="neutral"
+                className="text-xs font-normal hover:bg-[color:var(--color-backdrop-base)] cursor-default transition-colors"
+              >
                 <MapPin className="text-theme-primary-light" />
                 {experience.location}
               </Badge>
@@ -157,8 +114,9 @@ const ExperienceCard = ({ experience }) => {
           <div className="mt-5 relative">
             <div
               ref={contentRef}
-              className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-[150px]'
-                }`}
+              className={`transition-all duration-500 overflow-hidden ${
+                isExpanded ? "max-h-[2000px]" : "max-h-[150px]"
+              }`}
             >
               {renderDescription(experience.description)}
 
@@ -173,14 +131,21 @@ const ExperienceCard = ({ experience }) => {
                 className="mt-3 text-sm text-theme-primary-light hover:text-white transition-colors flex items-center gap-1.5 font-medium focus:outline-none relative z-10 group/btn"
               >
                 <span className="relative overflow-hidden pb-0.5">
-                  {isExpanded ? 'Show less' : 'Read more'}
+                  {isExpanded ? "Show less" : "Read more"}
                   <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-theme-primary-light transform origin-left scale-x-0 transition-transform duration-300 group-hover/btn:scale-x-100" />
                 </span>
-                <svg 
-                  className={`w-4 h-4 transition-transform duration-300 group-hover/btn:translate-y-0.5 ${isExpanded ? 'rotate-180 group-hover/btn:-translate-y-0.5' : ''}`} 
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                <svg
+                  className={`w-4 h-4 transition-transform duration-300 group-hover/btn:translate-y-0.5 ${isExpanded ? "rotate-180 group-hover/btn:-translate-y-0.5" : ""}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
             )}
@@ -225,7 +190,10 @@ const WorkExperienceSection = () => {
           {loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="rounded-2xl border border-white/10 bg-white/5 p-6 animate-pulse min-h-[220px]" />
+                <div
+                  key={index}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-6 animate-pulse min-h-[220px]"
+                />
               ))}
             </div>
           ) : hasExperiences ? (
@@ -234,13 +202,15 @@ const WorkExperienceSection = () => {
                 className="absolute left-[10px] top-0 bottom-0 w-px hidden md:block z-0"
                 style={{
                   background:
-                    'linear-gradient(to bottom, color-mix(in srgb, var(--color-primary-dark) 70%, transparent) 0%, color-mix(in srgb, var(--color-primary-light) 45%, transparent) 45%, transparent 100%)',
+                    "linear-gradient(to bottom, color-mix(in srgb, var(--color-primary-dark) 70%, transparent) 0%, color-mix(in srgb, var(--color-primary-light) 45%, transparent) 45%, transparent 100%)",
                 }}
               />
               <div className="space-y-5 sm:space-y-6 md:pl-10 lg:pl-12">
                 {experiences.map((experience, index) => (
                   <div key={experience.id} className="relative">
-                    <div className={`relative z-20 ${index % 2 === 0 ? 'lg:pr-20' : 'lg:pl-20'}`}>
+                    <div
+                      className={`relative z-20 ${index % 2 === 0 ? "lg:pr-20" : "lg:pl-20"}`}
+                    >
                       <ExperienceCard experience={experience} />
                     </div>
                   </div>
@@ -250,9 +220,12 @@ const WorkExperienceSection = () => {
           ) : (
             <div className="max-w-2xl mx-auto text-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-10 sm:p-14">
               <Briefcase className="w-10 h-10 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white">No work experience added yet</h3>
+              <h3 className="text-xl font-semibold text-white">
+                No work experience added yet
+              </h3>
               <p className="mt-3 text-gray-400">
-                The section is ready, but there is no published work experience to display.
+                The section is ready, but there is no published work experience
+                to display.
               </p>
             </div>
           )}

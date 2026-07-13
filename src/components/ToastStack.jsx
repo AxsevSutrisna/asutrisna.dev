@@ -1,37 +1,49 @@
-import { X} from'lucide-react'
-import { Button} from'./ui/button'
+import { X } from "lucide-react"
+import PropTypes from "prop-types"
+import { Button } from "./ui/button"
 
 const TOAST_STYLES = {
- success:'border-emerald-500/25 bg-emerald-500/10 text-emerald-100',
- error:'border-red-500/25 bg-red-500/10 text-red-100',
- info:'border-blue-500/25 bg-blue-500/10 text-blue-100',
+  success: "border-emerald-500/25 bg-emerald-500/10 text-emerald-100",
+  error: "border-red-500/25 bg-red-500/10 text-red-100",
+  info: "border-blue-500/25 bg-blue-500/10 text-blue-100",
 }
 
-export default function ToastStack({ toasts = [], onDismiss}) {
- if (!toasts.length) return null
+export default function ToastStack({ toasts = [], onDismiss }) {
+  if (!toasts.length) return null
 
- return (
- <div className="fixed top-4 right-4 z-[9999] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-3 pointer-events-none">
- {toasts.map((toast) => (
- <div
- key={toast.id}
- className={`pointer-events-auto rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-xl ${TOAST_STYLES[toast.type] || TOAST_STYLES.info}`}
- >
- <div className="flex items-start justify-between gap-4">
- <div className="text-sm leading-relaxed">{toast.message}</div>
- <Button
- type="button"
- onClick={() => onDismiss?.(toast.id)}
- variant="ghost"
- size="icon"
- className="mt-0.5 rounded-full text-current/70 hover:text-current"
- aria-label="Dismiss notification"
- >
- <X className="w-4 h-4" />
- </Button>
- </div>
- </div>
- ))}
- </div>
- )
+  return (
+    <div className="fixed top-4 right-4 z-[9999] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-3 pointer-events-none">
+      {toasts.map((toast) => (
+        <div
+          key={toast.id}
+          className={`pointer-events-auto rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-xl ${TOAST_STYLES[toast.type] || TOAST_STYLES.info}`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="text-sm leading-relaxed">{toast.message}</div>
+            <Button
+              type="button"
+              onClick={() => onDismiss?.(toast.id)}
+              variant="ghost"
+              size="icon"
+              className="mt-0.5 rounded-full text-current/70 hover:text-current"
+              aria-label="Dismiss notification"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+ToastStack.propTypes = {
+  toasts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      type: PropTypes.string,
+      message: PropTypes.string,
+    })
+  ),
+  onDismiss: PropTypes.func,
 }

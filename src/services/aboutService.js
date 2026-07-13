@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase';
+import { supabase } from "../config/supabase"
 
 export const aboutService = {
   async fetchAboutContent() {
@@ -7,9 +7,9 @@ export const aboutService = {
       .select("*")
       .eq("is_published", true)
       .order("version", { ascending: false })
-      .limit(1);
+      .limit(1)
 
-    if (error) throw new Error(error.message);
-    return data?.[0] || null;
-  }
-};
+    if (error) throw new Error(error.message)
+    return data?.[0] || null
+  },
+}

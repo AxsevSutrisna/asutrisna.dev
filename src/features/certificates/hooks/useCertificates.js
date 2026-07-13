@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
-import { useCertificatesStore } from '../../../store/useCertificatesStore';
+import { useEffect } from "react"
+import { useCertificatesStore } from "../../../store/useCertificatesStore"
 
 export function useCertificates() {
-  const { certificates, loading, fetchCertificates } = useCertificatesStore();
+  const { certificates, loading, fetchCertificates } = useCertificatesStore()
 
   useEffect(() => {
-    fetchCertificates();
-  }, [fetchCertificates]);
+    fetchCertificates()
+  }, [fetchCertificates])
 
-  const refresh = () => fetchCertificates(true);
+  const refresh = () => fetchCertificates(true)
 
-  return { certificates, loading, refresh };
+  return { certificates, loading, refresh }
 }

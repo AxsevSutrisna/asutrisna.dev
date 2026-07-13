@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { useCoursesStore } from '../../../store/useCoursesStore';
+import { useEffect } from "react"
+import { useCoursesStore } from "../../../store/useCoursesStore"
 
 export function useCourses() {
-  const { courses, loading, fetchCourses } = useCoursesStore();
+  const { courses, loading, fetchCourses } = useCoursesStore()
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    fetchCourses()
+  }, [fetchCourses])
 
-  return { courses, loading };
+  return { courses, loading }
 }

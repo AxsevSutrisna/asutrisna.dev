@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { techStackService } from '../services/techStackService';
+import { create } from "zustand"
+import { techStackService } from "../services/techStackService"
 
 export const useTechStackStore = create((set, get) => ({
   techStacks: [],
@@ -7,14 +7,14 @@ export const useTechStackStore = create((set, get) => ({
   error: null,
 
   fetchTechStacks: async (force = false) => {
-    if (!force && get().techStacks.length > 0) return;
+    if (!force && get().techStacks.length > 0) return
 
-    set({ loading: true, error: null });
+    set({ loading: true, error: null })
     try {
-      const data = await techStackService.fetchAll();
-      set({ techStacks: data, loading: false });
+      const data = await techStackService.fetchAll()
+      set({ techStacks: data, loading: false })
     } catch (err) {
-      set({ error: err.message, loading: false });
+      set({ error: err.message, loading: false })
     }
-  }
-}));
+  },
+}))

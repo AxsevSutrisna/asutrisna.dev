@@ -1,11 +1,10 @@
-import { useEffect, memo, useMemo } from"react"
+import { useEffect, memo, useMemo } from "react"
 import { Link } from "react-router-dom"
-import { Code, Award, Globe, ArrowUpRight } from"lucide-react"
-import AOS from'aos'
-import'aos/dist/aos.css'
+import { Code, Award, Globe } from "lucide-react"
+import AOS from "aos"
 import { useAboutContent } from "./hooks/useAboutContent"
-import PublicCtaButton from"../../components/ui/public-cta-button"
-import { Badge} from"@/components/ui/badge"
+import PublicCtaButton from "../../components/ui/public-cta-button"
+import { Badge } from "@/components/ui/badge"
 import DecryptedText from "@/components/ui/DecryptedText"
 import ProfileCard from "@/components/ui/ProfileCard"
 import StatCard from "@/components/ui/StatCard"
@@ -13,34 +12,40 @@ import LogoLoop from "@/components/ui/LogoLoop"
 import AchievementHighlight from "../home/components/AchievementHighlight"
 import { ABOUT_FALLBACK } from "../../constants/about"
 
-const ProfileImage = memo(({ name, roleBadges, photoUrl, yearsOfExperience }) => (
-  <div className="flex justify-center items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
-    <div
-      className="relative group w-full max-w-md mx-auto lg:mx-0"
-      data-aos="fade-up"
-      data-aos-duration="1000"
-    >
-      <ProfileCard
-        name={name}
-        title={roleBadges ? (roleBadges.split(',')[0].trim() === 'Developer' ? 'Full-Stack Developer' : roleBadges.split(',')[0].trim()) : "Full-Stack Developer"}
-        handle="asutrisnadev"
-        status="Online"
-        contactText="Contact Me"
-        avatarUrl={photoUrl || ABOUT_FALLBACK.photo_url}
-        showUserInfo={false}
-        enableTilt={true}
-        enableMobileTilt={false}
-        behindGlowColor="rgba(125, 190, 255, 0.67)"
-        behindGlowEnabled={true}
-        innerGradient="linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)"
-        yearsOfExperience={yearsOfExperience}
-      />
+const ProfileImage = memo(
+  ({ name, roleBadges, photoUrl, yearsOfExperience }) => (
+    <div className="flex justify-center items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
+      <div
+        className="relative group w-full max-w-md mx-auto lg:mx-0"
+        data-aos="fade-up"
+        data-aos-duration="1000"
+      >
+        <ProfileCard
+          name={name}
+          title={
+            roleBadges
+              ? roleBadges.split(",")[0].trim() === "Developer"
+                ? "Full-Stack Developer"
+                : roleBadges.split(",")[0].trim()
+              : "Full-Stack Developer"
+          }
+          handle="asutrisnadev"
+          status="Online"
+          contactText="Contact Me"
+          avatarUrl={photoUrl || ABOUT_FALLBACK.photo_url}
+          showUserInfo={false}
+          enableTilt={true}
+          enableMobileTilt={false}
+          behindGlowColor="rgba(125, 190, 255, 0.67)"
+          behindGlowEnabled={true}
+          innerGradient="linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)"
+          yearsOfExperience={yearsOfExperience}
+        />
+      </div>
     </div>
-  </div>
-));
-ProfileImage.displayName = 'ProfileImage';
-
-
+  )
+)
+ProfileImage.displayName = "ProfileImage"
 
 const AboutPage = () => {
   const {
@@ -49,61 +54,61 @@ const AboutPage = () => {
     totalCertificates,
     YearExperienceDecimal,
     YearExperienceLabel,
-    techStacks
+    techStacks,
   } = useAboutContent()
 
- const content = fetchedContent || ABOUT_FALLBACK
+  const content = fetchedContent || ABOUT_FALLBACK
 
- const initAOS = () => {
-  AOS.init({
-  once: false,
- })
-}
+  useEffect(() => {
+    // Debounced resize handler for AOS refresh
+    let resizeTimer
+    const handleResize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => AOS.refresh(), 250)
+    }
 
- useEffect(() => {
- initAOS();
+    window.addEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      clearTimeout(resizeTimer)
+    }
+  }, [])
 
- // Debounced resize handler
- let resizeTimer;
- const handleResize = () => {
- clearTimeout(resizeTimer);
- resizeTimer = setTimeout(initAOS, 250);
-};
-
- window.addEventListener('resize', handleResize);
- return () => {
- window.removeEventListener('resize', handleResize);
- clearTimeout(resizeTimer);
-};
-}, []);
-
- // Memoized stats data
-  const statsData = useMemo(() => [
-  {
-  icon: Code,
-  value: totalProjects,
-  label:"Total Projects",
-  description:"Innovative web solutions crafted",
-  animation:"fade-right",
-  href:"/projects",
- },
-  {
-  icon: Award,
-  value: totalCertificates,
-  label:"Certificates",
-  description:"Professional skills validated",
-  animation:"fade-up",
-  href:"/certificates",
- },
-  {
-  icon: Globe,
-  value: YearExperienceDecimal,
-  label:"Years of Experience",
-  description: YearExperienceLabel ||"Continuous learning journey",
-  animation:"fade-left",
-  href:"/experience",
- },
-  ], [totalProjects, totalCertificates, YearExperienceDecimal, YearExperienceLabel]);
+  // Memoized stats data
+  const statsData = useMemo(
+    () => [
+      {
+        icon: Code,
+        value: totalProjects,
+        label: "Total Projects",
+        description: "Innovative web solutions crafted",
+        animation: "fade-right",
+        href: "/projects",
+      },
+      {
+        icon: Award,
+        value: totalCertificates,
+        label: "Certificates",
+        description: "Professional skills validated",
+        animation: "fade-up",
+        href: "/certificates",
+      },
+      {
+        icon: Globe,
+        value: YearExperienceDecimal,
+        label: "Years of Experience",
+        description: YearExperienceLabel || "Continuous learning journey",
+        animation: "fade-left",
+        href: "/experience",
+      },
+    ],
+    [
+      totalProjects,
+      totalCertificates,
+      YearExperienceDecimal,
+      YearExperienceLabel,
+    ]
+  )
 
   return (
     <div
@@ -114,12 +119,19 @@ const AboutPage = () => {
     >
       <div className="w-full mx-auto relative">
         <div className="flex flex-col lg:grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
-          
           <div className="space-y-6 text-left">
             {/* Small Badge About Me */}
             <div data-aos="fade-right" data-aos-duration="1000">
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-white/20 text-white/80 bg-white/5 backdrop-blur-md">
-                <span className="text-sm font-medium" style={{ color: 'var(--color-primary-light)' }}>About Me</span>
+              <Badge
+                variant="outline"
+                className="px-4 py-1.5 rounded-full border-white/20 text-white/80 bg-white/5 backdrop-blur-md"
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--color-primary-light)" }}
+                >
+                  About Me
+                </span>
               </Badge>
             </div>
 
@@ -136,7 +148,7 @@ const AboutPage = () => {
                 className="text-white"
                 parentClassName="text-white"
               />
-              <br className="hidden sm:block"/>
+              <br className="hidden sm:block" />
               <DecryptedText
                 text={content.name}
                 animateOn="inViewHover"
@@ -144,7 +156,7 @@ const AboutPage = () => {
                 sequential={true}
                 className="text-[var(--color-primary-light)]"
                 parentClassName="text-[var(--color-primary-light)]"
-                style={{ color: 'var(--color-primary-light)' }}
+                style={{ color: "var(--color-primary-light)" }}
               />
             </h2>
 
@@ -153,16 +165,18 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1400"
             >
-              {content.description.split('\n').map((paragraph, index) => (
-                paragraph.trim() ? <p key={index}>{paragraph}</p> : null
-              ))}
+              {content.description
+                .split("\n")
+                .map((paragraph, index) =>
+                  paragraph.trim() ? <p key={index}>{paragraph}</p> : null
+                )}
             </div>
 
             {/* Personal Quote */}
             {content.quote && (
               <blockquote
                 className="border-l-2 border-white/20 pl-4 text-sm sm:text-base italic text-gray-400"
-                style={{ borderColor: 'var(--color-primary-light)' }}
+                style={{ borderColor: "var(--color-primary-light)" }}
                 data-aos="fade-right"
                 data-aos-duration="1500"
               >
@@ -171,19 +185,42 @@ const AboutPage = () => {
             )}
 
             {/* Role Badges */}
-            <div className="flex flex-wrap gap-2 pt-2" data-aos="fade-right" data-aos-duration="1600">
-              {(content.role_badges 
-                  ? content.role_badges.split(',').map(r => r.trim()).filter(Boolean) 
-                  : ['DEVELOPER', 'EDUCATOR', 'MENTOR', 'LECTURER', 'SPEAKER', 'IOT ENTHUSIAST']
+            <div
+              className="flex flex-wrap gap-2 pt-2"
+              data-aos="fade-right"
+              data-aos-duration="1600"
+            >
+              {(content.role_badges
+                ? content.role_badges
+                    .split(",")
+                    .map((r) => r.trim())
+                    .filter(Boolean)
+                : [
+                    "DEVELOPER",
+                    "EDUCATOR",
+                    "MENTOR",
+                    "LECTURER",
+                    "SPEAKER",
+                    "IOT ENTHUSIAST",
+                  ]
               ).map((role) => (
-                <Badge key={role} variant="outline" className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-semibold tracking-widest border-white/10 bg-[#0f172a] shadow-sm uppercase" style={{ color: 'var(--color-primary-light)' }}>
+                <Badge
+                  key={role}
+                  variant="outline"
+                  className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-semibold tracking-widest border-white/10 bg-[#0f172a] shadow-sm uppercase"
+                  style={{ color: "var(--color-primary-light)" }}
+                >
                   {role}
                 </Badge>
               ))}
             </div>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4" data-aos="fade-right" data-aos-duration="1800">
+            <div
+              className="flex flex-col sm:flex-row items-center gap-4 pt-4"
+              data-aos="fade-right"
+              data-aos-duration="1800"
+            >
               <PublicCtaButton
                 to="/contact"
                 text="👋 Get in touch"
@@ -197,11 +234,11 @@ const AboutPage = () => {
             </div>
           </div>
 
-          <ProfileImage 
+          <ProfileImage
             name={content.name}
             roleBadges={content.role_badges}
-            photoUrl={content.photo_url} 
-            yearsOfExperience={Math.floor(YearExperienceDecimal)} 
+            photoUrl={content.photo_url}
+            yearsOfExperience={Math.floor(YearExperienceDecimal)}
           />
         </div>
 
@@ -216,7 +253,7 @@ const AboutPage = () => {
         <AchievementHighlight />
       </div>
 
- <style>{`
+      <style>{`
  @keyframes float {
  0%, 100% { transform: translateY(0);}
  50% { transform: translateY(-20px);}
@@ -234,9 +271,9 @@ const AboutPage = () => {
  animation: spin-slower 8s linear infinite;
 }
  `}</style>
- </div>
- );
-};
+    </div>
+  )
+}
 
-AboutPage.displayName ='AboutPage';
-export default memo(AboutPage);
+AboutPage.displayName = "AboutPage"
+export default memo(AboutPage)

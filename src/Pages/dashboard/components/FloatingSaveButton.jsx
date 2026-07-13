@@ -1,16 +1,22 @@
-import { Check } from 'lucide-react'
+import { Check } from "lucide-react"
 
-export default function FloatingSaveButton({ 
-  onClick, 
-  disabled, 
-  saving, 
-  label = "Save", 
-  savingLabel = "Saving...", 
+export default function FloatingSaveButton({
+  onClick,
+  disabled,
+  saving,
+  label = "Save",
+  savingLabel = "Saving...",
   icon: Icon = Check,
-  colors = null
+  colors = null,
 }) {
-  const primaryFrom = colors?.button_primary_from || colors?.primary_color_dark || 'var(--color-primary-dark)'
-  const primaryTo = colors?.button_primary_to || colors?.primary_color_light || 'var(--color-primary-light)'
+  const primaryFrom =
+    colors?.button_primary_from ||
+    colors?.primary_color_dark ||
+    "var(--color-primary-dark)"
+  const primaryTo =
+    colors?.button_primary_to ||
+    colors?.primary_color_light ||
+    "var(--color-primary-light)"
   const backgroundGradient = `linear-gradient(135deg, ${primaryFrom}, ${primaryTo})`
 
   return (
@@ -21,7 +27,7 @@ export default function FloatingSaveButton({
         className="cursor-target relative group flex items-center justify-center focus:outline-none transition-all hover:scale-105 active:scale-95"
         style={{
           opacity: disabled || saving ? 0.5 : 1,
-          cursor: disabled || saving ? 'not-allowed' : 'pointer'
+          cursor: disabled || saving ? "not-allowed" : "pointer",
         }}
       >
         <div
@@ -35,12 +41,19 @@ export default function FloatingSaveButton({
           {saving ? (
             <>
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span className="text-sm font-bold text-white tracking-wide drop-shadow-md">{savingLabel}</span>
+              <span className="text-sm font-bold text-white tracking-wide drop-shadow-md">
+                {savingLabel}
+              </span>
             </>
           ) : (
             <>
-              <Icon className="w-5 h-5 text-white drop-shadow-md" strokeWidth={3} />
-              <span className="text-sm font-bold text-white tracking-wide drop-shadow-md">{label}</span>
+              <Icon
+                className="w-5 h-5 text-white drop-shadow-md"
+                strokeWidth={3}
+              />
+              <span className="text-sm font-bold text-white tracking-wide drop-shadow-md">
+                {label}
+              </span>
             </>
           )}
         </div>
