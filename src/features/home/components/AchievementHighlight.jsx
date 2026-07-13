@@ -1,9 +1,6 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { useAchievementStore } from "../../../store/useAchievementStore"
 import { Trophy } from "lucide-react"
-import AOS from "aos"
-import "aos/dist/aos.css"
-
 // Gunakan gradien warna serupa dengan avatar perusahaan di ExperienceHighlight
 const AVATAR_COLORS = [
   "linear-gradient(135deg, #6366f1, #818cf8)",
@@ -18,7 +15,6 @@ export default function AchievementHighlight() {
 
   useEffect(() => {
     fetchAchievements()
-    AOS.init({ once: false })
   }, [fetchAchievements])
 
   if (loading) {

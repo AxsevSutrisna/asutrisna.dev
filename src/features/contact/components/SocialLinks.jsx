@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import {
   Linkedin,
   Github,
@@ -7,8 +7,6 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { useContactInfo } from "../hooks/useContactInfo"
-import AOS from "aos"
-import "aos/dist/aos.css"
 // PresenceWidget removed (not used)
 
 const TIKTOK_ICON = (props) => (
@@ -62,12 +60,6 @@ const FALLBACK_SOCIAL_LINKS = []
 
 const SocialLinks = () => {
   const { socialLinks: links, loading } = useContactInfo()
-
-  useEffect(() => {
-    AOS.init({
-      offset: 10,
-    })
-  }, [])
 
   const orderedLinks = useMemo(() => {
     return [...links].sort((left, right) => {

@@ -1,8 +1,7 @@
 import { useEffect, memo, useMemo } from "react"
 import { Link } from "react-router-dom"
-import { Code, Award, Globe, ArrowUpRight } from "lucide-react"
+import { Code, Award, Globe } from "lucide-react"
 import AOS from "aos"
-import "aos/dist/aos.css"
 import { useAboutContent } from "./hooks/useAboutContent"
 import PublicCtaButton from "../../components/ui/public-cta-button"
 import { Badge } from "@/components/ui/badge"
@@ -60,20 +59,12 @@ const AboutPage = () => {
 
   const content = fetchedContent || ABOUT_FALLBACK
 
-  const initAOS = () => {
-    AOS.init({
-      once: false,
-    })
-  }
-
   useEffect(() => {
-    initAOS()
-
-    // Debounced resize handler
+    // Debounced resize handler for AOS refresh
     let resizeTimer
     const handleResize = () => {
       clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(initAOS, 250)
+      resizeTimer = setTimeout(() => AOS.refresh(), 250)
     }
 
     window.addEventListener("resize", handleResize)

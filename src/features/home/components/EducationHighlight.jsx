@@ -1,15 +1,12 @@
-import { memo, useMemo, useRef, useState, useEffect, useCallback } from "react"
+import { memo, useMemo, useRef, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Award, GraduationCap } from "lucide-react"
 import { useCertificates } from "../../certificates/hooks/useCertificates"
+import { useCarouselAutoScroll } from "../../../hooks/useCarouselAutoScroll"
 
-/* ─── Config carousel (same engine as FeaturedProjects) ─────────── */
+/* ─── Config carousel ───────────────────────────────────────────── */
 const CERT_CARD_W = 240 // px
 const CERT_CARD_GAP = 20 // px
-const SCROLL_SPEED = 50 // px/s
-const PAUSE_END_MS = 1800
-const PAUSE_START_MS = 800
-const START_DELAY_MS = 700
 
 /* ─── Certificate Card — fixed size for carousel ────────────────── */
 const CertCard = memo(({ cert }) => {
@@ -90,96 +87,6 @@ const CertCard = memo(({ cert }) => {
 })
 CertCard.displayName = "CertCard"
 
-/* ─── RAF-based forward-return carousel for certificates ─────────── */
-function useCertCarousel(containerRef, trackRef, items) {
-  const isHoveredRef = useRef(false)
-
-  const getMaxOffset = useCallback(() => {
-    const c = containerRef.current
-    const t = trackRef.current
-    if (!c || !t) return 0
-    return Math.max(0, t.scrollWidth - c.clientWidth)
-  }, [containerRef, trackRef])
-
-  useEffect(() => {
-    if (items.length === 0) return
-
-    let animId = null
-    let lastTs = null
-    let offset = 0
-    let phase = "forward"
-    let paused = false
-    let pauseTimer = null
-
-    const applyOffset = (px) => {
-      if (trackRef.current) {
-        trackRef.current.style.transform = `translate3d(${-px}px, 0, 0)`
-      }
-    }
-
-    const scheduleResume = (delayMs, nextPhase) => {
-      paused = true
-      pauseTimer = setTimeout(() => {
-        paused = false
-        phase = nextPhase
-        lastTs = null
-        animId = requestAnimationFrame(tick)
-      }, delayMs)
-    }
-
-    const tick = (timestamp) => {
-      if (lastTs === null) lastTs = timestamp
-      const dt = Math.min((timestamp - lastTs) / 1000, 0.05)
-      lastTs = timestamp
-
-      if (paused || isHoveredRef.current) {
-        animId = requestAnimationFrame(tick)
-        return
-      }
-
-      const maxOff = getMaxOffset()
-
-      if (maxOff <= 0) {
-        animId = requestAnimationFrame(tick)
-        return
-      }
-
-      if (phase === "forward") {
-        offset = Math.min(offset + SCROLL_SPEED * dt, maxOff)
-        applyOffset(offset)
-        if (offset >= maxOff) {
-          cancelAnimationFrame(animId)
-          animId = null
-          scheduleResume(PAUSE_END_MS, "return")
-          return
-        }
-      } else {
-        offset = Math.max(offset - SCROLL_SPEED * dt, 0)
-        applyOffset(offset)
-        if (offset <= 0) {
-          cancelAnimationFrame(animId)
-          animId = null
-          scheduleResume(PAUSE_START_MS, "forward")
-          return
-        }
-      }
-
-      animId = requestAnimationFrame(tick)
-    }
-
-    pauseTimer = setTimeout(() => {
-      animId = requestAnimationFrame(tick)
-    }, START_DELAY_MS)
-
-    return () => {
-      if (animId) cancelAnimationFrame(animId)
-      if (pauseTimer) clearTimeout(pauseTimer)
-    }
-  }, [items, getMaxOffset, trackRef])
-
-  return { isHoveredRef }
-}
-
 /* ─── Skeleton ─────────────────────────────────────────────────── */
 const SkeletonCert = ({ w }) => (
   <div
@@ -201,11 +108,21 @@ const EducationHighlight = () => {
   const hasCerts = featuredCerts.length > 0
 
   /* Cert carousel */
-  const { isHoveredRef } = useCertCarousel(
-    certContainerRef,
-    certTrackRef,
-    featuredCerts
-  )
+  const getMaxOffset = useCallback(() => {
+    const c = certContainerRef.current
+    const t = certTrackRef.current
+    if (!c || !t) return 0
+    return Math.max(0, t.scrollWidth - c.clientWidth)
+  }, [certContainerRef, certTrackRef])
+
+  const { isHoveredRef } = useCarouselAutoScroll({
+    trackRef: certTrackRef,
+    getMaxOffset,
+    enabled: hasCerts,
+    scrollSpeed: 50,
+    pauseAtStartMs: 800,
+    startDelayMs: 700,
+  })
 
   return (
     <section

@@ -6,14 +6,12 @@ import { toSlug } from "../../../utils/slug"
 import ProjectCard from "../../projects/components/ProjectCard"
 import ShowMoreButton from "../../../components/ui/ShowMoreButton"
 
+import { useCarouselAutoScroll } from "../../../hooks/useCarouselAutoScroll"
+
 /* ─── Config ────────────────────────────────────────────────────── */
 const CARD_WIDTH_DESKTOP = 300 // px
 const CARD_WIDTH_MOBILE = 256 // px
 const CARD_GAP = 20 // px
-const SCROLL_SPEED = 55 // px / second (forward & backward)
-const PAUSE_AT_END_MS = 1800 // pause when last card reached
-const PAUSE_AT_START_MS = 900 // pause before scrolling forward again
-const START_DELAY_MS = 600 // initial delay before first scroll
 
 /* ─── Helper: parse categories ──────────────────────────────────── */
 const getCategories = (project) => {
@@ -65,8 +63,6 @@ const FeaturedProjects = () => {
 
   const containerRef = useRef(null)
   const trackRef = useRef(null)
-  const isHoveredRef = useRef(false) // use ref — avoid stale closure in RAF
-
   const [cardWidth, setCardWidth] = useState(CARD_WIDTH_DESKTOP)
 
   // Show max 6 projects
@@ -91,87 +87,11 @@ const FeaturedProjects = () => {
     return Math.max(0, t.scrollWidth - c.clientWidth)
   }, [])
 
-  /* ── Auto-scroll: forward → pause → backward → pause → repeat ── */
-  useEffect(() => {
-    if (loading || featured.length === 0) return
-
-    let animId = null
-    let lastTs = null
-    let offset = 0
-    let phase = "forward" // 'forward' | 'return'
-    let paused = false
-    let pauseTimer = null
-
-    /* Apply CSS transform to track */
-    const applyOffset = (px) => {
-      if (trackRef.current) {
-        trackRef.current.style.transform = `translate3d(${-px}px, 0, 0)`
-      }
-    }
-
-    /* Schedule a pause then resume animation in next phase */
-    const scheduleResume = (delayMs, nextPhase) => {
-      paused = true
-      pauseTimer = setTimeout(() => {
-        paused = false
-        phase = nextPhase
-        lastTs = null // reset dt calculation
-        animId = requestAnimationFrame(tick)
-      }, delayMs)
-    }
-
-    const tick = (timestamp) => {
-      // Initialise timestamp on first call or after pause
-      if (lastTs === null) lastTs = timestamp
-      const dt = Math.min((timestamp - lastTs) / 1000, 0.05) // cap at 50ms
-      lastTs = timestamp
-
-      /* While hovered OR in pause — keep RAF alive but don't move */
-      if (paused || isHoveredRef.current) {
-        animId = requestAnimationFrame(tick)
-        return
-      }
-
-      const maxOff = getMaxOffset()
-
-      if (phase === "forward") {
-        offset = Math.min(offset + SCROLL_SPEED * dt, maxOff)
-        applyOffset(offset)
-
-        if (offset >= maxOff) {
-          /* Reached last card — stop RAF, schedule pause then return */
-          cancelAnimationFrame(animId)
-          animId = null
-          scheduleResume(PAUSE_AT_END_MS, "return")
-          return
-        }
-      } else {
-        /* return phase — scroll backwards */
-        offset = Math.max(offset - SCROLL_SPEED * dt, 0)
-        applyOffset(offset)
-
-        if (offset <= 0) {
-          /* Back at start — stop RAF, schedule pause then go forward again */
-          cancelAnimationFrame(animId)
-          animId = null
-          scheduleResume(PAUSE_AT_START_MS, "forward")
-          return
-        }
-      }
-
-      animId = requestAnimationFrame(tick)
-    }
-
-    /* Small delay before first scroll so layout is fully measured */
-    pauseTimer = setTimeout(() => {
-      animId = requestAnimationFrame(tick)
-    }, START_DELAY_MS)
-
-    return () => {
-      if (animId) cancelAnimationFrame(animId)
-      if (pauseTimer) clearTimeout(pauseTimer)
-    }
-  }, [loading, featured, getMaxOffset])
+  const { isHoveredRef } = useCarouselAutoScroll({
+    trackRef,
+    getMaxOffset,
+    enabled: !loading && featured.length > 0,
+  })
 
   /* ── Empty state ── */
   if (!loading && featured.length === 0) {

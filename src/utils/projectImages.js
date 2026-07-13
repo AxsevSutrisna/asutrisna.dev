@@ -29,5 +29,4 @@ export const normalizeProjectImages = (project) => {
   return [...new Set(images)].slice(0, MAX_PROJECT_IMAGES)
 }
 
-export const getPrimaryProjectImage = (project) =>
-  normalizeProjectImages(project)[0] || ""
+

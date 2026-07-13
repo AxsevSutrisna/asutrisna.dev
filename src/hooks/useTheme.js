@@ -66,7 +66,6 @@ const CSS_VAR_MAP = {
   shadow_primary_color: "--color-shadow-primary",
   glow_color_primary: "--color-glow-primary",
   glow_color_secondary: "--color-glow-secondary",
-  grid_line_color: "--color-grid-line",
   overlay_bg_color: "--color-overlay-bg",
 }
 
@@ -132,16 +131,16 @@ const injectCSSVariables = (colors) => {
 
 export const useTheme = () => {
   useEffect(() => {
+    let subscription = null
+
     const setupTheme = async () => {
       try {
-        // Check localStorage cache
         const cached = localStorage.getItem("theme_colors")
         if (cached) {
           const colors = JSON.parse(cached)
           injectCSSVariables(colors)
         }
 
-        // Fetch from Supabase
         const { data, error } = await supabase
           .from("site_theme")
           .select("*")
@@ -151,7 +150,6 @@ export const useTheme = () => {
         if (error) throw error
 
         if (data) {
-          // Extract color values - using all fields from CSS_VAR_MAP
           const colors = {}
           Object.keys(CSS_VAR_MAP).forEach((key) => {
             colors[key] = data[key] || DEFAULT_THEME[key]
@@ -161,8 +159,7 @@ export const useTheme = () => {
           localStorage.setItem("theme_colors", JSON.stringify(colors))
         }
 
-        // Subscribe to real-time updates
-        const subscription = supabase
+        subscription = supabase
           .channel("site_theme_changes")
           .on(
             "postgres_changes",
@@ -183,16 +180,18 @@ export const useTheme = () => {
               }
             }
           )
-          .subscribe((status) => {})
-
-        return () => {
-          supabase.removeChannel(subscription)
-        }
+          .subscribe(() => {})
       } catch (error) {
         console.error("Error setting up theme:", error)
       }
     }
 
     setupTheme()
+
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription)
+      }
+    }
   }, [])
 }

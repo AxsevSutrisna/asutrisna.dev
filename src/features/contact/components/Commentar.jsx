@@ -9,8 +9,6 @@ import {
   X,
   Pin,
 } from "lucide-react"
-import AOS from "aos"
-import "aos/dist/aos.css"
 import { supabase } from "../../../config/supabase"
 import { Button } from "../../../components/ui/button"
 
@@ -254,14 +252,6 @@ const Komentar = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
 
-  useEffect(() => {
-    // Initialize AOS
-    AOS.init({
-      once: false,
-      duration: 1000,
-    })
-  }, [])
-
   // Fetch pinned comment
   useEffect(() => {
     const fetchPinnedComment = async () => {
@@ -440,7 +430,6 @@ const Komentar = () => {
           <CommentForm
             onSubmit={handleCommentSubmit}
             isSubmitting={isSubmitting}
-            error={error}
           />
         </div>
 
@@ -455,7 +444,6 @@ const Komentar = () => {
               <Comment
                 comment={pinnedComment}
                 formatDate={formatDate}
-                index={0}
                 isPinned={true}
               />
             </div>
@@ -475,7 +463,6 @@ const Komentar = () => {
                 key={comment.id}
                 comment={comment}
                 formatDate={formatDate}
-                index={index + (pinnedComment ? 1 : 0)}
                 isPinned={false}
               />
             ))

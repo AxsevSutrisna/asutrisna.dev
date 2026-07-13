@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom"
-import { lazy, Suspense } from "react"
+import { lazy, Suspense, useEffect } from "react"
 import { HelmetProvider } from "react-helmet-async"
 import { Analytics } from "@vercel/analytics/react"
+import AOS from "aos"
+import "aos/dist/aos.css"
 import ErrorBoundary from "./components/ErrorBoundary"
 import { PageSkeleton } from "./components/ui/Skeleton"
 import "./index.css"
@@ -57,6 +59,13 @@ import TargetCursor from "./components/ui/TargetCursor"
 
 function App() {
   useTheme()
+
+  useEffect(() => {
+    AOS.init({
+      once: false,
+      offset: 10,
+    })
+  }, [])
 
   return (
     <ErrorBoundary>

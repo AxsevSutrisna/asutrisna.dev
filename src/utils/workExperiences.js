@@ -2,7 +2,7 @@
  * Normalize work experience data from Supabase
  * Ensures all required fields have default values
  */
-export { MONTH_NAMES, formatDateRange } from "./dateUtils"
+export { formatDateRange } from "./dateUtils"
 
 export const MIN_YEAR = 1950
 export const MAX_YEAR = new Date().getFullYear() + 5
@@ -133,25 +133,4 @@ export const compareWorkExperienceTimeline = (a, b) => {
   return (b.start_month || 0) - (a.start_month || 0)
 }
 
-/**
- * Get badge classes based on employment type
- * Returns Tailwind classes for styling
- */
-export const getEmploymentTypeBadgeClasses = (employmentType) => {
-  const baseClasses = "font-medium"
 
-  switch (employmentType?.toLowerCase()) {
-    case "full-time":
-      return `${baseClasses} bg-theme-state-success/10 text-theme-state-success border-theme-state-success/30`
-    case "part-time":
-      return `${baseClasses} bg-theme-state-info/10 text-theme-state-info border-theme-state-info/30`
-    case "contract":
-      return `${baseClasses} bg-theme-state-warning/10 text-theme-state-warning border-theme-state-warning/30`
-    case "freelance":
-      return `${baseClasses} bg-theme-secondary-dark/10 text-theme-secondary-light border-theme-secondary-dark/30`
-    case "internship":
-      return `${baseClasses} bg-theme-primary-dark/10 text-theme-primary-light border-theme-primary-dark/30`
-    default:
-      return `${baseClasses} bg-gray-500/10 text-gray-400 border-gray-500/30`
-  }
-}

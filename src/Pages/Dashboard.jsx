@@ -18,7 +18,7 @@ import Educations from "./dashboard/Educations"
 import HeroContent from "./dashboard/HeroContent"
 import SocialLinks from "./dashboard/SocialLinks"
 import ThemeManager from "./dashboard/ThemeManager"
-import Courses from "./dashboard/Courses"
+
 import Achievements from "./dashboard/Achievements"
 import Messages from "./dashboard/Messages"
 import {
@@ -33,7 +33,7 @@ import {
   Zap,
   Share2,
   Palette,
-  BookOpen,
+
   GraduationCap,
   Trophy,
   MessageSquare,

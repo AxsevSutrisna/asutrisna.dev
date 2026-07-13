@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
 import { useContactInfo } from "./hooks/useContactInfo"
 import { contactService } from "../../services/contactService"
-import AOS from "aos"
-import "aos/dist/aos.css"
 import {
   ExternalLink,
   Mail,
@@ -14,7 +12,6 @@ import {
   Sparkles,
 } from "lucide-react"
 import { useLocation } from "react-router-dom"
-import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/useToast"
@@ -53,9 +50,7 @@ const ContactPage = () => {
     "Project Lead",
   ]
 
-  useEffect(() => {
-    AOS.init({ once: false })
-  }, [])
+
 
   const getIconComponent = (iconName, platformName) => {
     const nameToUse = iconName || platformName || ""
@@ -92,12 +87,15 @@ const ContactPage = () => {
         _template: "table",
       }
 
-      await axios.post(formSubmitUrl, submitData, {
+      const res = await fetch(formSubmitUrl, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        body: JSON.stringify(submitData),
       })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
       pushToast(
         "success",

@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react"
+import { useEffect, useState, useCallback, useMemo } from "react"
 import { useProjects } from "./hooks/useProjects"
 import ProjectCard from "./components/ProjectCard"
-import AOS from "aos"
-import "aos/dist/aos.css"
 import { Search } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { useLocation } from "react-router-dom"
@@ -25,10 +23,6 @@ export default function Portofolio() {
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
-  }, [])
-
-  useEffect(() => {
-    AOS.init({ once: false })
   }, [])
 
   const toggleShowMore = useCallback(() => {

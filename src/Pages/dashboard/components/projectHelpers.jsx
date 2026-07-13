@@ -1,4 +1,3 @@
-import { ImageIcon } from "lucide-react"
 
 export const isValidHttpUrl = (value) => {
   if (!value) return false

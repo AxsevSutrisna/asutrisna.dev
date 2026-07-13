@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+
 import { useTechStacks } from "./hooks/useTechStacks"
 import {
   Code,
@@ -11,9 +11,6 @@ import {
   Server,
   Globe,
 } from "lucide-react"
-import AOS from "aos"
-import "aos/dist/aos.css"
-
 const getCategoryConfig = (category) => {
   const cat = (category || "General").toLowerCase()
   if (cat.includes("backend") || cat.includes("server"))
@@ -111,10 +108,6 @@ const TechCategoryCard = ({ category, stacks, animation }) => {
 
 export default function StackPage() {
   const { techStacks, loading } = useTechStacks()
-
-  useEffect(() => {
-    AOS.init({ once: false })
-  }, [])
 
   const categories = Object.keys(techStacks)
 

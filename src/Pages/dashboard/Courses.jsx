@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react"
-import ReactDOM from "react-dom"
+import { createPortal } from "react-dom"
 import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
@@ -22,7 +22,7 @@ const FieldError = ({ message }) =>
 
 // Modal Component
 const Modal = ({ title, onClose, children }) =>
-  ReactDOM.createPortal(
+  createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"

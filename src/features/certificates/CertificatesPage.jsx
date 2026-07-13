@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useCertificates } from "./hooks/useCertificates"
 import Certificate from "../../components/Certificate"
-import AOS from "aos"
-import "aos/dist/aos.css"
 import { Button } from "../../components/ui/button"
 
 import ShowMoreButton from "../../components/ui/ShowMoreButton"
@@ -19,10 +17,6 @@ export default function CertificatesPage() {
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
-  }, [])
-
-  useEffect(() => {
-    AOS.init({ once: false })
   }, [])
 
   const toggleShowMore = useCallback(() => {

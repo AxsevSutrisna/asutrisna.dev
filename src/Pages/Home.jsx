@@ -10,7 +10,6 @@ import {
 import { Helmet } from "react-helmet-async"
 import { Mail, ExternalLink, Sparkles, Code, Award, Globe } from "lucide-react"
 import AOS from "aos"
-import "aos/dist/aos.css"
 import PublicCtaButton from "@/components/ui/public-cta-button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -30,6 +29,17 @@ import { useAboutContent } from "../features/about/hooks/useAboutContent"
 import { useContactStore } from "../store/useContactStore"
 import { heroContentService } from "../services/heroContentService"
 import { STATIC_PATHS } from "../constants/urls"
+import {
+  TYPING_SPEED,
+  ERASING_SPEED,
+  PAUSE_DURATION,
+  FALLBACK_SITE_ORIGIN,
+  normalizeArray,
+  normalizeCtaButtons,
+  buildPageTitle,
+} from "../features/home/utils/homeHelpers"
+
+import { ABOUT_FALLBACK } from "../constants/about"
 
 const ExperienceHighlight = lazy(
   () => import("../features/home/components/ExperienceHighlight")
@@ -63,49 +73,7 @@ const SectionDivider = () => (
   </div>
 )
 
-const TYPING_SPEED = 100
-const ERASING_SPEED = 50
-const PAUSE_DURATION = 2000
-const FALLBACK_SITE_ORIGIN =
-  typeof window !== "undefined" ? window.location.origin : ""
-const ABOUT_FALLBACK = { description: "" }
 
-const normalizeArray = (value) => {
-  if (Array.isArray(value)) return value.filter(Boolean)
-  if (typeof value === "string" && value.trim()) {
-    try {
-      const parsed = JSON.parse(value)
-      if (Array.isArray(parsed)) return parsed.filter(Boolean)
-    } catch {
-      return value
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean)
-    }
-  }
-  return []
-}
-
-const normalizeCtaButtons = (value) =>
-  normalizeArray(value)
-    .map((button) => {
-      if (!button || typeof button !== "object") return null
-
-      const label = button.label?.trim?.() || ""
-      const url = button.url?.trim?.() || ""
-      if (!label || !url) return null
-
-      return { label, url }
-    })
-    .filter(Boolean)
-
-const buildPageTitle = (heroData) => {
-  const titleParts = [heroData?.title_line_1, heroData?.title_line_2]
-    .map((part) => part?.trim())
-    .filter(Boolean)
-
-  return titleParts.join("").trim()
-}
 
 const Home = () => {
   const [text, setText] = useState("")
@@ -295,16 +263,9 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    const initAOS = () => {
-      AOS.init({
-        once: true,
-        offset: 10,
-      })
-    }
-
-    initAOS()
-    window.addEventListener("resize", initAOS)
-    return () => window.removeEventListener("resize", initAOS)
+    const handleResize = () => AOS.refresh()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
   useEffect(() => {
