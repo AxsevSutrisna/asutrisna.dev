@@ -15,13 +15,13 @@ import { useTheme } from "./hooks/useTheme"
 import PublicLayout from "./components/layouts/PublicLayout"
 import ProtectedRoute from "./components/ProtectedRoute"
 
-import Login from "./pages/Login"
-import Dashboard from "./pages/Dashboard"
+import Login from "./Pages/Login"
+import Dashboard from "./Pages/Dashboard"
 
 const Portfolio = lazy(() => import("./features/projects/Portfolio"))
 const ContactPage = lazy(() => import("./features/contact/Contact"))
 const ProjectDetails = lazy(() => import("./features/projects/ProjectDetail"))
-const NotFoundPage = lazy(() => import("./pages/NotFound"))
+const NotFoundPage = lazy(() => import("./Pages/NotFound"))
 
 const About = lazy(() => import("./features/about/About"))
 const StackPage = lazy(() => import("./features/techstack/StackPage"))
