@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-import { supabase } from "../../config/supabase"
+import { useState } from "react"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
 import { Plus, Sparkles, User, CheckCircle2 } from "lucide-react"
@@ -7,189 +6,37 @@ import Modal from "../../components/ui/Modal"
 import AboutCard from "./components/AboutCard"
 import AboutForm from "./components/AboutForm"
 import { SkeletonCard } from "./components/aboutHelpers.jsx"
+import { useAboutManagement } from "@/features/about-management/model/useAbout"
 
 export default function About() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
-  const [uploading, setUploading] = useState(false)
   const { toasts, pushToast, removeToast } = useToast()
-
-  const fetchItems = async () => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from("about_contents")
-      .select("*")
-      .order("created_at", { ascending: false })
-    if (error) console.error("Error fetching about contents:", error)
-    setItems(data || [])
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
-  const uploadPhoto = async (file) => {
-    const fileName = `about-photo-${Date.now()}-${file.name}`
-    const { error } = await supabase.storage
-      .from("about-images")
-      .upload(fileName, file, { upsert: true })
-    if (error) throw error
-    const { data } = supabase.storage
-      .from("about-images")
-      .getPublicUrl(fileName)
-    return data.publicUrl
-  }
-
-  const uploadCv = async (file) => {
-    const fileName = `about-cv-${Date.now()}-${file.name}`
-    const { error } = await supabase.storage
-      .from("about-cv")
-      .upload(fileName, file, { upsert: true })
-    if (error) throw error
-    const { data } = supabase.storage.from("about-cv").getPublicUrl(fileName)
-    return data.publicUrl
-  }
+  const {
+    items,
+    loading,
+    uploading,
+    createAbout,
+    updateAbout,
+    removeAbout,
+    togglePublish,
+    viewCv: handleViewCv,
+  } = useAboutManagement(pushToast)
 
   const handleCreate = async (form, photoFile, cvFileEn, cvFileId) => {
-    setUploading(true)
-    try {
-      const photoUrl = photoFile ? await uploadPhoto(photoFile) : ""
-      const cvUrlEn = cvFileEn ? await uploadCv(cvFileEn) : ""
-      const cvUrlId = cvFileId ? await uploadCv(cvFileId) : ""
-      if (form.is_published) {
-        await supabase
-          .from("about_contents")
-          .update({ is_published: false })
-          .eq("is_published", true)
-      }
-      await supabase.from("about_contents").insert({
-        name: form.name,
-        description: form.description,
-        quote: form.quote,
-        role_badges: form.role_badges,
-        photo_url: photoUrl,
-        cv_en_url: cvUrlEn,
-        cv_id_url: cvUrlId,
-        is_published: form.is_published,
-        version: 1,
-      })
-      setShowCreate(false)
-      pushToast("success", "About content created successfully!")
-      fetchItems()
-    } catch (err) {
-      console.error(err)
-      pushToast("error", err.message || "Failed to save about content")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await createAbout(form, photoFile, cvFileEn, cvFileId)
+    if (ok) setShowCreate(false)
   }
 
   const handleEdit = async (form, photoFile, cvFileEn, cvFileId) => {
     if (!editItem) return
-    setUploading(true)
-    try {
-      const photoUrl = photoFile
-        ? await uploadPhoto(photoFile)
-        : editItem.photo_url || ""
-      const cvUrlEn = cvFileEn
-        ? await uploadCv(cvFileEn)
-        : editItem.cv_en_url || ""
-      const cvUrlId = cvFileId
-        ? await uploadCv(cvFileId)
-        : editItem.cv_id_url || ""
-      if (form.is_published) {
-        await supabase
-          .from("about_contents")
-          .update({ is_published: false })
-          .neq("id", editItem.id)
-          .eq("is_published", true)
-      }
-      await supabase
-        .from("about_contents")
-        .update({
-          name: form.name,
-          description: form.description,
-          quote: form.quote,
-          role_badges: form.role_badges,
-          photo_url: photoUrl,
-          cv_en_url: cvUrlEn,
-          cv_id_url: cvUrlId,
-          is_published: form.is_published,
-          version: (editItem.version || 1) + 1,
-        })
-        .eq("id", editItem.id)
-      setEditItem(null)
-      pushToast("success", "About content updated successfully!")
-      fetchItems()
-    } catch (err) {
-      console.error(err)
-      pushToast("error", err.message || "Failed to update about content")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await updateAbout(editItem, form, photoFile, cvFileEn, cvFileId)
+    if (ok) setEditItem(null)
   }
 
-  const deleteItem = async (id) => {
+  const deleteItem = (id) => {
     if (!confirm("Delete this about content?")) return
-    const { error } = await supabase
-      .from("about_contents")
-      .delete()
-      .eq("id", id)
-    if (error) {
-      pushToast("error", error.message || "Failed to delete")
-      return
-    }
-    pushToast("success", "About content deleted!")
-    fetchItems()
-  }
-
-  const togglePublish = async (item) => {
-    if (item.is_published) {
-      await supabase
-        .from("about_contents")
-        .update({ is_published: false })
-        .eq("id", item.id)
-    } else {
-      await supabase
-        .from("about_contents")
-        .update({ is_published: false })
-        .neq("id", item.id)
-        .eq("is_published", true)
-      await supabase
-        .from("about_contents")
-        .update({ is_published: true })
-        .eq("id", item.id)
-    }
-    pushToast("success", item.is_published ? "Unpublished!" : "Published!")
-    fetchItems()
-  }
-
-  const handleViewCv = async (cvUrl) => {
-    try {
-      let path = cvUrl
-      if (cvUrl.includes("/about-cv/")) {
-        path = cvUrl.split("/about-cv/").slice(1).join("/about-cv/")
-      }
-      path = decodeURIComponent(path)
-
-      const { data, error } = await supabase.storage
-        .from("about-cv")
-        .createSignedUrl(path, 3600)
-      if (error) {
-        console.error("Error creating signed URL:", error)
-        window.open(cvUrl, "_blank")
-        return
-      }
-      if (data?.signedUrl) {
-        window.open(data.signedUrl, "_blank")
-      }
-    } catch (err) {
-      console.error("Failed to view CV:", err)
-      window.open(cvUrl, "_blank")
-    }
+    removeAbout(id)
   }
 
   const publishedCount = items.filter((i) => i.is_published).length

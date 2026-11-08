@@ -19,7 +19,7 @@ import Certificate from "../../components/Certificate"
 import { Badge } from "../../components/ui/badge"
 import { Card, CardContent, CardHeader } from "../../components/ui/card"
 import PublicCtaButton from "../../components/ui/public-cta-button"
-import { aboutService } from "../../services/aboutService"
+import { aboutRepository } from "@/entities/about/api/aboutRepository"
 import { useCertificates } from "../certificates/hooks/useCertificates"
 import { useContactInfo } from "../contact/hooks/useContactInfo"
 import { useExperienceData } from "../experience/hooks/useExperienceData"
@@ -239,7 +239,7 @@ export default function CVPage() {
     const fetchAboutContent = async () => {
       setAboutLoading(true)
       try {
-        const data = await aboutService.fetchAboutContent()
+        const data = await aboutRepository.fetchPublished()
         if (active) {
           setAboutContent(data)
         }
