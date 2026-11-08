@@ -1,5 +1,4 @@
 import { useEffect, memo, useMemo } from "react"
-import { Link } from "react-router-dom"
 import { Code, Award, Globe } from "lucide-react"
 import AOS from "aos"
 import { useAboutContent } from "./hooks/useAboutContent"
@@ -8,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import DecryptedText from "@/components/ui/DecryptedText"
 import ProfileCard from "@/components/ui/ProfileCard"
 import StatCard from "@/components/ui/StatCard"
-import LogoLoop from "@/components/ui/LogoLoop"
 import AchievementHighlight from "../home/components/AchievementHighlight"
 import { ABOUT_FALLBACK } from "../../constants/about"
 
@@ -54,7 +52,6 @@ const AboutPage = () => {
     totalCertificates,
     YearExperienceDecimal,
     YearExperienceLabel,
-    techStacks,
   } = useAboutContent()
 
   const content = fetchedContent || ABOUT_FALLBACK

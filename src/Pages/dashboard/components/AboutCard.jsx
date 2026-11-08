@@ -11,7 +11,6 @@ import {
   User,
   RefreshCw,
   FileText,
-  Eye,
 } from "lucide-react"
 import { STATIC_PATHS } from "../../../constants/urls"
 import { formatDate } from "./aboutHelpers.jsx"

@@ -11,12 +11,10 @@ const AnimatedBackground = () => {
   const blobRefs = useRef([])
 
   useEffect(() => {
-    let currentScroll = 0
     let requestId
 
     const handleScroll = () => {
       const newScroll = window.pageYOffset
-      currentScroll = newScroll
 
       blobRefs.current.forEach((blob, index) => {
         const initialPos = initialPositions[index]
