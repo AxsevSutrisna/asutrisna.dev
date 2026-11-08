@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react"
-import { supabase } from "../../config/supabase"
+import { useEffect, useState } from "react"
 import { Award, Upload, Trash2, ImageIcon, Plus, Eye, X } from "lucide-react"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
+import { useCertificateManagement } from "@/features/certificate-management/model/useCertificates"
 
 const Card = ({ children, className = "" }) => (
   <div className={`relative group/card ${className}`}>
@@ -84,33 +84,18 @@ const CertCard = ({ cert, onDelete, onView }) => {
 }
 
 export default function Certificates() {
-  const [certs, setCerts] = useState([])
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
-  const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [lightboxImage, setLightboxImage] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
-
-  const fetchCerts = useCallback(async () => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from("certificates")
-      .select("*")
-      .order("created_at", { ascending: false })
-    if (error) {
-      console.error(error)
-      pushToast("error", "Failed to load certificates")
-    } else {
-      setCerts(data || [])
-    }
-    setLoading(false)
-  }, [pushToast])
-
-  useEffect(() => {
-    fetchCerts()
-  }, [fetchCerts])
+  const {
+    certificates: certs,
+    loading,
+    uploading,
+    uploadCertificate,
+    removeCertificate,
+  } = useCertificateManagement(pushToast)
 
   const handleFile = (f) => {
     if (!f) return
@@ -120,49 +105,16 @@ export default function Certificates() {
 
   const uploadImage = async () => {
     if (!file) return
-    setUploading(true)
-    try {
-      const fileName = `cert-${Date.now()}-${file.name}`
-      const { error: uploadError } = await supabase.storage
-        .from("certificate-images")
-        .upload(fileName, file)
-      if (uploadError) throw uploadError
-
-      const { data } = supabase.storage
-        .from("certificate-images")
-        .getPublicUrl(fileName)
-
-      const { error: dbError } = await supabase
-        .from("certificates")
-        .insert({ img: data.publicUrl })
-      if (dbError) throw dbError
-
-      pushToast("success", "Certificate uploaded successfully!")
+    const ok = await uploadCertificate(file)
+    if (ok) {
       setFile(null)
       setPreview(null)
-      fetchCerts()
-    } catch (error) {
-      console.error("Upload error:", error)
-      pushToast("error", "Failed to upload certificate")
-    } finally {
-      setUploading(false)
     }
   }
 
-  const deleteCert = async (id) => {
+  const deleteCert = (id) => {
     if (!confirm("Are you sure you want to delete this certificate?")) return
-    try {
-      const { error } = await supabase
-        .from("certificates")
-        .delete()
-        .eq("id", id)
-      if (error) throw error
-      pushToast("success", "Certificate deleted")
-      fetchCerts()
-    } catch (error) {
-      console.error("Delete error:", error)
-      pushToast("error", "Failed to delete certificate")
-    }
+    removeCertificate(id)
   }
 
   // Lock body scroll when lightbox is open
