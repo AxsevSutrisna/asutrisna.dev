@@ -3,10 +3,7 @@ import {
   Clock,
   Globe,
   Github,
-  Layers,
-  Zap,
   ImageIcon,
-  ExternalLink,
   Pencil,
   Trash2,
   GripVertical,
@@ -20,15 +17,14 @@ export default function ProjectRow({
   provided,
   isDragging,
 }) {
-  const title = project.title || project.Title || "Untitled"
-  const desc = project.description || project.Description || ""
-  const techStack =
-    project.tech_stack || project.techstack || project.TechStack || []
-  const features = project.features || project.Features || []
-  const isPublished = project.is_published ?? true
-  const imgSrc = project.img || project.Img || ""
-  const liveUrl = project.link || project.Link || ""
-  const githubUrl = project.github || project.Github || ""
+  const title = project.title || "Untitled"
+  const desc = project.description || ""
+  const techStack = project.techStack || []
+  const features = project.features || []
+  const isPublished = project.isPublished ?? true
+  const imgSrc = project.img || ""
+  const liveUrl = project.link || ""
+  const githubUrl = project.github || ""
 
   return (
     <div

@@ -16,16 +16,15 @@ export default function ProjectCard({ project, onDelete, onEdit }) {
   const [imgLoaded, setImgLoaded] = useState(false)
   const [hovered, setHovered] = useState(false)
 
-  const title = project.title || project.Title || "Untitled"
-  const desc = project.description || project.Description || ""
-  const techStack =
-    project.tech_stack || project.techstack || project.TechStack || []
-  const features = project.features || project.Features || []
-  const isPublished = project.is_published ?? true
-  const imgSrc = project.img || project.Img || ""
-  const liveUrl = project.link || project.Link || ""
-  const githubUrl = project.github || project.Github || ""
-  const category = project.category || project.Category || ""
+  const title = project.title || "Untitled"
+  const desc = project.description || ""
+  const techStack = project.techStack || []
+  const features = project.features || []
+  const isPublished = project.isPublished ?? true
+  const imgSrc = project.img || ""
+  const liveUrl = project.link || ""
+  const githubUrl = project.github || ""
+  const category = project.category || ""
 
   return (
     <div

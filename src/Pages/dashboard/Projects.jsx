@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
-import { supabase } from "../../config/supabase"
-import { MAX_PROJECT_IMAGES } from "../../utils/projectImages"
+import { useState } from "react"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
+import { useProjectManagement } from "@/features/project-management/model/useProjects"
 import {
   Plus,
   FolderGit2,
@@ -18,178 +17,61 @@ import Modal from "../../components/ui/Modal"
 import ProjectCard from "./components/ProjectCard"
 import ProjectRow from "./components/ProjectRow"
 import ProjectForm from "./components/ProjectForm"
-import {
-  SkeletonCard,
-  validateProjectForm,
-} from "./components/projectHelpers.jsx"
+import { SkeletonCard } from "./components/projectHelpers.jsx"
 
 export default function Projects() {
-  const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { toasts, pushToast, removeToast } = useToast()
+  const {
+    projects,
+    setProjects,
+    loading,
+    uploading,
+    createProject,
+    updateProject,
+    removeProject,
+    reorderProjects,
+  } = useProjectManagement(pushToast)
+
   const [showCreate, setShowCreate] = useState(false)
   const [editProject, setEditProject] = useState(null)
-  const [uploading, setUploading] = useState(false)
   const [hasOrderChanged, setHasOrderChanged] = useState(false)
-  const { toasts, pushToast, removeToast } = useToast()
+  const [viewMode, setViewMode] = useState("grid")
 
-  const fetchProjects = async () => {
-    setLoading(true)
-    const { data } = await supabase
-      .from("projects")
-      .select("*")
-      .order("order_index", { ascending: true })
-      .order("created_at", { ascending: false })
-    setProjects(data || [])
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchProjects()
-  }, [])
-
-  const uploadImage = async (f) => {
-    const fileName = `${Date.now()}-${f.name}`
-    await supabase.storage.from("project-images").upload(fileName, f)
-    const { data } = supabase.storage
-      .from("project-images")
-      .getPublicUrl(fileName)
-    return data.publicUrl
-  }
-
-  const uploadProjectImages = async (imageItems) => {
-    const uploadedUrls = []
-
-    for (const item of (imageItems || []).slice(0, 6)) {
-      if (item?.file) {
-        uploadedUrls.push(await uploadImage(item.file))
-      } else if (item?.url) {
-        uploadedUrls.push(item.url)
-      }
-    }
-
-    return [...new Set(uploadedUrls)].slice(0, MAX_PROJECT_IMAGES)
-  }
-
+  // ProjectForm sudah memvalidasi sebelum onSubmit; di sini cukup orkestrasi.
   const handleCreate = async (form, imageItems) => {
-    setUploading(true)
-    const validationErrors = validateProjectForm(form, imageItems)
-    const validationError = Object.values(validationErrors).find(Boolean)
-    if (validationError) {
-      pushToast("error", validationError)
-      setUploading(false)
-      return
-    }
-
-    const images = await uploadProjectImages(imageItems)
-    await supabase.from("projects").insert({
-      title: form.title,
-      description: form.description,
-      img: images[0] || "",
-      images,
-      tech_stack: form.techstack
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      features: form.features
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      link: form.link,
-      github: form.github,
-      category: form.category,
-    })
-    setShowCreate(false)
-    pushToast("success", "Project created successfully!")
-    setUploading(false)
-    fetchProjects()
+    const ok = await createProject(form, imageItems)
+    if (ok) setShowCreate(false)
   }
 
   const handleEdit = async (form, imageItems) => {
-    setUploading(true)
-    const validationErrors = validateProjectForm(form, imageItems)
-    const validationError = Object.values(validationErrors).find(Boolean)
-    if (validationError) {
-      pushToast("error", validationError)
-      setUploading(false)
-      return
-    }
-
-    const images = await uploadProjectImages(imageItems)
-    await supabase
-      .from("projects")
-      .update({
-        title: form.title,
-        description: form.description,
-        img: images[0] || "",
-        images,
-        tech_stack: form.techstack
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        features: form.features
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        link: form.link,
-        github: form.github,
-        category: form.category,
-      })
-      .eq("id", editProject.id)
-    setEditProject(null)
-    pushToast("success", "Project updated successfully!")
-    setUploading(false)
-    fetchProjects()
+    const ok = await updateProject(editProject.id, form, imageItems)
+    if (ok) setEditProject(null)
   }
 
-  const deleteProject = async (id) => {
+  const deleteProject = (id) => {
     if (!confirm("Delete this project?")) return
-    const { error } = await supabase.from("projects").delete().eq("id", id)
-    if (error) {
-      pushToast("error", error.message || "Failed to delete project")
-      return
-    }
-    pushToast("success", "Project deleted successfully!")
-    fetchProjects()
+    removeProject(id)
   }
 
   const handleDragEnd = (result) => {
     if (!result.destination) return
     const { source, destination } = result
-
     if (source.index === destination.index) return
 
-    const newProjects = Array.from(projects)
-    const [reorderedItem] = newProjects.splice(source.index, 1)
-    newProjects.splice(destination.index, 0, reorderedItem)
+    const next = Array.from(projects)
+    const [moved] = next.splice(source.index, 1)
+    next.splice(destination.index, 0, moved)
 
-    setProjects(newProjects)
+    setProjects(next)
     setHasOrderChanged(true)
   }
 
   const saveOrder = async () => {
-    setUploading(true)
-    try {
-      const updates = projects.map((p, index) => ({
-        ...p,
-        order_index: index,
-      }))
-
-      const { error } = await supabase.from("projects").upsert(updates)
-
-      if (error) throw error
-      pushToast("success", "Project order saved successfully!")
-      setHasOrderChanged(false)
-    } catch (err) {
-      pushToast("error", err.message || "Failed to save order")
-    } finally {
-      setUploading(false)
-      fetchProjects()
-    }
+    await reorderProjects(projects)
+    setHasOrderChanged(false)
   }
 
-  const [viewMode, setViewMode] = useState("grid")
-
-  const publishedCount = projects.filter((p) => p.is_published ?? true).length
+  const publishedCount = projects.filter((p) => p.isPublished ?? true).length
   const draftCount = projects.length - publishedCount
 
   return (

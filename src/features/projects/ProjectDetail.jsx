@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { useParams, useNavigate } from "react-router-dom"
-import { useProjectStore } from "../../store/useProjectStore"
+import { useProjectStore } from "@/entities/project/model/store"
 import { ArrowLeft, ExternalLink, Github, Code2, Star, X } from "lucide-react"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
 import { FALLBACK_SITE_ORIGIN, FALLBACK_GITHUB } from "../../constants/urls"
-import { toSlug } from "../../utils/slug"
-import { normalizeProjectImages } from "../../utils/projectImages"
 import {
   buildCreativeWorkSchema,
   buildPersonSchema,
@@ -66,59 +64,8 @@ const ProjectDetails = () => {
     window.scrollTo(0, 0)
     if (projects.length === 0) return
 
-    const found = projects.find((p) => toSlug(p?.title || p?.Title) === slug)
-    if (found) {
-      const normalizedTitle = found.title || found.Title || "Untitled Project"
-      const normalizedDescription = found.description || found.Description || ""
-      const normalizedFeatures = Array.isArray(found.features)
-        ? found.features
-        : typeof found.features === "string" && found.features.length > 0
-          ? found.features
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : Array.isArray(found.Features)
-            ? found.Features
-            : typeof found.Features === "string" && found.Features.length > 0
-              ? found.Features.split(",")
-                  .map((s) => s.trim())
-                  .filter(Boolean)
-              : []
-      const normalizedTechStack = Array.isArray(found.tech_stack)
-        ? found.tech_stack
-        : Array.isArray(found.techstack)
-          ? found.techstack
-          : typeof found.techstack === "string" && found.techstack.length > 0
-            ? found.techstack
-                .split(",")
-                .map((s) => s.trim())
-                .filter(Boolean)
-            : Array.isArray(found.TechStack)
-              ? found.TechStack
-              : typeof found.TechStack === "string" &&
-                  found.TechStack.length > 0
-                ? found.TechStack.split(",")
-                    .map((s) => s.trim())
-                    .filter(Boolean)
-                : []
-      const normalizedImages = normalizeProjectImages(found)
-
-      const enhanced = {
-        ...found,
-        Title: normalizedTitle,
-        Description: normalizedDescription,
-        Img: found.img || found.Img || "",
-        Images: normalizedImages,
-        Link: found.link || found.Link || "#",
-        Github: found.github || found.Github || FALLBACK_GITHUB,
-        Features: normalizedFeatures,
-        TechStack: normalizedTechStack,
-      }
-
-      setProject(enhanced)
-    } else {
-      setProject(null)
-    }
+    // Project sudah dalam bentuk kanonik (camelCase + slug) dari mapper.
+    setProject(projects.find((p) => p.slug === slug) ?? null)
     setIsResolved(true)
   }, [projects, slug])
 
@@ -170,23 +117,20 @@ const ProjectDetails = () => {
     )
   }
 
-  const projectUrl = resolveSiteUrl(
-    siteOrigin,
-    `/project/${toSlug(project.Title)}`
-  )
-  const projectImages = normalizeProjectImages(project)
-  const heroImage = projectImages[0] || project.img || project.Img
+  const projectUrl = resolveSiteUrl(siteOrigin, `/project/${project.slug}`)
+  const projectImages = project.images
+  const heroImage = project.images[0] || project.img
   const jsonLdSchemas = [
     buildWebPageSchema({
-      name: `${project.Title} — Asep Sutrisna Suhada Putra`,
+      name: `${project.title} — Asep Sutrisna Suhada Putra`,
       url: projectUrl,
       description:
-        project.Description?.slice(0, 155) ||
-        `Project ${project.Title} oleh Asep Sutrisna Suhada Putra.`,
+        project.description?.slice(0, 155) ||
+        `Project ${project.title} oleh Asep Sutrisna Suhada Putra.`,
       primaryImageOfPage: resolveAbsoluteUrl(heroImage, projectUrl),
       about: {
         "@type": "CreativeWork",
-        name: project.Title,
+        name: project.title,
       },
       isPartOf: {
         "@type": "WebSite",
@@ -199,10 +143,10 @@ const ProjectDetails = () => {
       },
     }),
     buildCreativeWorkSchema({
-      name: project.Title,
+      name: project.title,
       description:
-        project.Description?.slice(0, 155) ||
-        `Project ${project.Title} oleh Asep Sutrisna Suhada Putra.`,
+        project.description?.slice(0, 155) ||
+        `Project ${project.title} oleh Asep Sutrisna Suhada Putra.`,
       url: projectUrl,
       image: resolveAbsoluteUrl(heroImage, projectUrl),
       author: buildPersonSchema({
@@ -215,24 +159,24 @@ const ProjectDetails = () => {
   return (
     <>
       <Helmet>
-        <title>{project.Title} — Asep Sutrisna Suhada Putra</title>
+        <title>{project.title} — Asep Sutrisna Suhada Putra</title>
         <meta
           name="description"
           content={
-            project.Description
-              ? project.Description.slice(0, 155)
-              : `Project ${project.Title} oleh Asep Sutrisna Suhada Putra — Full-Stack Web Developer.`
+            project.description
+              ? project.description.slice(0, 155)
+              : `Project ${project.title} oleh Asep Sutrisna Suhada Putra — Full-Stack Web Developer.`
           }
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={projectUrl} />
         <meta
           property="og:title"
-          content={`${project.Title} — Asep Sutrisna Suhada Putra`}
+          content={`${project.title} — Asep Sutrisna Suhada Putra`}
         />
         <meta
           property="og:description"
-          content={project.Description?.slice(0, 155)}
+          content={project.description?.slice(0, 155)}
         />
         <meta property="og:url" content={projectUrl} />
         <meta property="og:type" content="website" />
@@ -315,7 +259,7 @@ const ProjectDetails = () => {
                   <BreadcrumbSeparator className="text-white/50 [&>svg]:w-3 [&>svg]:h-3 md:[&>svg]:w-4 md:[&>svg]:h-4 shrink-0" />
                   <BreadcrumbItem className="min-w-0 truncate">
                     <BreadcrumbPage className="text-white/90 font-medium text-sm md:text-base min-w-0 truncate block">
-                      {project.Title}
+                      {project.title}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
@@ -329,7 +273,7 @@ const ProjectDetails = () => {
                     className="text-3xl md:text-6xl font-bold leading-tight"
                     style={{ color: "var(--color-text-primary)" }}
                   >
-                    {project.Title}
+                    {project.title}
                   </h1>
                   <div className="relative h-1 w-16 md:w-24">
                     <div
@@ -354,7 +298,7 @@ const ProjectDetails = () => {
                     className="text-base md:text-lg leading-relaxed"
                     style={{ color: "var(--color-text-secondary)" }}
                   >
-                    {project.Description}
+                    {project.description}
                   </p>
                 </div>
 
@@ -368,7 +312,7 @@ const ProjectDetails = () => {
                     className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
                   >
                     <a
-                      href={project.Link}
+                      href={project.link || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group relative inline-flex items-center space-x-1.5 md:space-x-2"
@@ -385,12 +329,12 @@ const ProjectDetails = () => {
                     className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
                   >
                     <a
-                      href={project.Github}
+                      href={project.github || FALLBACK_GITHUB}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group relative inline-flex items-center space-x-1.5 md:space-x-2"
                       onClick={(e) => {
-                        if (!handleGithubClick(project.Github)) {
+                        if (!handleGithubClick(project.github)) {
                           e.preventDefault()
                         }
                       }}
@@ -409,9 +353,9 @@ const ProjectDetails = () => {
                     />
                     Technologies Used
                   </h3>
-                  {project.TechStack?.length > 0 ? (
+                  {project.techStack?.length > 0 ? (
                     <div className="flex flex-wrap gap-2 md:gap-3">
-                      {(project.TechStack || []).map((tech, index) => (
+                      {(project.techStack || []).map((tech, index) => (
                         <TechBadge key={index} tech={tech} />
                       ))}
                     </div>
@@ -433,7 +377,7 @@ const ProjectDetails = () => {
                     {heroImage ? (
                       <img
                         src={heroImage}
-                        alt={project.Title || project.title}
+                        alt={project.title}
                         className="w-full object-cover transform transition-transform duration-700 will-change-transform group-hover:scale-105"
                       />
                     ) : (
@@ -454,7 +398,7 @@ const ProjectDetails = () => {
                         >
                           <img
                             src={image}
-                            alt={`${project.Title} image ${index + 2}`}
+                            alt={`${project.title} image ${index + 2}`}
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
@@ -472,9 +416,9 @@ const ProjectDetails = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {project.Features?.length > 0 ? (
+                    {project.features?.length > 0 ? (
                       <ul className="list-none space-y-2">
-                        {(project.Features || []).map((feature, index) => (
+                        {(project.features || []).map((feature, index) => (
                           <FeatureItem key={index} feature={feature} />
                         ))}
                       </ul>

@@ -1,10 +1,8 @@
 import { memo, useMemo, useRef, useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
-import { ArrowRight, FolderOpen, ExternalLink } from "lucide-react"
+import { ArrowRight, FolderOpen } from "lucide-react"
 import { useProjects } from "../../projects/hooks/useProjects"
-import { toSlug } from "../../../utils/slug"
 import ProjectCard from "../../projects/components/ProjectCard"
-import ShowMoreButton from "../../../components/ui/ShowMoreButton"
 
 import { useCarouselAutoScroll } from "../../../hooks/useCarouselAutoScroll"
 
@@ -13,40 +11,22 @@ const CARD_WIDTH_DESKTOP = 300 // px
 const CARD_WIDTH_MOBILE = 256 // px
 const CARD_GAP = 20 // px
 
-/* ─── Helper: parse categories ──────────────────────────────────── */
-const getCategories = (project) => {
-  const raw = project.category || project.Category || ""
-  if (!raw) return []
-  return raw
-    .split(",")
-    .map((s) => s.trim().toUpperCase())
-    .filter(Boolean)
-}
-
 /* ─── ProjectCard (Local Wrapper) ───────────────────────────────── */
-const LocalProjectCard = memo(({ project, cardWidth }) => {
-  const title = project.title || project.Title || ""
-  const description = project.description || project.Description || ""
-  const img = project.img || project.Img
-  const link = project.link || project.Link
-  const id = project.id
-
-  return (
-    <article
-      className="group relative shrink-0 flex flex-col pb-2 pr-2"
-      style={{ width: cardWidth, height: 460 }}
-      aria-label={title}
-    >
-      <ProjectCard
-        img={img}
-        title={title}
-        description={description}
-        link={link}
-        id={id}
-      />
-    </article>
-  )
-})
+const LocalProjectCard = memo(({ project, cardWidth }) => (
+  <article
+    className="group relative shrink-0 flex flex-col pb-2 pr-2"
+    style={{ width: cardWidth, height: 460 }}
+    aria-label={project.title}
+  >
+    <ProjectCard
+      img={project.img}
+      title={project.title}
+      description={project.description}
+      link={project.link}
+      id={project.id}
+    />
+  </article>
+))
 LocalProjectCard.displayName = "LocalProjectCard"
 
 /* ─── Skeleton card ─────────────────────────────────────────────── */

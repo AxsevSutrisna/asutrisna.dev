@@ -1,8 +1,8 @@
 import { Code2, Layers } from "lucide-react"
 
 export default function ProjectStats({ project }) {
-  const techStackCount = project?.TechStack?.length || 0
-  const featuresCount = project?.Features?.length || 0
+  const techStackCount = project?.techStack?.length || 0
+  const featuresCount = project?.features?.length || 0
 
   return (
     <div

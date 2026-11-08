@@ -11,10 +11,7 @@ import {
   Layers,
   Zap,
 } from "lucide-react"
-import {
-  MAX_PROJECT_IMAGES,
-  normalizeProjectImages,
-} from "../../../utils/projectImages"
+import { MAX_PROJECT_IMAGES } from "@/entities/project/lib/projectMapper"
 import { validateProjectForm } from "./projectHelpers.jsx"
 
 const sectionTitle = (icon, text) => (
@@ -36,34 +33,26 @@ export default function ProjectForm({
 }) {
   const [touched, setTouched] = useState({})
   const [errors, setErrors] = useState({})
+  // `initial` adalah entity Project kanonik (camelCase) hasil mapper.
   const [imageItems, setImageItems] = useState(() =>
-    normalizeProjectImages(initial).map((url, index) => ({
+    (initial?.images ?? []).map((url, index) => ({
       id: `existing-${index}-${url}`,
       url,
       file: null,
     }))
   )
   const [form, setForm] = useState({
-    title: initial?.title || initial?.Title || "",
-    category: initial?.category || initial?.Category || "",
-    description: initial?.description || initial?.Description || "",
-    techstack: Array.isArray(initial?.tech_stack)
-      ? initial.tech_stack.join(",")
-      : Array.isArray(initial?.techstack)
-        ? initial.techstack.join(",")
-        : Array.isArray(initial?.TechStack)
-          ? initial.TechStack.join(",")
-          : initial?.techstack ||
-            initial?.TechStack ||
-            initial?.tech_stack ||
-            "",
+    title: initial?.title || "",
+    category: initial?.category || "",
+    description: initial?.description || "",
+    techstack: Array.isArray(initial?.techStack)
+      ? initial.techStack.join(",")
+      : "",
     features: Array.isArray(initial?.features)
       ? initial.features.join(",")
-      : Array.isArray(initial?.Features)
-        ? initial.Features.join(",")
-        : initial?.features || initial?.Features || "",
-    link: initial?.link || initial?.Link || "",
-    github: initial?.github || initial?.Github || "",
+      : "",
+    link: initial?.link || "",
+    github: initial?.github || "",
   })
 
   const set = (key) => (e) => {

@@ -31,20 +31,14 @@ export default function Portofolio() {
 
   // Dynamic filters based on project categories
   const filters = useMemo(() => {
-    const categories = projects
-      .map((p) => p.category || p.Category)
-      .filter(Boolean)
+    const categories = projects.map((p) => p.category).filter(Boolean)
     const uniqueCategories = [...new Set(categories)]
     return ["All", ...uniqueCategories]
   }, [projects])
 
   const filteredProjects = projects.filter((project) => {
-    const title = (project.title || project.Title || "").toLowerCase()
-    const description = (
-      project.description ||
-      project.Description ||
-      ""
-    ).toLowerCase()
+    const title = (project.title || "").toLowerCase()
+    const description = (project.description || "").toLowerCase()
 
     const matchesSearch =
       title.includes(searchQuery.toLowerCase()) ||
@@ -52,8 +46,7 @@ export default function Portofolio() {
 
     if (activeFilter === "All") return matchesSearch
 
-    const projectCategory = project.category || project.Category || ""
-    const matchesFilter = projectCategory === activeFilter
+    const matchesFilter = (project.category || "") === activeFilter
 
     return matchesSearch && matchesFilter
   })
@@ -147,10 +140,10 @@ export default function Portofolio() {
                 }
               >
                 <ProjectCard
-                  img={project.img || project.Img}
-                  title={project.title || project.Title}
-                  description={project.description || project.Description}
-                  link={project.link || project.Link}
+                  img={project.img}
+                  title={project.title}
+                  description={project.description}
+                  link={project.link}
                   id={project.id}
                 />
               </div>

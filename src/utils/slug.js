@@ -1,5 +1,5 @@
-export const toSlug = (title) =>
-  String(title ?? "")
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
+/**
+ * @deprecated Re-export shim. Sumber tunggal: `src/shared/lib/slug.js`.
+ * Impor baru sebaiknya pakai `@/shared/lib/slug`.
+ */
+export { toSlug } from "@/shared/lib/slug"
