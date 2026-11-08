@@ -30,7 +30,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { supabase } from "../../../config/supabase"
+import { themePresetRepository } from "@/entities/themePreset/api/themePresetRepository"
 import { AlertCircle, RefreshCw } from "lucide-react"
 import PresetFilterTabs from "./PresetFilterTabs"
 import PresetCardsGrid from "./PresetCardsGrid"
@@ -175,26 +175,7 @@ const ThemePresetSection = ({ onPresetApply, currentColors }) => {
     setLoading(true)
     setError(null)
     try {
-      const { data, error: sbErr } = await supabase
-        .from("theme_presets")
-        .select(
-          "id, name, description, vibe, use_case, category, color_scheme, is_default, is_featured"
-        )
-        .order("is_featured", { ascending: false })
-        .order("id", { ascending: true })
-
-      if (sbErr) throw sbErr
-
-      // Ensure color_scheme is always an object (Supabase can return string)
-      const normalized = (data || []).map((p) => ({
-        ...p,
-        color_scheme:
-          typeof p.color_scheme === "string"
-            ? JSON.parse(p.color_scheme)
-            : p.color_scheme,
-      }))
-
-      setPresets(normalized)
+      setPresets(await themePresetRepository.fetchAll())
     } catch (e) {
       setError(e.message || String(e))
     } finally {
