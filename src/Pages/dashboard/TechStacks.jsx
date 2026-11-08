@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createPortal } from "react-dom"
-import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
 import { SIMPLE_ICONS_BASE } from "../../constants/urls"
+import { techStackSlug as toSlug } from "@/entities/techStack/lib/techStackSlug"
+import { useTechStackManagement } from "@/features/techstack-management/model/useTechStacks"
 import {
   Boxes,
   Pencil,
@@ -79,13 +80,6 @@ const InputField = ({
     />
   </div>
 )
-
-const toSlug = (value) =>
-  String(value || "")
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
 
 const TECH_CATEGORIES = [
   "Programming Language",
@@ -480,99 +474,21 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
 }
 
 export default function TechStacks() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
-  const [uploading, setUploading] = useState(false)
   const [draggingId, setDraggingId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
-
-  const fetchItems = async () => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from("tech_stacks")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .order("name", { ascending: true })
-
-    if (error) {
-      console.error("Error fetching tech stacks:", error)
-    }
-
-    setItems(data || [])
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
-  const uploadIcon = async (file) => {
-    const fileName = `tech-${Date.now()}-${file.name}`
-    const { error } = await supabase.storage
-      .from("tech-stack-icons")
-      .upload(fileName, file, { upsert: true })
-    if (error) throw error
-    const { data } = supabase.storage
-      .from("tech-stack-icons")
-      .getPublicUrl(fileName)
-    return data.publicUrl
-  }
-
-  const checkSlugUnique = async (slug, currentId = null) => {
-    const normalizedSlug = toSlug(slug)
-    if (!normalizedSlug) {
-      throw new Error("Slug is required")
-    }
-
-    let query = supabase
-      .from("tech_stacks")
-      .select("id, slug")
-      .eq("slug", normalizedSlug)
-
-    if (currentId) {
-      query = query.neq("id", currentId)
-    }
-
-    const { data, error } = await query.limit(1)
-
-    if (error) throw error
-    if ((data || []).length > 0) {
-      throw new Error("Slug already used. Please choose another one.")
-    }
-
-    return normalizedSlug
-  }
-
-  const getNextSortOrder = () => {
-    const highestSortOrder = items.reduce((highest, item) => {
-      const currentSortOrder = Number(item.sort_order || 0)
-      return currentSortOrder > highest ? currentSortOrder : highest
-    }, 0)
-
-    return highestSortOrder + 1
-  }
-
-  const resolveSortOrder = (value) => {
-    if (value === "" || value === null || value === undefined) {
-      return getNextSortOrder()
-    }
-
-    const parsedSortOrder = Number(value)
-    return Number.isNaN(parsedSortOrder) ? getNextSortOrder() : parsedSortOrder
-  }
-
-  const persistOrder = async (orderedItems) => {
-    const updates = orderedItems.map((item, index) => ({
-      ...item,
-      sort_order: index + 1,
-    }))
-    const { error } = await supabase.from("tech_stacks").upsert(updates)
-    if (error) throw error
-    setItems(updates)
-  }
+  const {
+    items,
+    loading,
+    uploading,
+    createItem,
+    updateItem,
+    removeItem,
+    toggleActive,
+    reorderItems,
+  } = useTechStackManagement(pushToast)
 
   const handleDragStart = (id) => setDraggingId(id)
 
@@ -595,117 +511,41 @@ export default function TechStacks() {
   }
 
   const handleDrop = async (targetId) => {
-    if (!draggingId || draggingId === targetId) return
+    if (!draggingId || draggingId === targetId) {
+      setDraggingId(null)
+      setDropTargetId(null)
+      return
+    }
 
-    const currentItems = [...items]
-    const sourceIndex = currentItems.findIndex((item) => item.id === draggingId)
-    const targetIndex = currentItems.findIndex((item) => item.id === targetId)
+    const sourceIndex = items.findIndex((item) => item.id === draggingId)
+    const targetIndex = items.findIndex((item) => item.id === targetId)
+
+    setDraggingId(null)
+    setDropTargetId(null)
 
     if (sourceIndex === -1 || targetIndex === -1) return
 
-    const nextItems = [...currentItems]
+    const nextItems = [...items]
     const [movedItem] = nextItems.splice(sourceIndex, 1)
     nextItems.splice(targetIndex, 0, movedItem)
 
-    try {
-      await persistOrder(nextItems)
-    } catch (error) {
-      console.error("Error reordering tech stacks:", error)
-      pushToast("error", error.message || "Failed to reorder tech stacks")
-    } finally {
-      setDraggingId(null)
-      setDropTargetId(null)
-    }
+    await reorderItems(nextItems)
   }
 
   const handleCreate = async (form, iconFile) => {
-    setUploading(true)
-    try {
-      const slug = await checkSlugUnique(form.slug || form.name)
-      const iconUrl = iconFile ? await uploadIcon(iconFile) : form.icon_url
-      const sortOrder = resolveSortOrder(form.sort_order)
-
-      const { error } = await supabase.from("tech_stacks").insert({
-        name: form.name,
-        slug,
-        category: form.category || null,
-        description: form.description || null,
-        icon_url: iconUrl,
-        sort_order: sortOrder,
-        is_active: form.is_active,
-      })
-
-      if (error) throw error
-
-      setShowCreate(false)
-      pushToast("success", "Tech stack created successfully!")
-      fetchItems()
-    } catch (error) {
-      console.error("Error creating tech stack:", error)
-      pushToast("error", error.message || "Failed to create tech stack")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await createItem(form, iconFile)
+    if (ok) setShowCreate(false)
   }
 
   const handleEdit = async (form, iconFile) => {
     if (!editItem) return
-    setUploading(true)
-    try {
-      const slug = await checkSlugUnique(form.slug || form.name, editItem.id)
-      const iconUrl = iconFile ? await uploadIcon(iconFile) : form.icon_url
-      const sortOrder = resolveSortOrder(form.sort_order)
-
-      const { error } = await supabase
-        .from("tech_stacks")
-        .update({
-          name: form.name,
-          slug,
-          category: form.category || null,
-          description: form.description || null,
-          icon_url: iconUrl,
-          sort_order: sortOrder,
-          is_active: form.is_active,
-        })
-        .eq("id", editItem.id)
-
-      if (error) throw error
-
-      setEditItem(null)
-      pushToast("success", "Tech stack updated successfully!")
-      fetchItems()
-    } catch (error) {
-      console.error("Error updating tech stack:", error)
-      pushToast("error", error.message || "Failed to update tech stack")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await updateItem(editItem.id, form, iconFile)
+    if (ok) setEditItem(null)
   }
 
-  const deleteItem = async (id) => {
+  const deleteItem = (id) => {
     if (!confirm("Delete this tech stack?")) return
-    const { error } = await supabase.from("tech_stacks").delete().eq("id", id)
-    if (error) {
-      pushToast("error", error.message || "Failed to delete tech stack")
-      return
-    }
-    pushToast("success", "Tech stack deleted successfully!")
-    fetchItems()
-  }
-
-  const toggleActive = async (item) => {
-    const { error } = await supabase
-      .from("tech_stacks")
-      .update({ is_active: !item.is_active })
-      .eq("id", item.id)
-
-    if (error) {
-      pushToast("error", error.message || "Failed to update status")
-      return
-    }
-
-    pushToast("success", "Tech stack status updated!")
-    fetchItems()
+    removeItem(id)
   }
 
   return (
