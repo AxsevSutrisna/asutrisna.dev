@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createPortal } from "react-dom"
-import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
 import { Trophy, Trash2, Pencil, X, Save, GripVertical } from "lucide-react"
 import AddNewButton from "./components/AddNewButton"
+import { useAchievementManagement } from "@/features/achievement-management/model/useAchievements"
 
 const Modal = ({ title, onClose, children }) =>
   createPortal(
@@ -200,63 +200,22 @@ const AchievementForm = ({
 }
 
 export default function Achievements() {
-  const [achievements, setAchievements] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
-  const [saving, setSaving] = useState(false)
 
   const [draggingId, setDraggingId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
 
   const { toasts, pushToast, removeToast } = useToast()
-
-  const fetchAchievements = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("achievements")
-        .select("*")
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setAchievements(data || [])
-    } catch (err) {
-      pushToast("error", err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchAchievements()
-  }, [])
-
-  const getNextSortOrder = () => {
-    const highestSortOrder = achievements.reduce((highest, item) => {
-      const currentSortOrder = Number(item.sort_order || 0)
-      return currentSortOrder > highest ? currentSortOrder : highest
-    }, 0)
-    return highestSortOrder + 1
-  }
-
-  const resolveSortOrder = (value) => {
-    if (value === "" || value === null || value === undefined) {
-      return getNextSortOrder()
-    }
-    const parsedSortOrder = Number(value)
-    return Number.isNaN(parsedSortOrder) ? getNextSortOrder() : parsedSortOrder
-  }
-
-  const persistOrder = async (orderedItems) => {
-    const updates = orderedItems.map((item, index) => ({
-      ...item,
-      sort_order: index + 1,
-    }))
-    const { error } = await supabase.from("achievements").upsert(updates)
-    if (error) throw error
-    setAchievements(updates)
-  }
+  const {
+    achievements,
+    loading,
+    saving,
+    createAchievement,
+    updateAchievement,
+    removeAchievement,
+    reorderAchievements,
+  } = useAchievementManagement(pushToast)
 
   const handleDragStart = (id) => setDraggingId(id)
   const handleDragOver = (event) => event.preventDefault()
@@ -274,84 +233,46 @@ export default function Achievements() {
   }
 
   const handleDrop = async (targetId) => {
-    if (!draggingId || draggingId === targetId) return
+    if (!draggingId || draggingId === targetId) {
+      setDraggingId(null)
+      setDropTargetId(null)
+      return
+    }
 
-    const currentItems = [...achievements]
-    const sourceIndex = currentItems.findIndex((item) => item.id === draggingId)
-    const targetIndex = currentItems.findIndex((item) => item.id === targetId)
+    const sourceIndex = achievements.findIndex((item) => item.id === draggingId)
+    const targetIndex = achievements.findIndex((item) => item.id === targetId)
+
+    setDraggingId(null)
+    setDropTargetId(null)
 
     if (sourceIndex === -1 || targetIndex === -1) return
 
-    const nextItems = [...currentItems]
+    const nextItems = [...achievements]
     const [movedItem] = nextItems.splice(sourceIndex, 1)
     nextItems.splice(targetIndex, 0, movedItem)
 
-    try {
-      await persistOrder(nextItems)
-    } catch (error) {
-      pushToast("error", error.message || "Failed to reorder achievements")
-    } finally {
-      setDraggingId(null)
-      setDropTargetId(null)
-    }
+    await reorderAchievements(nextItems)
   }
 
   const handleCreate = async (form) => {
-    try {
-      setSaving(true)
-      const sortOrder = resolveSortOrder(form.sort_order)
-      const { error } = await supabase
-        .from("achievements")
-        .insert([{ ...form, sort_order: sortOrder }])
-      if (error) throw error
-      pushToast("success", "Achievement created!")
-      setShowCreate(false)
-      fetchAchievements()
-    } catch (err) {
-      pushToast("error", err.message)
-    } finally {
-      setSaving(false)
-    }
+    const ok = await createAchievement(form)
+    if (ok) setShowCreate(false)
   }
 
   const handleUpdate = async (form) => {
-    try {
-      setSaving(true)
-      const sortOrder = resolveSortOrder(form.sort_order)
-      const { error } = await supabase
-        .from("achievements")
-        .update({ ...form, sort_order: sortOrder })
-        .eq("id", editItem.id)
-      if (error) throw error
-      pushToast("success", "Achievement updated!")
-      setEditItem(null)
-      fetchAchievements()
-    } catch (err) {
-      pushToast("error", err.message)
-    } finally {
-      setSaving(false)
-    }
+    const ok = await updateAchievement(editItem.id, form)
+    if (ok) setEditItem(null)
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this achievement?"))
       return
-    try {
-      const { error } = await supabase
-        .from("achievements")
-        .delete()
-        .eq("id", id)
-      if (error) throw error
-      pushToast("success", "Achievement removed.")
-      fetchAchievements()
-    } catch (err) {
-      pushToast("error", err.message)
-    }
+    removeAchievement(id)
   }
 
   return (
     <div className="space-y-6">
-      <ToastStack toasts={toasts} removeToast={removeToast} />
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
