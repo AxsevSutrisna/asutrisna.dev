@@ -9,7 +9,7 @@ import {
   X,
   Pin,
 } from "lucide-react"
-import { supabase } from "../../../config/supabase"
+import { commentRepository } from "@/entities/comment/api/commentRepository"
 import { Button } from "../../../components/ui/button"
 
 const Comment = memo(({ comment, formatDate, isPinned = false }) => (
@@ -256,17 +256,7 @@ const Komentar = () => {
   useEffect(() => {
     const fetchPinnedComment = async () => {
       try {
-        const { data, error } = await supabase
-          .from("portfolio_comments")
-          .select("*")
-          .eq("is_pinned", true)
-          .single()
-
-        if (error && error.code !== "PGRST116") {
-          console.error("Error fetching pinned comment:", error)
-          return
-        }
-
+        const data = await commentRepository.fetchPinned()
         if (data) {
           setPinnedComment(data)
         }
@@ -281,64 +271,25 @@ const Komentar = () => {
   // Fetch regular comments (excluding pinned) and set up real-time subscription
   useEffect(() => {
     const fetchComments = async () => {
-      const { data, error } = await supabase
-        .from("portfolio_comments")
-        .select("*")
-        .eq("is_pinned", false)
-        .order("created_at", { ascending: false })
-
-      if (error) {
+      try {
+        setComments(await commentRepository.fetchRegular())
+      } catch (error) {
         console.error("Error fetching comments:", error)
-        return
       }
-
-      setComments(data || [])
     }
 
     fetchComments()
 
-    // Set up real-time subscription
-    const subscription = supabase
-      .channel("portfolio_comments")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "portfolio_comments",
-          filter: "is_pinned=eq.false",
-        },
-        () => {
-          fetchComments() // Refresh comments when changes occur
-        }
-      )
-      .subscribe()
-
+    // Real-time subscription (idempotent unsubscribe via shared helper)
+    const unsubscribe = commentRepository.subscribeRegular(fetchComments)
     return () => {
-      subscription.unsubscribe()
+      unsubscribe()
     }
   }, [])
 
   const uploadImage = useCallback(async (imageFile) => {
     if (!imageFile) return null
-
-    const fileExt = imageFile.name.split(".").pop()
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`
-    const filePath = `profile-images/${fileName}`
-
-    const { error: uploadError } = await supabase.storage
-      .from("profile-images")
-      .upload(filePath, imageFile)
-
-    if (uploadError) {
-      throw uploadError
-    }
-
-    const { data } = supabase.storage
-      .from("profile-images")
-      .getPublicUrl(filePath)
-
-    return data.publicUrl
+    return commentRepository.uploadProfileImage(imageFile)
   }, [])
 
   const handleCommentSubmit = useCallback(
@@ -349,19 +300,11 @@ const Komentar = () => {
       try {
         const profileImageUrl = await uploadImage(imageFile)
 
-        const { error } = await supabase.from("portfolio_comments").insert([
-          {
-            content: newComment,
-            user_name: userName,
-            profile_image: profileImageUrl,
-            is_pinned: false,
-            created_at: new Date().toISOString(),
-          },
-        ])
-
-        if (error) {
-          throw error
-        }
+        await commentRepository.add({
+          content: newComment,
+          user_name: userName,
+          profile_image: profileImageUrl,
+        })
       } catch (error) {
         setError("Failed to post comment. Please try again.")
         console.error("Error adding comment:", error)
@@ -458,7 +401,7 @@ const Komentar = () => {
               </p>
             </div>
           ) : (
-            comments.map((comment, index) => (
+            comments.map((comment) => (
               <Comment
                 key={comment.id}
                 comment={comment}
