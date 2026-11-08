@@ -19,16 +19,16 @@ import {
   resolveAbsoluteUrl,
   resolveSiteUrl,
   serializeJsonLd,
-} from "../utils/seoSchema"
+} from "@/utils/seoSchema"
 import LogoLoop from "@/components/ui/LogoLoop"
 import StatCard from "@/components/ui/StatCard"
 import SocialLink from "@/features/home/components/SocialLinks"
 import TechStackBadge from "@/features/home/components/TechStackBadge"
-import { useTechStackStore } from "../store/useTechStackStore"
-import { useAboutContent } from "../features/about/hooks/useAboutContent"
-import { useContactStore } from "../store/useContactStore"
+import { useTechStackStore } from "@/store/useTechStackStore"
+import { useAboutContent } from "@/features/about/hooks/useAboutContent"
+import { useContactStore } from "@/store/useContactStore"
 import { heroContentRepository } from "@/entities/heroContent/api/heroContentRepository"
-import { STATIC_PATHS } from "../constants/urls"
+import { STATIC_PATHS } from "@/constants/urls"
 import {
   TYPING_SPEED,
   ERASING_SPEED,
@@ -37,23 +37,23 @@ import {
   normalizeArray,
   normalizeCtaButtons,
   buildPageTitle,
-} from "../features/home/utils/homeHelpers"
+} from "@/features/home/utils/homeHelpers"
 
-import { ABOUT_FALLBACK } from "../constants/about"
+import { ABOUT_FALLBACK } from "@/constants/about"
 
 const ExperienceHighlight = lazy(
-  () => import("../features/home/components/ExperienceHighlight")
+  () => import("@/features/home/components/ExperienceHighlight")
 )
 const FeaturedProjects = lazy(
-  () => import("../features/home/components/FeaturedProjects")
+  () => import("@/features/home/components/FeaturedProjects")
 )
 const EducationHighlight = lazy(
-  () => import("../features/home/components/EducationHighlight")
+  () => import("@/features/home/components/EducationHighlight")
 )
 const AchievementHighlight = lazy(
-  () => import("../features/home/components/AchievementHighlight")
+  () => import("@/features/home/components/AchievementHighlight")
 )
-const Contact = lazy(() => import("../features/contact/Contact"))
+const Contact = lazy(() => import("@/features/contact/Contact"))
 
 /** Garis pemisah tipis antar section */
 const SectionDivider = () => (

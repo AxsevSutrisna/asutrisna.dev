@@ -1,8 +1,8 @@
 import { memo, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Briefcase } from "lucide-react"
-import { useExperienceData } from "../../experience/hooks/useExperienceData"
-import { formatDateRange } from "../../../utils/workExperiences"
+import { useExperienceData } from "@/features/experience/hooks/useExperienceData"
+import { formatDateRange } from "@/utils/workExperiences"
 import { Badge } from "@/components/ui/badge"
 
 /* ─── Avatar inisial perusahaan ───────────────────────────────── */

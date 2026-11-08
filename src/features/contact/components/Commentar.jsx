@@ -10,7 +10,7 @@ import {
   Pin,
 } from "lucide-react"
 import { commentRepository } from "@/entities/comment/api/commentRepository"
-import { Button } from "../../../components/ui/button"
+import { Button } from "@/components/ui/button"
 
 const Comment = memo(({ comment, formatDate, isPinned = false }) => (
   <div

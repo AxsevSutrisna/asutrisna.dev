@@ -6,10 +6,10 @@ import {
   resetTheme,
   THEME_COLOR_CATEGORIES,
   DEFAULT_THEME,
-} from "../../utils/themeManager"
+} from "@/utils/themeManager"
 import { RotateCcw, Copy, Check, X } from "lucide-react"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import ThemePresetSection from "./components/ThemePresetSection"
 import FloatingSaveButton from "./components/FloatingSaveButton"
 

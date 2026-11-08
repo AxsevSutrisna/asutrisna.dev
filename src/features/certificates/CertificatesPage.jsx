@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react"
 import { useCertificates } from "./hooks/useCertificates"
-import Certificate from "../../components/Certificate"
+import Certificate from "@/components/Certificate"
 
-import ShowMoreButton from "../../components/ui/ShowMoreButton"
+import ShowMoreButton from "@/components/ui/ShowMoreButton"
 
 export default function CertificatesPage() {
   const { certificates } = useCertificates()

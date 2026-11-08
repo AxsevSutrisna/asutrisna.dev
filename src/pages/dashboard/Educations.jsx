@@ -11,10 +11,10 @@ import {
   X,
   BookOpen,
 } from "lucide-react"
-import { formatDateRange } from "../../utils/educations"
+import { formatDateRange } from "@/utils/educations"
 import AddNewButton from "./components/AddNewButton"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import { useEducationManagement } from "@/features/education-management/model/useEducations"
 
 /* ── Helpers ── */

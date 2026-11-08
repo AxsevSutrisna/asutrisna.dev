@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from "react"
-import { useAboutStore } from "../../../store/useAboutStore"
-import { useProjectStore } from "../../../store/useProjectStore"
-import { useCertificatesStore } from "../../../store/useCertificatesStore"
-import { useTechStackStore } from "../../../store/useTechStackStore"
-import { ABOUT_FALLBACK } from "../../../constants/about"
+import { useAboutStore } from "@/store/useAboutStore"
+import { useProjectStore } from "@/store/useProjectStore"
+import { useCertificatesStore } from "@/store/useCertificatesStore"
+import { useTechStackStore } from "@/store/useTechStackStore"
+import { ABOUT_FALLBACK } from "@/constants/about"
 
 export function useAboutContent() {
   const {

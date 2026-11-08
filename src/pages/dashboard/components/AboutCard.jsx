@@ -12,7 +12,7 @@ import {
   RefreshCw,
   FileText,
 } from "lucide-react"
-import { STATIC_PATHS } from "../../../constants/urls"
+import { STATIC_PATHS } from "@/constants/urls"
 import { formatDate } from "./aboutHelpers.jsx"
 
 export default function AboutCard({

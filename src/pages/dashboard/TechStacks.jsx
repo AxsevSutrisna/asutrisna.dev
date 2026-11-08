@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
-import { SIMPLE_ICONS_BASE } from "../../constants/urls"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
+import { SIMPLE_ICONS_BASE } from "@/constants/urls"
 import { techStackSlug as toSlug } from "@/entities/techStack/lib/techStackSlug"
 import { useTechStackManagement } from "@/features/techstack-management/model/useTechStacks"
 import {

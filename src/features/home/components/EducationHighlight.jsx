@@ -1,8 +1,8 @@
 import { memo, useMemo, useRef, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Award, GraduationCap } from "lucide-react"
-import { useCertificates } from "../../certificates/hooks/useCertificates"
-import { useCarouselAutoScroll } from "../../../hooks/useCarouselAutoScroll"
+import { useCertificates } from "@/features/certificates/hooks/useCertificates"
+import { useCarouselAutoScroll } from "@/hooks/useCarouselAutoScroll"
 
 /* ─── Config carousel ───────────────────────────────────────────── */
 const CERT_CARD_W = 240 // px

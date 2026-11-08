@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react"
 import { useExperienceData } from "./hooks/useExperienceData"
 import { MapPin, CalendarDays, Sparkles } from "lucide-react"
-import { formatDateRange as formatWorkDate } from "../../utils/workExperiences"
-import { formatDateRange as formatEduDate } from "../../utils/educations"
-import { Card } from "../../components/ui/card"
-import { Badge } from "../../components/ui/badge"
-import renderDescription from "../../utils/renderDescription"
+import { formatDateRange as formatWorkDate } from "@/utils/workExperiences"
+import { formatDateRange as formatEduDate } from "@/utils/educations"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import renderDescription from "@/utils/renderDescription"
 
 /* ── Generic Expandable Card ── */
 const ExpandableCard = ({

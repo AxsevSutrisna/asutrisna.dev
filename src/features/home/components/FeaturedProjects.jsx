@@ -1,10 +1,10 @@
 import { memo, useMemo, useRef, useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, FolderOpen } from "lucide-react"
-import { useProjects } from "../../projects/hooks/useProjects"
-import ProjectCard from "../../projects/components/ProjectCard"
+import { useProjects } from "@/features/projects/hooks/useProjects"
+import ProjectCard from "@/features/projects/components/ProjectCard"
 
-import { useCarouselAutoScroll } from "../../../hooks/useCarouselAutoScroll"
+import { useCarouselAutoScroll } from "@/hooks/useCarouselAutoScroll"
 
 /* ─── Config ────────────────────────────────────────────────────── */
 const CARD_WIDTH_DESKTOP = 300 // px

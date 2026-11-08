@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { createPortal } from "react-dom"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import { useSocialLinkManagement } from "@/features/social-link-management/model/useSocialLinks"
 import {
   Plus,

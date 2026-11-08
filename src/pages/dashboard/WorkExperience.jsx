@@ -21,10 +21,10 @@ import {
   validateWorkExperienceForm,
   EMPLOYMENT_TYPES,
   DEFAULT_EMPLOYMENT_TYPE,
-} from "../../utils/workExperiences"
+} from "@/utils/workExperiences"
 import AddNewButton from "./components/AddNewButton"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import { useWorkExperienceManagement } from "@/features/experience-management/model/useWorkExperience"
 
 /* ── Helpers ── */

@@ -3,10 +3,10 @@ import { sessionRepository } from "@/entities/session/api/sessionRepository"
 import { useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 import { Mail, Lock, LogIn, Sparkles, Eye, EyeOff } from "lucide-react"
-import { Card } from "../components/ui/card"
-import { Button } from "../components/ui/button"
-import { useToast } from "../hooks/useToast"
-import ToastStack from "../components/ToastStack"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 
 export default function Login() {
   const [email, setEmail] = useState("")

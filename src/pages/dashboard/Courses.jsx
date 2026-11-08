@@ -1,8 +1,7 @@
-import { useEffect, useState, useCallback } from "react"
+import { useState } from "react"
 import { createPortal } from "react-dom"
-import { supabase } from "../../config/supabase"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import {
   Trash2,
   Upload,
@@ -16,6 +15,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import AddNewButton from "./components/AddNewButton"
+import { useCourseManagement } from "@/features/course-management/model/useCourses"
 
 const FieldError = ({ message }) =>
   message ? <p className="mt-2 text-sm text-red-400">{message}</p> : null
@@ -392,104 +392,31 @@ const CourseCard = ({ course, onEdit, onDelete }) => {
 }
 
 export default function Courses() {
-  const [courses, setCourses] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editCourse, setEditCourse] = useState(null)
-  const [uploading, setUploading] = useState(false)
   const { toasts, pushToast, removeToast } = useToast()
-
-  const fetchCourses = useCallback(async () => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from("courses")
-      .select("*")
-      .order("created_at", { ascending: false })
-    if (error) {
-      console.error(error)
-      pushToast("error", "Failed to fetch courses.")
-    } else {
-      setCourses(data || [])
-    }
-    setLoading(false)
-  }, [pushToast])
-
-  useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
-
-  const uploadImage = async (file) => {
-    const fileName = `course-${Date.now()}-${file.name}`
-    const { error: uploadError } = await supabase.storage
-      .from("course-images")
-      .upload(fileName, file)
-    if (uploadError) throw uploadError
-    const { data } = supabase.storage
-      .from("course-images")
-      .getPublicUrl(fileName)
-    return data.publicUrl
-  }
+  const {
+    courses,
+    loading,
+    uploading,
+    createCourse,
+    updateCourse,
+    removeCourse,
+  } = useCourseManagement(pushToast)
 
   const handleCreate = async (form, file) => {
-    setUploading(true)
-    try {
-      let img_url = null
-      if (file) {
-        img_url = await uploadImage(file)
-      }
-
-      const { error } = await supabase
-        .from("courses")
-        .insert([{ ...form, img_url }])
-      if (error) throw error
-
-      pushToast("success", "Course added successfully!")
-      setShowCreate(false)
-      fetchCourses()
-    } catch (err) {
-      console.error(err)
-      pushToast("error", "Failed to create course.")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await createCourse(form, file)
+    if (ok) setShowCreate(false)
   }
 
   const handleUpdate = async (form, file) => {
-    setUploading(true)
-    try {
-      let img_url = editCourse.img_url
-      if (file) {
-        img_url = await uploadImage(file)
-      }
-
-      const { error } = await supabase
-        .from("courses")
-        .update({ ...form, img_url })
-        .eq("id", editCourse.id)
-      if (error) throw error
-
-      pushToast("success", "Course updated successfully!")
-      setEditCourse(null)
-      fetchCourses()
-    } catch (err) {
-      console.error(err)
-      pushToast("error", "Failed to update course.")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await updateCourse(editCourse.id, form, file, editCourse.img_url)
+    if (ok) setEditCourse(null)
   }
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this course?")) return
-    try {
-      const { error } = await supabase.from("courses").delete().eq("id", id)
-      if (error) throw error
-      pushToast("success", "Course deleted successfully!")
-      fetchCourses()
-    } catch (err) {
-      console.error(err)
-      pushToast("error", "Failed to delete course.")
-    }
+    await removeCourse(id)
   }
 
   return (

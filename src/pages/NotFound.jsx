@@ -1,6 +1,6 @@
 import { Home, ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
-import { Button } from "../components/ui/button"
+import { Button } from "@/components/ui/button"
 
 export default function NotFoundPage() {
   const handleGoBack = () => {

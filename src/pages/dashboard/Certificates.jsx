@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Award, Upload, Trash2, ImageIcon, Plus, Eye, X } from "lucide-react"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import { useCertificateManagement } from "@/features/certificate-management/model/useCertificates"
 
 const Card = ({ children, className = "" }) => (

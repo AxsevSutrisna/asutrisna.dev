@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import { useProjectManagement } from "@/features/project-management/model/useProjects"
 import {
   Plus,
@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import AddNewButton from "./components/AddNewButton"
-import Modal from "../../components/ui/Modal"
+import Modal from "@/components/ui/Modal"
 import ProjectCard from "./components/ProjectCard"
 import ProjectRow from "./components/ProjectRow"
 import ProjectForm from "./components/ProjectForm"

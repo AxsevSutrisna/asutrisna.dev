@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useProjectStore } from "../../../store/useProjectStore"
+import { useProjectStore } from "@/store/useProjectStore"
 
 export function useProjects() {
   const { projects, loading, fetchProjects } = useProjectStore()

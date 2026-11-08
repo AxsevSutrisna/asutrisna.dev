@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useCoursesStore } from "../../../store/useCoursesStore"
+import { useCoursesStore } from "@/store/useCoursesStore"
 
 export function useCourses() {
   const { courses, loading, fetchCourses } = useCoursesStore()

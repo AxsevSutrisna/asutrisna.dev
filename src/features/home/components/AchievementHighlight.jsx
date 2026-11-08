@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useAchievementStore } from "../../../store/useAchievementStore"
+import { useAchievementStore } from "@/store/useAchievementStore"
 import { Trophy } from "lucide-react"
 // Gunakan gradien warna serupa dengan avatar perusahaan di ExperienceHighlight
 const AVATAR_COLORS = [

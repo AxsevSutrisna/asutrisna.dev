@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, memo, useRef } from "react"
 import { Briefcase, Sparkles, MapPin, CalendarDays } from "lucide-react"
-import { useExperienceData } from "../hooks/useExperienceData"
-import { formatDateRange } from "../../../utils/workExperiences"
-import { Card } from "../../../components/ui/card"
-import { Badge } from "../../../components/ui/badge"
-import renderDescription from "../../../utils/renderDescription"
+import { useExperienceData } from "@/features/experience/hooks/useExperienceData"
+import { formatDateRange } from "@/utils/workExperiences"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import renderDescription from "@/utils/renderDescription"
 
 const SectionHeader = memo(() => (
   <div className="text-center pb-10">

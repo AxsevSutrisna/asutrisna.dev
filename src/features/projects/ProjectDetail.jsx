@@ -3,9 +3,9 @@ import { Helmet } from "react-helmet-async"
 import { useParams, useNavigate } from "react-router-dom"
 import { useProjectStore } from "@/entities/project/model/store"
 import { ArrowLeft, ExternalLink, Github, Code2, Star, X } from "lucide-react"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
-import { FALLBACK_SITE_ORIGIN, FALLBACK_GITHUB } from "../../constants/urls"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
+import { FALLBACK_SITE_ORIGIN, FALLBACK_GITHUB } from "@/constants/urls"
 import {
   buildCreativeWorkSchema,
   buildPersonSchema,
@@ -13,11 +13,11 @@ import {
   resolveAbsoluteUrl,
   resolveSiteUrl,
   serializeJsonLd,
-} from "../../utils/seoSchema"
+} from "@/utils/seoSchema"
 import TechBadge from "./components/TechBadge"
 import FeatureItem from "./components/FeatureItem"
 import ProjectStats from "./components/ProjectStats"
-import { Button } from "../../components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,13 +25,13 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "../../components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb"
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-} from "../../components/ui/card"
+} from "@/components/ui/card"
 
 const ProjectDetails = () => {
   const { slug } = useParams()

@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from "react"
-import { useExperienceStore } from "../../../store/useExperienceStore"
+import { useExperienceStore } from "@/store/useExperienceStore"
 import {
   normalizeWorkExperience,
   compareWorkExperienceTimeline,
-} from "../../../utils/workExperiences"
+} from "@/utils/workExperiences"
 import {
   normalizeEducation,
   compareEducationTimeline,
-} from "../../../utils/educations"
+} from "@/utils/educations"
 
 export function useExperienceData() {
   const {

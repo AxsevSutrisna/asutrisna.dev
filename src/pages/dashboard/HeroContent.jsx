@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { heroContentRepository } from "@/entities/heroContent/api/heroContentRepository"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
-import { STATIC_PATHS } from "../../constants/urls"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
+import { STATIC_PATHS } from "@/constants/urls"
 import {
   X,
   ImageIcon,

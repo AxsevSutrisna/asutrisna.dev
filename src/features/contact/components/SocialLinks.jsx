@@ -6,7 +6,7 @@ import {
   Youtube,
   ExternalLink,
 } from "lucide-react"
-import { useContactInfo } from "../hooks/useContactInfo"
+import { useContactInfo } from "@/features/contact/hooks/useContactInfo"
 // PresenceWidget removed (not used)
 
 const TIKTOK_ICON = (props) => (

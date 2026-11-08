@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback, useMemo } from "react"
 import { useProjects } from "./hooks/useProjects"
 import ProjectCard from "./components/ProjectCard"
 import { Search } from "lucide-react"
-import { Button } from "../../components/ui/button"
+import { Button } from "@/components/ui/button"
 import { useLocation } from "react-router-dom"
 
-import ShowMoreButton from "../../components/ui/ShowMoreButton"
+import ShowMoreButton from "@/components/ui/ShowMoreButton"
 
 export default function Portofolio() {
   const { projects } = useProjects()

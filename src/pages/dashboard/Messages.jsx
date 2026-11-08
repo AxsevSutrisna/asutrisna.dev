@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useToast } from "../../hooks/useToast"
-import ToastStack from "../../components/ToastStack"
+import { useToast } from "@/hooks/useToast"
+import ToastStack from "@/components/ToastStack"
 import { useMessageManagement } from "@/features/message-management/model/useMessages"
 import {
   Trash2,

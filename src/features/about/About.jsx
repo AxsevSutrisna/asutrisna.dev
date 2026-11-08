@@ -2,13 +2,13 @@ import { useEffect, memo, useMemo } from "react"
 import { Code, Award, Globe } from "lucide-react"
 import AOS from "aos"
 import { useAboutContent } from "./hooks/useAboutContent"
-import PublicCtaButton from "../../components/ui/public-cta-button"
+import PublicCtaButton from "@/components/ui/public-cta-button"
 import { Badge } from "@/components/ui/badge"
 import DecryptedText from "@/components/ui/DecryptedText"
 import ProfileCard from "@/components/ui/ProfileCard"
 import StatCard from "@/components/ui/StatCard"
-import AchievementHighlight from "../home/components/AchievementHighlight"
-import { ABOUT_FALLBACK } from "../../constants/about"
+import AchievementHighlight from "@/features/home/components/AchievementHighlight"
+import { ABOUT_FALLBACK } from "@/constants/about"
 
 const ProfileImage = memo(
   ({ name, roleBadges, photoUrl, yearsOfExperience }) => (
