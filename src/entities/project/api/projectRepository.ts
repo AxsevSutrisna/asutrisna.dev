@@ -33,11 +33,6 @@ async function fetchAll(): Promise<Project[]> {
   return mapRows(data as ProjectRow[] | null, rowToProject)
 }
 
-async function resolveBySlug(slug: string): Promise<Project | null> {
-  const projects = await fetchAll()
-  return projects.find((project) => project.slug === slug) ?? null
-}
-
 /**
  * Upload gambar baru (item.file) & pertahankan yang sudah ada (item.url).
  * Skema penamaan bucket `project-images` dipertahankan (`<ts>-<name>`),
@@ -98,7 +93,6 @@ async function reorder(orderedIds: Array<number | string>): Promise<void> {
 
 export const projectRepository = {
   fetchAll,
-  resolveBySlug,
   uploadImages,
   create,
   update,

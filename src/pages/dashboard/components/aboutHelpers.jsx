@@ -39,8 +39,7 @@ export const validateAboutForm = (
   return errors
 }
 
-export const FieldError = ({ message }) =>
-  message ? <p className="mt-2 text-sm text-red-400">{message}</p> : null
+export { FieldError } from "@/components/ui/FieldError"
 
 export const SkeletonCard = () => (
   <div className="rounded-2xl border border-white/6 overflow-hidden animate-pulse flex flex-col sm:flex-row">

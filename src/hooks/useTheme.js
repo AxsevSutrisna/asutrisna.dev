@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { DEFAULT_THEME } from "@/utils/themeManager"
+import { DEFAULT_THEME } from "@/entities/theme/model/constants"
 import {
   fetchTheme,
   subscribeTheme,

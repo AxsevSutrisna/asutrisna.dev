@@ -4,9 +4,11 @@ import {
   fetchTheme,
   updateTheme,
   resetTheme,
+} from "@/entities/theme/api/themeRepository"
+import {
   THEME_COLOR_CATEGORIES,
   DEFAULT_THEME,
-} from "@/utils/themeManager"
+} from "@/entities/theme/model/constants"
 import { RotateCcw, Copy, Check, X } from "lucide-react"
 import { useToast } from "@/hooks/useToast"
 import ToastStack from "@/components/ToastStack"
