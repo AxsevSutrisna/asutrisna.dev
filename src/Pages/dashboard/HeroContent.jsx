@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { supabase } from "../../config/supabase"
+import { heroContentRepository } from "@/entities/heroContent/api/heroContentRepository"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
 import { STATIC_PATHS } from "../../constants/urls"
@@ -181,26 +181,14 @@ export default function HeroContentDashboard() {
     const fetchHero = async () => {
       setLoading(true)
       try {
-        const { data, error } = await supabase
-          .from("hero_contents")
-          .select("*")
-          .limit(1)
-          .maybeSingle()
-
-        if (error) {
-          console.error("Error fetching hero content:", error)
-        } else if (data) {
+        const data = await heroContentRepository.getFirst()
+        if (data) {
           setHeroItem(data)
           initForm(data)
         } else {
           // No hero exists, create one with fallback
-          const { data: createdHero, error: createError } = await supabase
-            .from("hero_contents")
-            .insert([{ ...HERO_FALLBACK, is_active: true, sort_order: 0 }])
-            .select()
-            .single()
-
-          if (createError) throw createError
+          const createdHero =
+            await heroContentRepository.createDefault(HERO_FALLBACK)
           setHeroItem(createdHero)
           initForm(createdHero)
           pushToast("success", "Default hero content created successfully!")
@@ -249,21 +237,6 @@ export default function HeroContentDashboard() {
     setImagePreview(URL.createObjectURL(file))
   }
 
-  const uploadImage = async (file) => {
-    const fileName = `${Date.now()}-${file.name}`
-    const { error: uploadError } = await supabase.storage
-      .from("project-images")
-      .upload(`hero-content/${fileName}`, file, {
-        upsert: true,
-      })
-    if (uploadError) throw uploadError
-
-    const { data } = supabase.storage
-      .from("project-images")
-      .getPublicUrl(`hero-content/${fileName}`)
-    return data.publicUrl
-  }
-
   const normalizeList = (value) =>
     String(value || "")
       .split(",")
@@ -277,7 +250,7 @@ export default function HeroContentDashboard() {
 
     try {
       const heroImageUrl = imageFile
-        ? await uploadImage(imageFile)
+        ? await heroContentRepository.uploadImage(imageFile)
         : form.hero_image_url
 
       const payload = {
@@ -298,12 +271,7 @@ export default function HeroContentDashboard() {
         is_active: true,
       }
 
-      const { error } = await supabase
-        .from("hero_contents")
-        .update(payload)
-        .eq("id", heroItem.id)
-
-      if (error) throw error
+      await heroContentRepository.update(heroItem.id, payload)
 
       setSaveStatus({
         type: "success",
@@ -313,12 +281,7 @@ export default function HeroContentDashboard() {
       setImageFile(null)
 
       // Re-fetch to sync state
-      const { data } = await supabase
-        .from("hero_contents")
-        .select("*")
-        .eq("id", heroItem.id)
-        .single()
-
+      const data = await heroContentRepository.getById(heroItem.id)
       if (data) {
         setHeroItem(data)
         initForm(data)

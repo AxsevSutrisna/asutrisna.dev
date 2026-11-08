@@ -27,7 +27,7 @@ import TechStackBadge from "@/features/home/components/TechStackBadge"
 import { useTechStackStore } from "../store/useTechStackStore"
 import { useAboutContent } from "../features/about/hooks/useAboutContent"
 import { useContactStore } from "../store/useContactStore"
-import { heroContentService } from "../services/heroContentService"
+import { heroContentRepository } from "@/entities/heroContent/api/heroContentRepository"
 import { STATIC_PATHS } from "../constants/urls"
 import {
   TYPING_SPEED,
@@ -221,7 +221,7 @@ const Home = () => {
     const fetchHeroContent = async () => {
       setHeroLoading(true)
       try {
-        const data = await heroContentService.fetchActiveHeroContent()
+        const data = await heroContentRepository.fetchActive()
 
         if (data) {
           setHeroData({
@@ -247,7 +247,7 @@ const Home = () => {
     }
 
     fetchHeroContent()
-    const unsubscribe = heroContentService.subscribeToChanges(fetchHeroContent)
+    const unsubscribe = heroContentRepository.subscribe(fetchHeroContent)
     return unsubscribe
   }, [])
 
