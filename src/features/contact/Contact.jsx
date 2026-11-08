@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useContactInfo } from "./hooks/useContactInfo"
-import { contactService } from "../../services/contactService"
+import { messageRepository } from "@/entities/message/api/messageRepository"
 import {
   ExternalLink,
   Mail,
@@ -75,7 +75,7 @@ const ContactPage = () => {
 
     setIsSubmitting(true)
     try {
-      await contactService.sendMessage(formData)
+      await messageRepository.send(formData)
 
       const formSubmitUrl = FORM_SUBMIT_ENDPOINT
       const submitData = {

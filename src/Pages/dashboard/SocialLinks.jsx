@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { createPortal } from "react-dom"
-import { supabase } from "../../config/supabase"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
+import { useSocialLinkManagement } from "@/features/social-link-management/model/useSocialLinks"
 import {
   Plus,
   Pencil,
@@ -204,14 +204,6 @@ const isValidUrl = (value) => {
     return true
   } catch {
     return false
-  }
-}
-const normalizeUrl = (value) => {
-  if (!value) return ""
-  try {
-    return new URL(value).toString()
-  } catch {
-    return ""
   }
 }
 
@@ -717,89 +709,22 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
 
 /* ── Main Dashboard ── */
 export default function SocialLinksDashboard() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
-  const [uploading, setUploading] = useState(false)
   const [draggingId, setDraggingId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
-
-  const fetchItems = async () => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from("social_links")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .order("created_at", { ascending: true })
-    if (error) console.error("Fetch error:", error)
-    setItems(data || [])
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
-  const getNextSortOrder = () =>
-    items.reduce(
-      (max, item) => Math.max(max, Number(item.sort_order || 0)),
-      0
-    ) + 1
-  const resolveSortOrder = (value) =>
-    value === "" || value === null
-      ? getNextSortOrder()
-      : Math.max(0, Number(value) || 0)
-
-  const clearOtherPrimary = async (currentId = null) => {
-    let q = supabase
-      .from("social_links")
-      .update({ is_primary: false })
-      .eq("is_primary", true)
-    if (currentId) q = q.neq("id", currentId)
-    await q
-  }
-
-  const validateForm = (form) => {
-    if (!form.platform?.trim()) throw new Error("Platform is required")
-    if (!form.display_name?.trim()) throw new Error("Display name is required")
-    if (!form.url?.trim()) throw new Error("URL is required")
-    if (!isValidUrl(form.url)) throw new Error("URL is not valid")
-    return {
-      ...form,
-      platform: form.platform.trim(),
-      display_name: form.display_name.trim(),
-      sub_text: form.sub_text.trim(),
-      url: normalizeUrl(form.url.trim()),
-      icon: form.icon.trim(),
-      color: form.color.trim(),
-      gradient: form.gradient.trim(),
-    }
-  }
-
-  const uploadIcon = async (file) => {
-    if (!file) return null
-    const fileName = `social-icons/${Date.now()}-${file.name}`
-    const { error } = await supabase.storage
-      .from("project-images")
-      .upload(fileName, file, { upsert: true })
-    if (error) throw error
-    const { data } = supabase.storage
-      .from("project-images")
-      .getPublicUrl(fileName)
-    return data.publicUrl
-  }
-
-  const persistOrder = async (orderedItems) => {
-    const updates = orderedItems.map((item, i) => ({
-      ...item,
-      sort_order: i + 1,
-    }))
-    const { error } = await supabase.from("social_links").upsert(updates)
-    if (error) throw new Error("Reordering failed: " + error.message)
-    setItems(updates)
-  }
+  const {
+    items,
+    loading,
+    uploading,
+    createItem,
+    updateItem,
+    removeItem,
+    toggleActive,
+    setPrimary,
+    reorderItems,
+  } = useSocialLinkManagement(pushToast)
 
   const handleDragStart = (id) => setDraggingId(id)
   const handleDragOver = (e) => e.preventDefault()
@@ -812,120 +737,40 @@ export default function SocialLinksDashboard() {
   }
 
   const handleDrop = async (targetId) => {
-    if (!draggingId || draggingId === targetId) return
+    if (!draggingId || draggingId === targetId) {
+      setDraggingId(null)
+      setDropTargetId(null)
+      return
+    }
     const srcIdx = items.findIndex((i) => i.id === draggingId)
     const tgtIdx = items.findIndex((i) => i.id === targetId)
+
+    setDraggingId(null)
+    setDropTargetId(null)
+
     if (srcIdx === -1 || tgtIdx === -1) return
 
     const nextItems = [...items]
     const [moved] = nextItems.splice(srcIdx, 1)
     nextItems.splice(tgtIdx, 0, moved)
 
-    try {
-      await persistOrder(nextItems)
-    } catch {
-      pushToast("error", "Failed to reorder")
-    } finally {
-      setDraggingId(null)
-      setDropTargetId(null)
-    }
+    await reorderItems(nextItems)
   }
 
   const handleCreate = async (form, iconFile) => {
-    setUploading(true)
-    try {
-      const normalized = validateForm(form)
-      const sortOrder = resolveSortOrder(normalized.sort_order)
-      if (normalized.is_primary) await clearOtherPrimary()
-
-      let iconValue = normalized.icon || null
-      if (iconFile) {
-        const publicUrl = await uploadIcon(iconFile)
-        if (publicUrl) iconValue = publicUrl
-      }
-
-      const { error } = await supabase
-        .from("social_links")
-        .insert({ ...normalized, icon: iconValue, sort_order: sortOrder })
-      if (error) throw error
-
-      setShowCreate(false)
-      pushToast("success", "Created!")
-      fetchItems()
-    } catch (err) {
-      pushToast("error", err.message || "Failed to create")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await createItem(form, iconFile)
+    if (ok) setShowCreate(false)
   }
 
   const handleEdit = async (form, iconFile) => {
     if (!editItem) return
-    setUploading(true)
-    try {
-      const normalized = validateForm(form)
-      const sortOrder = resolveSortOrder(normalized.sort_order)
-      if (normalized.is_primary) await clearOtherPrimary(editItem.id)
-
-      let iconValue = normalized.icon || null
-      if (iconFile) {
-        const publicUrl = await uploadIcon(iconFile)
-        if (publicUrl) iconValue = publicUrl
-      }
-
-      const { error } = await supabase
-        .from("social_links")
-        .update({ ...normalized, icon: iconValue, sort_order: sortOrder })
-        .eq("id", editItem.id)
-      if (error) throw error
-
-      setEditItem(null)
-      pushToast("success", "Updated!")
-      fetchItems()
-    } catch (err) {
-      pushToast("error", err.message || "Failed to update")
-    } finally {
-      setUploading(false)
-    }
+    const ok = await updateItem(editItem.id, form, iconFile)
+    if (ok) setEditItem(null)
   }
 
-  const deleteItem = async (id) => {
+  const deleteItem = (id) => {
     if (!confirm("Delete this social link?")) return
-    const { error } = await supabase.from("social_links").delete().eq("id", id)
-    if (error) {
-      pushToast("error", "Failed to delete")
-      return
-    }
-    pushToast("success", "Deleted!")
-    fetchItems()
-  }
-
-  const toggleActive = async (item) => {
-    const { error } = await supabase
-      .from("social_links")
-      .update({ is_active: !item.is_active })
-      .eq("id", item.id)
-    if (error) {
-      pushToast("error", "Failed to update")
-      return
-    }
-    pushToast("success", "Status updated!")
-    fetchItems()
-  }
-
-  const setPrimary = async (item) => {
-    try {
-      await clearOtherPrimary(item.id)
-      const { error } = await supabase
-        .from("social_links")
-        .update({ is_primary: true })
-        .eq("id", item.id)
-      if (error) throw error
-      pushToast("success", "Primary link updated!")
-      fetchItems()
-    } catch {
-      pushToast("error", "Failed to set primary")
-    }
+    removeItem(id)
   }
 
   const activePrimary = useMemo(() => items.find((i) => i.is_primary), [items])

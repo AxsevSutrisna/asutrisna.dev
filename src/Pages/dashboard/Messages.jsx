@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react"
-import { supabase } from "../../config/supabase"
+import { useState } from "react"
 import { useToast } from "../../hooks/useToast"
 import ToastStack from "../../components/ToastStack"
+import { useMessageManagement } from "@/features/message-management/model/useMessages"
 import {
   Trash2,
   Mail,
-  MailOpen,
   MessageSquare,
-  Clock,
   CheckCircle2,
   User,
   Search,
@@ -172,51 +170,21 @@ const SkeletonCard = () => (
 
 /* ── Main Page ── */
 export default function Messages() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState("all") // 'all', 'unread', 'read'
   const [sortOrder, setSortOrder] = useState("newest") // 'newest', 'oldest'
   const [expandedId, setExpandedId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const {
+    items,
+    loading,
+    removeMessage,
+    toggleRead: toggleReadStatus,
+  } = useMessageManagement(pushToast)
 
-  const fetchItems = async () => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from("messages")
-      .select("*")
-      .order("created_at", { ascending: false })
-    if (error) console.error("Error fetching messages:", error)
-    setItems(data || [])
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
-  const deleteItem = async (id) => {
+  const deleteItem = (id) => {
     if (!confirm("Are you sure you want to delete this message?")) return
-    const { error } = await supabase.from("messages").delete().eq("id", id)
-    if (error) {
-      pushToast("error", error.message || "Failed to delete message")
-      return
-    }
-    pushToast("success", "Message deleted successfully!")
-    fetchItems()
-  }
-
-  const toggleReadStatus = async (item) => {
-    const { error } = await supabase
-      .from("messages")
-      .update({ is_read: !item.is_read })
-      .eq("id", item.id)
-    if (error) {
-      pushToast("error", error.message || "Failed to update status")
-      return
-    }
-    pushToast("success", item.is_read ? "Marked as unread" : "Marked as read")
-    fetchItems()
+    removeMessage(id)
   }
 
   const unreadCount = items.filter((i) => !i.is_read).length
