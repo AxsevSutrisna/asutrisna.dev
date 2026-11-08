@@ -1,6 +1,11 @@
 import { create } from "zustand"
-import { experienceService } from "../services/experienceService"
+import { experienceRepository } from "@/entities/experience/api/experienceRepository"
+import { educationRepository } from "@/entities/education/api/educationRepository"
 
+/**
+ * Store publik gabungan (work experiences + educations) karena keduanya diambil
+ * bersamaan oleh useExperienceData. Mengkomposisi dua repository entity.
+ */
 export const useExperienceStore = create((set, get) => ({
   workExperiences: [],
   educations: [],
@@ -13,12 +18,15 @@ export const useExperienceStore = create((set, get) => ({
     set({ loading: true, error: null })
     try {
       const [workData, eduData] = await Promise.all([
-        experienceService.fetchWorkExperiences(),
-        experienceService.fetchEducations(),
+        experienceRepository.fetchAll(),
+        educationRepository.fetchAll(),
       ])
       set({ workExperiences: workData, educations: eduData, loading: false })
     } catch (err) {
-      set({ error: err.message, loading: false })
+      set({
+        error: err instanceof Error ? err.message : String(err),
+        loading: false,
+      })
     }
   },
 }))

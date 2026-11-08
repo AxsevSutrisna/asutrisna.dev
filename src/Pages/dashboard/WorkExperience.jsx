@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createPortal } from "react-dom"
-import { supabase } from "../../config/supabase"
 import {
   Briefcase,
   Pencil,
@@ -17,8 +16,6 @@ import {
   X,
 } from "lucide-react"
 import {
-  normalizeWorkExperience,
-  compareWorkExperienceTimeline,
   formatDateRange,
   buildWorkExperiencePayload,
   validateWorkExperienceForm,
@@ -26,6 +23,9 @@ import {
   DEFAULT_EMPLOYMENT_TYPE,
 } from "../../utils/workExperiences"
 import AddNewButton from "./components/AddNewButton"
+import { useToast } from "../../hooks/useToast"
+import ToastStack from "../../components/ToastStack"
+import { useWorkExperienceManagement } from "@/features/experience-management/model/useWorkExperience"
 
 /* ── Helpers ── */
 const getInitials = (company = "") =>
@@ -774,71 +774,32 @@ const ExperienceCard = ({ experience, onEdit, onDelete, isLast }) => {
 
 /* ── Main Page ── */
 export default function WorkExperience() {
-  const [experiences, setExperiences] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editExperience, setEditExperience] = useState(null)
-  const [submitting, setSubmitting] = useState(false)
-
-  const fetchExperiences = async () => {
-    setLoading(true)
-    const { data, error } = await supabase.from("work_experiences").select("*")
-    if (error) {
-      console.error("Failed to fetch:", error)
-      setExperiences([])
-      setLoading(false)
-      return
-    }
-    const normalized = (data || [])
-      .map(normalizeWorkExperience)
-      .sort(compareWorkExperienceTimeline)
-    setExperiences(normalized)
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchExperiences()
-  }, [])
+  const { toasts, pushToast, removeToast } = useToast()
+  const {
+    experiences,
+    loading,
+    submitting,
+    createExperience,
+    updateExperience,
+    removeExperience,
+  } = useWorkExperienceManagement(pushToast)
 
   const handleCreate = async (payload) => {
-    setSubmitting(true)
-    const { error } = await supabase.from("work_experiences").insert([payload])
-    setSubmitting(false)
-    if (error) {
-      console.error("Failed to create:", error)
-      return
-    }
-    setShowCreate(false)
-    fetchExperiences()
+    const ok = await createExperience(payload)
+    if (ok) setShowCreate(false)
   }
 
   const handleEdit = async (payload) => {
     if (!editExperience) return
-    setSubmitting(true)
-    const { error } = await supabase
-      .from("work_experiences")
-      .update(payload)
-      .eq("id", editExperience.id)
-    setSubmitting(false)
-    if (error) {
-      console.error("Failed to update:", error)
-      return
-    }
-    setEditExperience(null)
-    fetchExperiences()
+    const ok = await updateExperience(editExperience.id, payload)
+    if (ok) setEditExperience(null)
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (!confirm("Delete this work experience?")) return
-    const { error } = await supabase
-      .from("work_experiences")
-      .delete()
-      .eq("id", id)
-    if (error) {
-      console.error("Failed to delete:", error)
-      return
-    }
-    fetchExperiences()
+    removeExperience(id)
   }
 
   const currentCount = experiences.filter((e) => e.is_current).length
@@ -1000,6 +961,8 @@ export default function WorkExperience() {
           </div>
         </div>
       )}
+
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
     </div>
   )
 }

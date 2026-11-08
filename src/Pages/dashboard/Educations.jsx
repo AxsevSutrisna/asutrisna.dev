@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createPortal } from "react-dom"
-import { supabase } from "../../config/supabase"
 import {
   GraduationCap,
   Pencil,
@@ -12,12 +11,11 @@ import {
   X,
   BookOpen,
 } from "lucide-react"
-import {
-  normalizeEducation,
-  compareEducationTimeline,
-  formatDateRange,
-} from "../../utils/educations"
+import { formatDateRange } from "../../utils/educations"
 import AddNewButton from "./components/AddNewButton"
+import { useToast } from "../../hooks/useToast"
+import ToastStack from "../../components/ToastStack"
+import { useEducationManagement } from "@/features/education-management/model/useEducations"
 
 /* ── Helpers ── */
 const getInitials = (school = "") =>
@@ -607,74 +605,32 @@ const EducationCard = ({ education, onEdit, onDelete, isLast }) => {
 
 /* ── Main Page ── */
 export default function Educations() {
-  const [educations, setEducations] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [editEducation, setEditEducation] = useState(null)
-  const [submitting, setSubmitting] = useState(false)
-
-  const fetchEducations = async () => {
-    setLoading(true)
-    const { data, error } = await supabase.from("educations").select("*")
-    if (error) {
-      console.error("Failed to fetch:", error)
-      setEducations([])
-      setLoading(false)
-      return
-    }
-    const normalized = (data || [])
-      .map(normalizeEducation)
-      .sort(compareEducationTimeline)
-    setEducations(normalized)
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    fetchEducations()
-  }, [])
+  const { toasts, pushToast, removeToast } = useToast()
+  const {
+    educations,
+    loading,
+    submitting,
+    createEducation,
+    updateEducation,
+    removeEducation,
+  } = useEducationManagement(pushToast)
 
   const handleCreate = async (payload) => {
-    setSubmitting(true)
-    const { error } = await supabase.from("educations").insert([payload])
-    setSubmitting(false)
-    if (error) {
-      console.error("Failed to create:", error)
-      alert(
-        `Gagal menyimpan ke database: ${error.message || error.details || "Unknown error"}`
-      )
-      return
-    }
-    setShowCreate(false)
-    fetchEducations()
+    const ok = await createEducation(payload)
+    if (ok) setShowCreate(false)
   }
 
   const handleEdit = async (payload) => {
     if (!editEducation) return
-    setSubmitting(true)
-    const { error } = await supabase
-      .from("educations")
-      .update(payload)
-      .eq("id", editEducation.id)
-    setSubmitting(false)
-    if (error) {
-      console.error("Failed to update:", error)
-      alert(
-        `Gagal mengupdate ke database: ${error.message || error.details || "Unknown error"}`
-      )
-      return
-    }
-    setEditEducation(null)
-    fetchEducations()
+    const ok = await updateEducation(editEducation.id, payload)
+    if (ok) setEditEducation(null)
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (!confirm("Delete this education history?")) return
-    const { error } = await supabase.from("educations").delete().eq("id", id)
-    if (error) {
-      console.error("Failed to delete:", error)
-      return
-    }
-    fetchEducations()
+    removeEducation(id)
   }
 
   const currentCount = educations.filter((e) => e.is_current).length
@@ -802,6 +758,8 @@ export default function Educations() {
           </div>
         </div>
       )}
+
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
     </div>
   )
 }
