@@ -1,10 +1,12 @@
 import { useState } from "react"
-import { supabase } from "../config/supabase"
+import { sessionRepository } from "@/entities/session/api/sessionRepository"
 import { useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 import { Mail, Lock, LogIn, Sparkles, Eye, EyeOff } from "lucide-react"
 import { Card } from "../components/ui/card"
 import { Button } from "../components/ui/button"
+import { useToast } from "../hooks/useToast"
+import ToastStack from "../components/ToastStack"
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -12,33 +14,18 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const { toasts, pushToast, removeToast } = useToast()
 
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) {
-      alert(error.message)
+    try {
+      await sessionRepository.signInAsAdmin(email, password)
+      navigate("/dashboard")
+    } catch (err) {
+      pushToast("error", err instanceof Error ? err.message : "Login gagal")
       setLoading(false)
-      return
     }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .single()
-
-    if (profile?.role !== "admin") {
-      alert("Access denied")
-      await supabase.auth.signOut()
-      setLoading(false)
-      return
-    }
-    navigate("/dashboard")
   }
 
   return (
@@ -141,6 +128,8 @@ export default function Login() {
           </div>
         </div>
       </div>
+
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
     </>
   )
 }

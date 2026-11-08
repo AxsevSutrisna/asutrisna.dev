@@ -8,7 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
-import { supabase } from "../config/supabase"
+import { sessionRepository } from "@/entities/session/api/sessionRepository"
 import Projects from "./dashboard/Projects"
 import Certificates from "./dashboard/Certificates"
 import About from "./dashboard/About"
@@ -60,7 +60,7 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await sessionRepository.signOut()
     navigate("/login")
   }
 
