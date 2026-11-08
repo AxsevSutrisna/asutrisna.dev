@@ -1,6 +1,9 @@
 import { useEffect } from "react"
-import { supabase } from "../config/supabase"
 import { DEFAULT_THEME } from "../utils/themeManager"
+import {
+  fetchTheme,
+  subscribeTheme,
+} from "@/entities/theme/api/themeRepository"
 
 const CSS_VAR_MAP = {
   // Primary and Secondary
@@ -129,58 +132,42 @@ const injectCSSVariables = (colors) => {
   root.style.setProperty("--color-grid-line-soft", hexToRgba(gridSoft, 0.018))
 }
 
+const buildColors = (source) => {
+  const colors = {}
+  Object.keys(CSS_VAR_MAP).forEach((key) => {
+    colors[key] = source[key] || DEFAULT_THEME[key]
+  })
+  return colors
+}
+
+const applyColors = (source) => {
+  const colors = buildColors(source)
+  injectCSSVariables(colors)
+  try {
+    localStorage.setItem("theme_colors", JSON.stringify(colors))
+  } catch {
+    // ignore storage errors (private mode / blocked)
+  }
+}
+
 export const useTheme = () => {
   useEffect(() => {
-    let subscription = null
+    let unsubscribe = null
 
     const setupTheme = async () => {
       try {
         const cached = localStorage.getItem("theme_colors")
-        if (cached) {
-          const colors = JSON.parse(cached)
-          injectCSSVariables(colors)
-        }
+        if (cached) injectCSSVariables(JSON.parse(cached))
+      } catch {
+        // ignore cache read errors
+      }
 
-        const { data, error } = await supabase
-          .from("site_theme")
-          .select("*")
-          .eq("id", 1)
-          .maybeSingle()
+      try {
+        const data = await fetchTheme()
+        if (data) applyColors(data)
 
-        if (error) throw error
-
-        if (data) {
-          const colors = {}
-          Object.keys(CSS_VAR_MAP).forEach((key) => {
-            colors[key] = data[key] || DEFAULT_THEME[key]
-          })
-
-          injectCSSVariables(colors)
-          localStorage.setItem("theme_colors", JSON.stringify(colors))
-        }
-
-        subscription = supabase
-          .channel("site_theme_changes")
-          .on(
-            "postgres_changes",
-            {
-              event: "UPDATE",
-              schema: "public",
-              table: "site_theme",
-              filter: "id=eq.1",
-            },
-            (payload) => {
-              if (payload.new) {
-                const colors = {}
-                Object.keys(CSS_VAR_MAP).forEach((key) => {
-                  colors[key] = payload.new[key] || DEFAULT_THEME[key]
-                })
-                injectCSSVariables(colors)
-                localStorage.setItem("theme_colors", JSON.stringify(colors))
-              }
-            }
-          )
-          .subscribe(() => {})
+        // Realtime via idempotent, StrictMode-safe shared helper.
+        unsubscribe = subscribeTheme((row) => applyColors(row))
       } catch (error) {
         console.error("Error setting up theme:", error)
       }
@@ -189,9 +176,7 @@ export const useTheme = () => {
     setupTheme()
 
     return () => {
-      if (subscription) {
-        supabase.removeChannel(subscription)
-      }
+      if (unsubscribe) unsubscribe()
     }
   }, [])
 }
