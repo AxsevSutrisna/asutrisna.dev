@@ -13,7 +13,6 @@ export default function ProjectRow({
   project,
   onDelete,
   onEdit,
-  index,
   provided,
   isDragging,
 }) {
@@ -31,10 +30,6 @@ export default function ProjectRow({
       ref={provided.innerRef}
       {...provided.draggableProps}
       className={`group flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all duration-300 cursor-target ${isDragging ? "bg-indigo-500/10 border-indigo-500/30 shadow-xl" : "border-white/5 hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.05]"}`}
-      style={{
-        ...provided.draggableProps.style,
-        animationDelay: isDragging ? "0ms" : `${index * 50}ms`,
-      }}
     >
       <div
         {...provided.dragHandleProps}

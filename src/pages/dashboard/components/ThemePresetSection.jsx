@@ -16,7 +16,8 @@
  * DB preset color_scheme keys are now IDENTICAL to site_theme column names:
  * primary_color_dark, primary_color_light, secondary_color_dark,
  * secondary_color_light, backdrop_base, backdrop_glow,
- * background_blob_one ... overlay_bg_color (44 fields total)
+ * background_blob_one ... shadow_primary_color (hanya field tema yang
+ * benar-benar di-inject & dipakai UI; field lama tak terpakai sudah dibuang).
  *
  * Backward compatibility:
  * If a preset still has the old 6-key format (primary_dark, primary_light, etc.),
@@ -78,41 +79,22 @@ function mapPresetToTheme(colorScheme) {
     backdrop_base,
     backdrop_glow,
 
-    // Background blobs (derived from primary/secondary)
+    // Background blobs + grid (derived from primary/secondary)
     background_blob_one: primary_dark,
     background_blob_two: primary_light,
     background_blob_three: secondary_light,
     background_blob_four: secondary_dark,
     background_grid_line: primary_dark,
     background_grid_line_soft: primary_dark,
-    background_gradient_from: primary_dark,
-    background_gradient_to: primary_light,
 
     // Buttons
     button_primary_from: primary_dark,
     button_primary_to: primary_light,
     button_secondary_from: secondary_dark,
-    button_secondary_to: secondary_light,
     button_outline_color: primary_light,
 
-    // Navigation
-    navbar_bg: backdrop_base,
-    navbar_link_active: "#ffffff",
-    navbar_link_inactive: primary_light,
-
-    // Links
-    link_color: primary_dark,
-    link_hover_color: primary_light,
-
-    // Input borders
-    input_border_focus: primary_dark,
-
-    // Effects / glows
+    // Effects
     shadow_primary_color: primary_dark,
-    glow_color_primary: primary_dark,
-    glow_color_secondary: primary_light,
-    grid_line_color: primary_dark,
-    overlay_bg_color: backdrop_base,
   }
 }
 

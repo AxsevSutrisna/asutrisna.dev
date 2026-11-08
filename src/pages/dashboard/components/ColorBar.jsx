@@ -85,8 +85,6 @@ const COLOR_GROUPS = [
       { key: "background_blob_two", label: "Blob 2" },
       { key: "background_blob_three", label: "Blob 3" },
       { key: "background_blob_four", label: "Blob 4" },
-      { key: "background_gradient_from", label: "Grad From" },
-      { key: "background_gradient_to", label: "Grad To" },
     ],
   },
   {
@@ -95,7 +93,6 @@ const COLOR_GROUPS = [
       { key: "button_primary_from", label: "Primary From" },
       { key: "button_primary_to", label: "Primary To" },
       { key: "button_secondary_from", label: "Secondary From" },
-      { key: "button_secondary_to", label: "Secondary To" },
       { key: "button_outline_color", label: "Outline" },
     ],
   },
@@ -110,22 +107,10 @@ const COLOR_GROUPS = [
     ],
   },
   {
-    label: "Cards & Navigation",
+    label: "Cards & Effects",
     slots: [
       { key: "card_bg_dark", label: "Card BG" },
-      { key: "card_border_light", label: "Card Border" },
-      { key: "navbar_bg", label: "Navbar BG" },
-      { key: "navbar_link_active", label: "Link Active" },
-      { key: "navbar_link_inactive", label: "Link Inactive" },
-    ],
-  },
-  {
-    label: "Effects",
-    slots: [
-      { key: "glow_color_primary", label: "Glow Primary" },
-      { key: "glow_color_secondary", label: "Glow Secondary" },
       { key: "shadow_primary_color", label: "Shadow" },
-      { key: "overlay_bg_color", label: "Overlay" },
     ],
   },
 ]

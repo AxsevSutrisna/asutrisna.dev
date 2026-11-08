@@ -2,6 +2,11 @@
  * Kontrak warna tema. Kunci SENGAJA snake_case karena identik dengan kolom
  * tabel `site_theme`, nama CSS variable (via CSS_VAR_MAP di useTheme), dan
  * bentuk cache localStorage("theme_colors"). JANGAN di-camelCase.
+ *
+ * Catatan: hanya field yang benar-benar di-inject & dikonsumsi UI yang
+ * disertakan. Field lama yang tak terpakai (states, navigation, forms/links,
+ * glow/overlay, gradient, card light/border, button secondary-to) sudah dibuang
+ * agar editor tetap ringkas dan tiap pilihan benar-benar berefek.
  */
 export const THEME_COLOR_CATEGORIES: Record<
   string,
@@ -29,8 +34,6 @@ export const THEME_COLOR_CATEGORIES: Record<
       "background_blob_three",
       "background_blob_four",
       "background_grid_line",
-      "background_gradient_from",
-      "background_gradient_to",
     ],
     label: "Background Elements",
     hint: "Animated blobs and grid overlay colors",
@@ -40,63 +43,30 @@ export const THEME_COLOR_CATEGORIES: Record<
       "button_primary_from",
       "button_primary_to",
       "button_secondary_from",
-      "button_secondary_to",
       "button_outline_color",
     ],
     label: "Button Colors",
     hint: "Button gradient and outline colors for interactive elements",
   },
   cards: {
-    fields: [
-      "card_bg_light",
-      "card_bg_dark",
-      "card_border_light",
-      "card_border_dark",
-    ],
-    label: "Card & Box Colors",
-    hint: "Background and border colors for cards and containers",
+    fields: ["card_bg_dark"],
+    label: "Card Colors",
+    hint: "Background color for cards and containers",
   },
   text: {
     fields: ["text_primary", "text_secondary", "text_muted"],
     label: "Text Colors",
-    hint: "Text colors for primary and secondary content",
+    hint: "Text colors for primary, secondary, and muted content",
   },
   border: {
     fields: ["border_light", "border_dark"],
     label: "Border Colors",
     hint: "Border colors for light and dark contexts",
   },
-  states: {
-    fields: ["state_success", "state_warning", "state_error", "state_info"],
-    label: "State Colors",
-    hint: "Colors for success, warning, error, and info states",
-  },
-  navigation: {
-    fields: ["navbar_bg", "navbar_link_active", "navbar_link_inactive"],
-    label: "Navigation Colors",
-    hint: "Colors for navbar background and link states",
-  },
-  forms: {
-    fields: [
-      "input_bg_color",
-      "input_border_color",
-      "input_border_focus",
-      "link_color",
-      "link_hover_color",
-    ],
-    label: "Form & Link Colors",
-    hint: "Colors for input fields, borders, and links",
-  },
   effects: {
-    fields: [
-      "shadow_primary_color",
-      "glow_color_primary",
-      "glow_color_secondary",
-      "grid_line_color",
-      "overlay_bg_color",
-    ],
+    fields: ["shadow_primary_color"],
     label: "Effects & Shadows",
-    hint: "Colors for shadows, glows, and overlay effects",
+    hint: "Shadow color for elevated elements",
   },
 }
 
@@ -117,8 +87,6 @@ export const DEFAULT_THEME: Record<string, string> = {
   background_blob_three: "#ec4899",
   background_blob_four: "#8b5cf6",
   background_grid_line: "#6366f1",
-  background_gradient_from: "#6366f1",
-  background_gradient_to: "#a855f7",
 
   // Text Colors
   text_primary: "#f5f3ff",
@@ -133,37 +101,11 @@ export const DEFAULT_THEME: Record<string, string> = {
   button_primary_from: "#6366f1",
   button_primary_to: "#a855f7",
   button_secondary_from: "#a855f7",
-  button_secondary_to: "#6366f1",
   button_outline_color: "#a855f7",
 
   // Cards
-  card_bg_light: "#ffffff",
   card_bg_dark: "#1e1b4b",
-  card_border_light: "#e5e0ff",
-  card_border_dark: "#3d394e",
-
-  // States
-  state_success: "#10b981",
-  state_warning: "#f59e0b",
-  state_error: "#ef4444",
-  state_info: "#3b82f6",
-
-  // Navigation
-  navbar_bg: "#030014",
-  navbar_link_active: "#ffffff",
-  navbar_link_inactive: "#e2d3fd",
-
-  // Forms & Links
-  input_bg_color: "#ffffff",
-  input_border_color: "#e5e0ff",
-  input_border_focus: "#6366f1",
-  link_color: "#6366f1",
-  link_hover_color: "#a855f7",
 
   // Effects
   shadow_primary_color: "#6366f1",
-  glow_color_primary: "#6366f1",
-  glow_color_secondary: "#a855f7",
-  grid_line_color: "#6366f1",
-  overlay_bg_color: "#030014",
 }

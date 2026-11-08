@@ -168,7 +168,7 @@ const ApplyPresetModal = ({ preset, onApply, onClose }) => {
               <div
                 className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white shadow-md"
                 style={{
-                  background: `linear-gradient(135deg, ${colors.button_secondary_from || secDark}, ${colors.button_secondary_to || secLight})`,
+                  background: `linear-gradient(135deg, ${colors.button_secondary_from || secDark}, ${secLight})`,
                 }}
               >
                 Secondary
@@ -205,7 +205,7 @@ const ApplyPresetModal = ({ preset, onApply, onClose }) => {
               className="rounded-lg border p-3 text-xs"
               style={{
                 backgroundColor: colors.card_bg_dark || "#1e1b4b",
-                borderColor: colors.card_border_light || "#e5e0ff",
+                borderColor: "rgba(255,255,255,0.12)",
               }}
             >
               <p
@@ -220,10 +220,7 @@ const ApplyPresetModal = ({ preset, onApply, onClose }) => {
               >
                 Card with themed background and borders
               </p>
-              <p
-                style={{ color: colors.link_color || primary }}
-                className="mt-1"
-              >
+              <p style={{ color: primary }} className="mt-1">
                 → Learn more
               </p>
             </div>

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import Modal from "@/components/ui/Modal"
 import { FieldError } from "@/components/ui/FieldError"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { useSocialLinkManagement } from "@/features/social-link-management/model/useSocialLinks"
 import {
@@ -72,11 +73,13 @@ const InputField = ({
   required = false,
   min,
   error,
+  autoFocus = false,
+  hint,
 }) => (
   <div className="space-y-1.5">
     <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">
       {label}
-      {required ? " *" : ""}
+      {required ? <span className="text-red-400"> *</span> : ""}
     </label>
     <input
       type={type}
@@ -85,8 +88,10 @@ const InputField = ({
       placeholder={placeholder}
       required={required}
       min={min}
+      autoFocus={autoFocus}
       className={`cursor-target w-full bg-[#0d0d22] border rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all ${error ? "border-red-500/50 focus:border-red-500/60 focus:ring-red-500/20" : "border-white/10"}`}
     />
+    {hint && !error && <p className="text-[11px] text-gray-500">{hint}</p>}
     <FieldError message={error} />
   </div>
 )
@@ -98,7 +103,6 @@ const PLATFORM_PRESETS = {
     sub_text: "on LinkedIn",
     icon: "Linkedin",
     color: "#0A66C2",
-    gradient: "] ]",
   },
   instagram: {
     platform: "Instagram",
@@ -106,7 +110,6 @@ const PLATFORM_PRESETS = {
     sub_text: "@username",
     icon: "Instagram",
     color: "#E4405F",
-    gradient: "] ] ]",
   },
   youtube: {
     platform: "YouTube",
@@ -114,7 +117,6 @@ const PLATFORM_PRESETS = {
     sub_text: "@channel",
     icon: "Youtube",
     color: "#FF0000",
-    gradient: "] ]",
   },
   github: {
     platform: "GitHub",
@@ -122,7 +124,6 @@ const PLATFORM_PRESETS = {
     sub_text: "@username",
     icon: "Github",
     color: "#24292e",
-    gradient: "] ]",
   },
   tiktok: {
     platform: "TikTok",
@@ -130,7 +131,6 @@ const PLATFORM_PRESETS = {
     sub_text: "@username",
     icon: "TikTok",
     color: "#000000",
-    gradient: "] ] ]",
   },
 }
 
@@ -138,8 +138,6 @@ const normalizePlatformKey = (val) =>
   String(val || "")
     .toLowerCase()
     .replace(/[^a-z]/g, "")
-const getPlatformPreset = (platform) =>
-  PLATFORM_PRESETS[normalizePlatformKey(platform)] || null
 
 const COLOR_PALETTE = [
   "#0A66C2",
@@ -153,15 +151,6 @@ const COLOR_PALETTE = [
   "#f59e0b",
   "#ef4444",
 ]
-const GRADIENT_PRESETS = [
-  { label: "LinkedIn", value: "] ]" },
-  { label: "Instagram", value: "] ] ]" },
-  { label: "YouTube", value: "] ]" },
-  { label: "GitHub", value: "] ]" },
-  { label: "TikTok", value: "] ] ]" },
-  { label: "Blue Purple", value: "] ]" },
-]
-
 const isValidUrl = (value) => {
   try {
     new URL(value)
@@ -234,7 +223,14 @@ const SocialLinkCard = ({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <h3 className="font-bold text-white text-lg truncate flex items-center gap-2">
-                {item.display_name}
+                <button
+                  type="button"
+                  onClick={() => onEdit(item)}
+                  title="Edit social link"
+                  className="cursor-target appearance-none border-0 bg-transparent p-0 text-left truncate transition-colors hover:text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+                >
+                  {item.display_name}
+                </button>
                 {item.is_primary && (
                   <Star className="w-4 h-4 fill-yellow-500 text-yellow-500 shrink-0" />
                 )}
@@ -286,7 +282,7 @@ const SocialLinkCard = ({
               </span>
             </div>
 
-            <div className="flex gap-1.5 opacity-60 group-hover/card:opacity-100 transition-opacity">
+            <div className="flex gap-1.5">
               <button
                 onClick={() => onSetPrimary(item)}
                 title="Primary"
@@ -336,7 +332,6 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
     url: initial?.url || "",
     icon: initial?.icon || "",
     color: initial?.color || "",
-    gradient: initial?.gradient || "",
     sort_order: initial?.sort_order ?? "",
     is_primary: initial?.is_primary ?? false,
     is_active: initial?.is_active ?? true,
@@ -345,6 +340,15 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
   const [iconPreview, setIconPreview] = useState(initial?.icon || null)
   const [errors, setErrors] = useState({})
 
+  const clearError = (key) =>
+    setErrors((current) => {
+      if (!current[key]) return current
+      const next = { ...current }
+      delete next[key]
+      return next
+    })
+
+  // Isi otomatis dari preset (cara cepat); field tetap bisa disesuaikan.
   const applyPreset = (preset) => {
     setForm((f) => ({
       ...f,
@@ -353,47 +357,17 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
       sub_text: preset.sub_text,
       icon: preset.icon,
       color: preset.color,
-      gradient: preset.gradient,
     }))
+    setErrors({})
   }
 
   const set = (key) => (e) => {
     let val = e.target.type === "checkbox" ? e.target.checked : e.target.value
-    if (key === "display_name") {
-      setForm((f) => ({ ...f, display_name: val, platform: f.platform || val }))
-      setErrors((current) => {
-        const next = { ...current }
-        delete next.display_name
-        if (String(val || "").trim()) delete next.platform
-        return next
-      })
-      return
-    }
-    if (key === "platform") {
-      setForm((f) => ({ ...f, platform: val }))
-      const p = getPlatformPreset(val)
-      if (p) applyPreset(p)
-      setErrors((current) => {
-        if (!current.platform) return current
-        const next = { ...current }
-        delete next.platform
-        return next
-      })
-      return
-    }
-    if (key === "url") {
-      setForm((f) => ({ ...f, [key]: val }))
-      setErrors((current) => {
-        if (!current.url) return current
-        const next = { ...current }
-        delete next.url
-        return next
-      })
-      return
-    }
-    if (key === "sort_order")
+    if (key === "sort_order") {
       val = val === "" ? "" : Math.max(0, Number(val) || 0)
+    }
     setForm((f) => ({ ...f, [key]: val }))
+    if (typeof val !== "boolean") clearError(key)
   }
 
   const handleFileChange = (e) => {
@@ -450,6 +424,9 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
               </button>
             ))}
           </div>
+          <p className="mt-1 text-[11px] text-gray-500">
+            Pilih preset untuk mengisi otomatis, lalu sesuaikan bila perlu.
+          </p>
         </div>
 
         <InputField
@@ -458,7 +435,9 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
           onChange={set("platform")}
           placeholder="e.g. LinkedIn"
           required
+          autoFocus
           error={errors.platform}
+          hint="Dipakai sebagai label & ikon bawaan."
         />
         <InputField
           label="Display Name"
@@ -467,6 +446,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
           placeholder="e.g. Let's Connect"
           required
           error={errors.display_name}
+          hint="Teks utama yang tampil di kartu."
         />
         <InputField
           label="Sub Text"
@@ -506,10 +486,10 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-300 truncate">
-                {iconFile ? iconFile.name : "Upload Image"}
+                {iconFile ? iconFile.name : "Upload custom icon"}
               </p>
               <p className="text-[10px] text-gray-600 mt-0.5">
-                Or use key below
+                Atau ketik nama ikon bawaan di bawah
               </p>
             </div>
             <input
@@ -523,7 +503,7 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
             type="text"
             value={form.icon}
             onChange={set("icon")}
-            placeholder="Fallback key: e.g. Linkedin"
+            placeholder="Nama ikon bawaan: LinkedIn, GitHub, YouTube…"
             className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-xs outline-none focus:border-indigo-500/50"
           />
         </div>
@@ -558,37 +538,6 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
             />
           </div>
         </div>
-      </div>
-
-      {/* Gradient Presets */}
-      <div className="space-y-1.5">
-        <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">
-          Gradient Overlay
-        </label>
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {GRADIENT_PRESETS.map((preset) => (
-            <button
-              key={preset.label}
-              type="button"
-              onClick={() => setForm((f) => ({ ...f, gradient: preset.value }))}
-              className={`cursor-target shrink-0 w-24 h-12 rounded-lg relative overflow-hidden border transition-all no-neo ${form.gradient === preset.value ? "border-white ring-2 ring-indigo-500/40" : "border-white/10 hover:border-white/30"}`}
-            >
-              <div
-                className={`absolute inset-0 bg-[#0f172a] ${preset.value} opacity-80`}
-              />
-              <span className="absolute bottom-1 left-1.5 text-[9px] font-bold text-white drop-shadow-md">
-                {preset.label}
-              </span>
-            </button>
-          ))}
-        </div>
-        <input
-          type="text"
-          value={form.gradient}
-          onChange={set("gradient")}
-          placeholder="e.g. ] ]"
-          className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-lg px-3 py-2 text-gray-200 placeholder-gray-600 text-sm outline-none"
-        />
       </div>
 
       {sectionTitle(<ExternalLink className="w-3 h-3" />, "Visibility & Order")}
@@ -675,6 +624,7 @@ export default function SocialLinksDashboard() {
   const [draggingId, setDraggingId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     items,
     loading,
@@ -729,8 +679,14 @@ export default function SocialLinksDashboard() {
     if (ok) setEditItem(null)
   }
 
-  const deleteItem = (id) => {
-    if (!confirm("Delete this social link?")) return
+  const deleteItem = async (id) => {
+    const ok = await confirm({
+      title: "Delete this social link?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeItem(id)
   }
 

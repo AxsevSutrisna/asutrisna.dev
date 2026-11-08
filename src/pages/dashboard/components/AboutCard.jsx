@@ -93,8 +93,15 @@ export default function AboutCard({
         <div className="flex-1 p-5 flex flex-col gap-4 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="font-bold text-white text-lg leading-tight group-hover:text-indigo-100 transition-colors duration-300">
-                {item.name}
+              <h3 className="leading-tight">
+                <button
+                  type="button"
+                  onClick={() => onEdit(item)}
+                  title="Edit about content"
+                  className="cursor-target appearance-none border-0 bg-transparent p-0 text-left font-bold text-white text-lg transition-colors duration-300 group-hover:text-indigo-100 hover:!text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+                >
+                  {item.name}
+                </button>
               </h3>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[11px] text-gray-500 bg-white/5 border border-white/8 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -106,7 +113,7 @@ export default function AboutCard({
               </div>
             </div>
 
-            <div className="flex gap-1.5 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="flex gap-1.5 shrink-0">
               <button
                 onClick={() => onTogglePublish(item)}
                 title={item.is_published ? "Unpublish" : "Publish"}

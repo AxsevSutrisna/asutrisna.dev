@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
-import { Plus, Sparkles, User, CheckCircle2 } from "lucide-react"
+import { Sparkles, User, CheckCircle2 } from "lucide-react"
 import Modal from "@/components/ui/Modal"
 import AboutCard from "./components/AboutCard"
 import AboutForm from "./components/AboutForm"
+import AddNewButton from "./components/AddNewButton"
 import { SkeletonCard } from "./components/aboutHelpers.jsx"
 import { useAboutManagement } from "@/features/about-management/model/useAbout"
 
@@ -12,6 +14,7 @@ export default function About() {
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     items,
     loading,
@@ -34,8 +37,14 @@ export default function About() {
     if (ok) setEditItem(null)
   }
 
-  const deleteItem = (id) => {
-    if (!confirm("Delete this about content?")) return
+  const deleteItem = async (id) => {
+    const ok = await confirm({
+      title: "Delete this about content?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeAbout(id)
   }
 
@@ -80,25 +89,7 @@ export default function About() {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowCreate(true)}
-          className="cursor-target relative group shrink-0 no-neo"
-        >
-          <div
-            className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300"
-            style={{
-              background:
-                "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
-            }}
-          />
-          <div
-            className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10"
-            style={{ backgroundColor: "var(--color-backdrop-base)" }}
-          >
-            <Plus className="w-4 h-4 text-indigo-400" />
-            <span className="text-sm font-medium text-gray-200">New About</span>
-          </div>
-        </button>
+        <AddNewButton onClick={() => setShowCreate(true)} label="New About" />
       </div>
 
       {showCreate && (
@@ -149,25 +140,12 @@ export default function About() {
                 Create your first about profile to show on your portfolio
               </p>
             </div>
-            <button
-              onClick={() => setShowCreate(true)}
-              className="cursor-target relative group mt-2 no-neo"
-            >
-              <div
-                className="absolute -inset-0.5 rounded-xl opacity-50 blur group-hover:opacity-90 transition duration-300"
-                style={{
-                  background:
-                    "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
-                }}
+            <div className="mt-2">
+              <AddNewButton
+                onClick={() => setShowCreate(true)}
+                label="Create About Profile"
               />
-              <div
-                className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-sm font-medium text-gray-200"
-                style={{ backgroundColor: "var(--color-backdrop-base)" }}
-              >
-                <Plus className="w-4 h-4 text-indigo-400" /> Create About
-                Profile
-              </div>
-            </button>
+            </div>
           </div>
         </div>
       ) : (

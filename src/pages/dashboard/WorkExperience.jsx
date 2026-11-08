@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Modal from "@/components/ui/Modal"
 import { FieldError } from "@/components/ui/FieldError"
 import {
@@ -25,6 +25,7 @@ import {
 } from "@/utils/workExperiences"
 import AddNewButton from "./components/AddNewButton"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { useWorkExperienceManagement } from "@/features/experience-management/model/useWorkExperience"
 
@@ -76,15 +77,18 @@ const getEmpStyle = (type) =>
     dot: "bg-gray-400",
   }
 
+/** Selisih bulan antara dua Date (dipakai durasi kartu & total tahun). */
+const diffInMonths = (start, end) =>
+  (end.getFullYear() - start.getFullYear()) * 12 +
+  (end.getMonth() - start.getMonth())
+
 const calcDuration = (startMonth, startYear, endMonth, endYear, isCurrent) => {
   const now = new Date()
   const start = new Date(startYear, (startMonth ?? 1) - 1)
   const end = isCurrent
     ? now
     : new Date(endYear ?? now.getFullYear(), (endMonth ?? 1) - 1)
-  const totalMonths =
-    (end.getFullYear() - start.getFullYear()) * 12 +
-    (end.getMonth() - start.getMonth())
+  const totalMonths = diffInMonths(start, end)
   if (totalMonths < 1) return "< 1 mo"
   const y = Math.floor(totalMonths / 12)
   const m = totalMonths % 12
@@ -161,6 +165,18 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting }) => {
   )
   const [techDraft, setTechDraft] = useState("")
   const [errors, setErrors] = useState({})
+
+  // Textarea deskripsi auto-grow (seragam dengan ProjectForm).
+  const descriptionRef = useRef(null)
+  const autoGrowDescription = () => {
+    const el = descriptionRef.current
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 240)}px`
+  }
+  useEffect(() => {
+    autoGrowDescription()
+  }, [])
 
   const set = (key) => (e) => {
     const value = e.target.value
@@ -245,6 +261,7 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting }) => {
           <label className={labelCls}>Position *</label>
           <input
             type="text"
+            autoFocus
             value={form.position}
             onChange={set("position")}
             placeholder="e.g. Full-Stack Developer"
@@ -422,14 +439,34 @@ const ExperienceForm = ({ initial = null, onSubmit, onCancel, submitting }) => {
       {sectionTitle(<Code2 className="w-3 h-3" />, "Details & Skills")}
       <div className="grid grid-cols-1 gap-4">
         <div className="space-y-1.5">
-          <label className={labelCls}>Description</label>
+          <div className="flex items-center justify-between gap-2">
+            <label className={labelCls}>Description</label>
+            <span
+              className={`text-[11px] tabular-nums ${
+                form.description.length > 300
+                  ? "text-amber-400/80"
+                  : "text-gray-600"
+              }`}
+            >
+              {form.description.length} karakter
+            </span>
+          </div>
           <textarea
+            ref={descriptionRef}
             value={form.description}
-            onChange={set("description")}
+            onChange={(e) => {
+              set("description")(e)
+              autoGrowDescription()
+            }}
+            onInput={autoGrowDescription}
             placeholder="Describe your responsibilities and achievements..."
             rows={3}
-            className={`${inputCls} resize-none`}
+            className={`${inputCls} min-h-[96px] resize-none overflow-y-auto leading-relaxed`}
           />
+          <p className="text-[10px] text-gray-500">
+            Pakai baris baru atau awali dengan tanda minus untuk tiap poin;
+            tampil ringkas di kartu.
+          </p>
         </div>
 
         <div className="space-y-1.5">
@@ -629,8 +666,15 @@ const ExperienceCard = ({ experience, onEdit, onDelete, isLast }) => {
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-bold text-white text-base leading-tight group-hover:text-indigo-100 transition-colors duration-300">
-                    {experience.position}
+                  <h3 className="leading-tight">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(experience)}
+                      title="Edit experience"
+                      className="cursor-target appearance-none border-0 bg-transparent p-0 text-left font-bold text-white text-base transition-colors duration-300 group-hover:text-indigo-100 hover:!text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+                    >
+                      {experience.position}
+                    </button>
                   </h3>
                   {experience.is_current && (
                     <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-semibold uppercase tracking-wider">
@@ -711,7 +755,7 @@ const ExperienceCard = ({ experience, onEdit, onDelete, isLast }) => {
                 <Briefcase className="w-3 h-3" /> #
                 {experience.display_order ?? 0} in timeline
               </span>
-              <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => onEdit(experience)}
@@ -740,6 +784,7 @@ export default function WorkExperience() {
   const [showCreate, setShowCreate] = useState(false)
   const [editExperience, setEditExperience] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     experiences,
     loading,
@@ -760,8 +805,14 @@ export default function WorkExperience() {
     if (ok) setEditExperience(null)
   }
 
-  const handleDelete = (id) => {
-    if (!confirm("Delete this work experience?")) return
+  const handleDelete = async (id) => {
+    const ok = await confirm({
+      title: "Delete this work experience?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeExperience(id)
   }
 
@@ -774,11 +825,7 @@ export default function WorkExperience() {
       const en = e.is_current
         ? now
         : new Date(e.end_year ?? now.getFullYear(), (e.end_month ?? 1) - 1)
-      months += Math.max(
-        0,
-        (en.getFullYear() - s.getFullYear()) * 12 +
-          (en.getMonth() - s.getMonth())
-      )
+      months += Math.max(0, diffInMonths(s, en))
     }
     return Math.floor(months / 12)
   })()

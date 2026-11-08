@@ -3,7 +3,6 @@ import {
   ImageIcon,
   CheckCircle2,
   Clock,
-  Globe,
   Github,
   Layers,
   Zap,
@@ -28,7 +27,7 @@ export default function ProjectCard({ project, onDelete, onEdit }) {
 
   return (
     <div
-      className="group relative flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-500 hover:border-white/20 hover:shadow-2xl"
+      className="group relative flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-300 hover:border-white/20 hover:shadow-2xl hover:-translate-y-1"
       style={{
         boxShadow: hovered ? "0 0 40px -10px rgba(99,102,241,0.25)" : "none",
       }}
@@ -55,7 +54,6 @@ export default function ProjectCard({ project, onDelete, onEdit }) {
               onLoad={() => setImgLoaded(true)}
               className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
             />
-            <div className="absolute inset-0 bg-[#0f172a] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -78,30 +76,11 @@ export default function ProjectCard({ project, onDelete, onEdit }) {
           {isPublished ? "Published" : "Draft"}
         </div>
 
-        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
-          {liveUrl && (
-            <a
-              href={liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-target w-8 h-8 rounded-lg bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
-              title="Live Preview"
-            >
-              <Globe className="w-3.5 h-3.5" />
-            </a>
-          )}
-          {githubUrl && (
-            <a
-              href={githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-target w-8 h-8 rounded-lg bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
-              title="GitHub Repo"
-            >
-              <Github className="w-3.5 h-3.5" />
-            </a>
-          )}
-        </div>
+        {(project.images?.length ?? 0) > 1 && (
+          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 text-[10px] font-medium text-white">
+            <ImageIcon className="w-3 h-3" /> {project.images.length}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col flex-1 p-4 gap-3">
@@ -111,8 +90,15 @@ export default function ProjectCard({ project, onDelete, onEdit }) {
               {category}
             </span>
           )}
-          <h3 className="font-semibold text-white text-sm leading-snug line-clamp-2 group-hover:text-indigo-200 transition-colors duration-300">
-            {title}
+          <h3 className="leading-snug">
+            <button
+              type="button"
+              onClick={() => onEdit(project)}
+              title="Edit project"
+              className="cursor-target w-full appearance-none border-0 bg-transparent p-0 text-left font-semibold text-white text-sm line-clamp-2 transition-colors duration-300 group-hover:text-indigo-200 hover:!text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+            >
+              {title}
+            </button>
           </h3>
           {desc && (
             <p className="text-gray-500 text-xs mt-1.5 line-clamp-2 leading-relaxed">

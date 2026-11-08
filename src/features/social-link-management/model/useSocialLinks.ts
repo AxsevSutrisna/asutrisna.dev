@@ -11,7 +11,6 @@ interface SocialLinkFormValues {
   url: string
   icon: string
   color: string
-  gradient: string
   sort_order: number | string
   is_primary: boolean
   is_active: boolean
@@ -86,7 +85,6 @@ export function useSocialLinkManagement(notify?: Notify) {
           url: normalizeUrl(form.url.trim()),
           icon: iconValue,
           color: form.color.trim(),
-          gradient: form.gradient.trim(),
           sort_order: resolveSortOrder(form.sort_order),
           is_primary: form.is_primary,
           is_active: form.is_active,

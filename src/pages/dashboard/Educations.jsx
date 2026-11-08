@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Modal from "@/components/ui/Modal"
 import { FieldError } from "@/components/ui/FieldError"
 import {
@@ -10,10 +10,12 @@ import {
   CheckCircle2,
   Building2,
   BookOpen,
+  Clock,
 } from "lucide-react"
 import { formatDateRange } from "@/utils/educations"
 import AddNewButton from "./components/AddNewButton"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { useEducationManagement } from "@/features/education-management/model/useEducations"
 
@@ -84,6 +86,19 @@ const EducationForm = ({ initial = null, onSubmit, onCancel, submitting }) => {
     description: initial?.description ?? "",
   })
   const [errors, setErrors] = useState({})
+
+  // Textarea auto-grow (seragam dengan ProjectForm / ExperienceForm).
+  const activitiesRef = useRef(null)
+  const descriptionRef = useRef(null)
+  const autoGrow = (el) => {
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 240)}px`
+  }
+  useEffect(() => {
+    autoGrow(activitiesRef.current)
+    autoGrow(descriptionRef.current)
+  }, [])
 
   const set = (key) => (e) => {
     const value = e.target.value
@@ -156,6 +171,7 @@ const EducationForm = ({ initial = null, onSubmit, onCancel, submitting }) => {
             <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
+              autoFocus
               value={form.school}
               onChange={set("school")}
               placeholder="e.g. Universitas Teknologi Bandung"
@@ -323,23 +339,48 @@ const EducationForm = ({ initial = null, onSubmit, onCancel, submitting }) => {
         <div className="space-y-1.5">
           <label className={labelCls}>Activities and Societies</label>
           <textarea
+            ref={activitiesRef}
             value={form.activities}
-            onChange={set("activities")}
+            onChange={(e) => {
+              set("activities")(e)
+              autoGrow(e.target)
+            }}
+            onInput={(e) => autoGrow(e.target)}
             placeholder="e.g. Student Council, Programming Club, Volleyball Team"
             rows={2}
-            className={`${inputCls} resize-none`}
+            className={`${inputCls} min-h-[72px] resize-none overflow-y-auto leading-relaxed`}
           />
         </div>
 
         <div className="space-y-1.5">
-          <label className={labelCls}>Description</label>
+          <div className="flex items-center justify-between gap-2">
+            <label className={labelCls}>Description</label>
+            <span
+              className={`text-[11px] tabular-nums ${
+                form.description.length > 300
+                  ? "text-amber-400/80"
+                  : "text-gray-600"
+              }`}
+            >
+              {form.description.length} karakter
+            </span>
+          </div>
           <textarea
+            ref={descriptionRef}
             value={form.description}
-            onChange={set("description")}
+            onChange={(e) => {
+              set("description")(e)
+              autoGrow(e.target)
+            }}
+            onInput={(e) => autoGrow(e.target)}
             placeholder="Describe your achievements and notable coursework..."
             rows={3}
-            className={`${inputCls} resize-none`}
+            className={`${inputCls} min-h-[96px] resize-none overflow-y-auto leading-relaxed`}
           />
+          <p className="text-[10px] text-gray-500">
+            Pakai baris baru atau awali dengan tanda minus untuk tiap poin;
+            tampil ringkas di kartu.
+          </p>
         </div>
       </div>
 
@@ -483,8 +524,15 @@ const EducationCard = ({ education, onEdit, onDelete, isLast }) => {
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-bold text-white text-base leading-tight group-hover:text-indigo-100 transition-colors duration-300">
-                    {education.school}
+                  <h3 className="leading-tight">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(education)}
+                      title="Edit education"
+                      className="cursor-target appearance-none border-0 bg-transparent p-0 text-left font-bold text-white text-base transition-colors duration-300 group-hover:text-indigo-100 hover:!text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+                    >
+                      {education.school}
+                    </button>
                   </h3>
                   {education.is_current && (
                     <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-semibold uppercase tracking-wider">
@@ -541,7 +589,7 @@ const EducationCard = ({ education, onEdit, onDelete, isLast }) => {
               <span className="text-[10px] text-gray-600 flex items-center gap-1">
                 <GraduationCap className="w-3 h-3" /> Educational Record
               </span>
-              <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => onEdit(education)}
@@ -570,6 +618,7 @@ export default function Educations() {
   const [showCreate, setShowCreate] = useState(false)
   const [editEducation, setEditEducation] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     educations,
     loading,
@@ -590,8 +639,14 @@ export default function Educations() {
     if (ok) setEditEducation(null)
   }
 
-  const handleDelete = (id) => {
-    if (!confirm("Delete this education history?")) return
+  const handleDelete = async (id) => {
+    const ok = await confirm({
+      title: "Delete this education record?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeEducation(id)
   }
 
@@ -704,6 +759,18 @@ export default function Educations() {
         </div>
       ) : (
         <div className="pt-2">
+          {/* Legend */}
+          <div className="flex items-center gap-3 mb-5 text-[11px] text-gray-500 flex-wrap">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Current
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-600" /> Past
+            </span>
+            <span className="hidden sm:flex items-center gap-1.5">
+              <Clock className="w-3 h-3" /> Sorted by most recent first
+            </span>
+          </div>
           <div className="space-y-0">
             {educations.map((edu, index) => (
               <EducationCard

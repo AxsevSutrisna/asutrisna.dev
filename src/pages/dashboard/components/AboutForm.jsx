@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   Upload,
   ImageIcon,
@@ -40,15 +40,32 @@ export default function AboutForm({
   )
   const [errors, setErrors] = useState({})
 
-  const set = (key) => (e) => {
-    const value = e.target.value
-    setForm((f) => ({ ...f, [key]: value }))
+  // Textarea auto-grow (seragam dengan form modul lain).
+  const descriptionRef = useRef(null)
+  const quoteRef = useRef(null)
+  const autoGrow = (el) => {
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 260)}px`
+  }
+  useEffect(() => {
+    autoGrow(descriptionRef.current)
+    autoGrow(quoteRef.current)
+  }, [])
+
+  // Hapus satu pesan error (dedup dari beberapa handler).
+  const clearError = (key) =>
     setErrors((current) => {
       if (!current[key]) return current
       const next = { ...current }
       delete next[key]
       return next
     })
+
+  const set = (key) => (e) => {
+    const value = e.target.value
+    setForm((f) => ({ ...f, [key]: value }))
+    clearError(key)
   }
 
   const handlePhotoChange = (e) => {
@@ -56,12 +73,7 @@ export default function AboutForm({
     if (!file) return
     setPhotoFile(file)
     setPhotoPreview(URL.createObjectURL(file))
-    setErrors((current) => {
-      if (!current.photo) return current
-      const next = { ...current }
-      delete next.photo
-      return next
-    })
+    clearError("photo")
   }
 
   const handleCvEnChange = (e) => {
@@ -69,12 +81,7 @@ export default function AboutForm({
     if (!file) return
     setCvFileEn(file)
     setCvLabelEn(file.name)
-    setErrors((current) => {
-      if (!current.cv) return current
-      const next = { ...current }
-      delete next.cv
-      return next
-    })
+    clearError("cv")
   }
 
   const handleCvIdChange = (e) => {
@@ -82,12 +89,7 @@ export default function AboutForm({
     if (!file) return
     setCvFileId(file)
     setCvLabelId(file.name)
-    setErrors((current) => {
-      if (!current.cv) return current
-      const next = { ...current }
-      delete next.cv
-      return next
-    })
+    clearError("cv")
   }
 
   const inputCls =
@@ -177,6 +179,7 @@ export default function AboutForm({
             <label className={labelCls}>Full Name *</label>
             <input
               type="text"
+              autoFocus
               value={form.name}
               onChange={set("name")}
               placeholder="e.g. Asep Sutrisna"
@@ -202,13 +205,27 @@ export default function AboutForm({
         <div className="space-y-1.5">
           <label className={labelCls}>Bio / Description *</label>
           <textarea
+            ref={descriptionRef}
             value={form.description}
-            onChange={set("description")}
+            onChange={(e) => {
+              set("description")(e)
+              autoGrow(e.target)
+            }}
+            onInput={(e) => autoGrow(e.target)}
             placeholder="Describe yourself — your skills, experience, and what drives you..."
             rows={5}
-            className={getInputClass("description") + " resize-none"}
+            className={
+              getInputClass("description") +
+              " resize-none overflow-y-auto leading-relaxed"
+            }
           />
-          <p className="text-[10px] text-gray-600">
+          <p
+            className={`text-[10px] tabular-nums ${
+              form.description.length > 300
+                ? "text-amber-400/80"
+                : "text-gray-600"
+            }`}
+          >
             {form.description.length} characters
           </p>
           <FieldError message={errors.description} />
@@ -219,11 +236,16 @@ export default function AboutForm({
           <div className="relative">
             <Quote className="absolute left-3 top-3 w-4 h-4 text-indigo-500/40 pointer-events-none" />
             <textarea
+              ref={quoteRef}
               value={form.quote}
-              onChange={set("quote")}
+              onChange={(e) => {
+                set("quote")(e)
+                autoGrow(e.target)
+              }}
+              onInput={(e) => autoGrow(e.target)}
               placeholder="A short quote that defines your professional philosophy..."
               rows={2}
-              className={inputCls + " resize-none pl-9"}
+              className={inputCls + " resize-none overflow-y-auto pl-9 leading-relaxed"}
             />
           </div>
           {form.quote && (

@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Modal from "@/components/ui/Modal"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { Trophy, Trash2, Pencil, Save, GripVertical } from "lucide-react"
 import AddNewButton from "./components/AddNewButton"
@@ -25,6 +26,17 @@ const AchievementForm = ({
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
+  // Textarea deskripsi auto-grow (seragam dengan form modul lain).
+  const descriptionRef = useRef(null)
+  const autoGrow = (el) => {
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 220)}px`
+  }
+  useEffect(() => {
+    autoGrow(descriptionRef.current)
+  }, [])
+
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit(form)
@@ -42,6 +54,7 @@ const AchievementForm = ({
           <label className={labelCls}>Title *</label>
           <input
             type="text"
+            autoFocus
             value={form.title}
             onChange={set("title")}
             placeholder="e.g. LKS Web Development"
@@ -100,11 +113,16 @@ const AchievementForm = ({
         <div className="sm:col-span-2 space-y-1.5">
           <label className={labelCls}>Description</label>
           <textarea
+            ref={descriptionRef}
             value={form.deskripsi}
-            onChange={set("deskripsi")}
+            onChange={(e) => {
+              set("deskripsi")(e)
+              autoGrow(e.target)
+            }}
+            onInput={(e) => autoGrow(e.target)}
             placeholder="Achievement quote or description"
             rows={3}
-            className={`${inputCls} resize-none`}
+            className={`${inputCls} resize-none overflow-y-auto leading-relaxed`}
           />
         </div>
 
@@ -171,6 +189,7 @@ export default function Achievements() {
   const [dropTargetId, setDropTargetId] = useState(null)
 
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     achievements,
     loading,
@@ -228,9 +247,14 @@ export default function Achievements() {
     if (ok) setEditItem(null)
   }
 
-  const handleDelete = (id) => {
-    if (!window.confirm("Are you sure you want to delete this achievement?"))
-      return
+  const handleDelete = async (id) => {
+    const ok = await confirm({
+      title: "Delete this achievement?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeAchievement(id)
   }
 
@@ -269,8 +293,13 @@ export default function Achievements() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {achievements.map((item) => (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-[11px] text-gray-500">
+            <GripVertical className="h-3.5 w-3.5 text-gray-600" />
+            Seret kartu mana pun untuk mengubah urutan.
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {achievements.map((item) => (
             <div
               key={item.id}
               draggable
@@ -289,13 +318,26 @@ export default function Achievements() {
               )}
 
               <div className="relative group h-full">
-                <div className="absolute -inset-0.5 bg-[#0f172a] rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-500" />
+                <div
+                  className="absolute -inset-0.5 rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-500"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
+                  }}
+                />
                 <div className="relative bg-white/5 backdrop-blur-xl border border-white/12 rounded-2xl h-full p-4 flex flex-col gap-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-white text-sm">
-                          {item.title}
+                        <h3 className="leading-tight">
+                          <button
+                            type="button"
+                            onClick={() => setEditItem(item)}
+                            title="Edit achievement"
+                            className="cursor-target appearance-none border-0 bg-transparent p-0 text-left font-semibold text-white text-sm transition-colors hover:text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+                          >
+                            {item.title}
+                          </button>
                         </h3>
                         {item.badge_text && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] border bg-emerald-500/10 border-emerald-500/20 text-emerald-300">
@@ -326,11 +368,6 @@ export default function Achievements() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[11px] text-gray-500 uppercase tracking-widest cursor-move">
-                    <GripVertical className="w-4 h-4 text-gray-600" />
-                    Drag to reorder
-                  </div>
-
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center shrink-0">
                       <Trophy className="w-8 h-8 text-indigo-400/50" />
@@ -352,6 +389,7 @@ export default function Achievements() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       )}
 

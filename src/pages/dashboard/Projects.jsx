@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { useProjectManagement } from "@/features/project-management/model/useProjects"
 import {
@@ -10,6 +11,10 @@ import {
   Eye,
   CheckCircle2,
   Clock,
+  Search,
+  X,
+  SlidersHorizontal,
+  GripVertical,
 } from "lucide-react"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import AddNewButton from "./components/AddNewButton"
@@ -21,6 +26,7 @@ import { SkeletonCard } from "./components/projectHelpers.jsx"
 
 export default function Projects() {
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     projects,
     setProjects,
@@ -36,6 +42,9 @@ export default function Projects() {
   const [editProject, setEditProject] = useState(null)
   const [hasOrderChanged, setHasOrderChanged] = useState(false)
   const [viewMode, setViewMode] = useState("grid")
+  const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all") // all | published | draft
+  const [categoryFilter, setCategoryFilter] = useState("all")
 
   // ProjectForm sudah memvalidasi sebelum onSubmit; di sini cukup orkestrasi.
   const handleCreate = async (form, imageItems) => {
@@ -48,12 +57,20 @@ export default function Projects() {
     if (ok) setEditProject(null)
   }
 
-  const deleteProject = (id) => {
-    if (!confirm("Delete this project?")) return
+  const deleteProject = async (id) => {
+    const ok = await confirm({
+      title: "Delete this project?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeProject(id)
   }
 
   const handleDragEnd = (result) => {
+    // Reorder hanya valid pada daftar penuh (tanpa filter aktif).
+    if (isFiltering) return
     if (!result.destination) return
     const { source, destination } = result
     if (source.index === destination.index) return
@@ -73,6 +90,42 @@ export default function Projects() {
 
   const publishedCount = projects.filter((p) => p.isPublished ?? true).length
   const draftCount = projects.length - publishedCount
+
+  // --- Pencarian & filter ---
+  const categories = [
+    ...new Set(projects.map((p) => p.category).filter(Boolean)),
+  ].sort()
+  const q = search.trim().toLowerCase()
+  const isFiltering =
+    q !== "" || statusFilter !== "all" || categoryFilter !== "all"
+
+  const visibleProjects = isFiltering
+    ? projects.filter((p) => {
+        const published = p.isPublished ?? true
+        const matchStatus =
+          statusFilter === "all" ||
+          (statusFilter === "published" ? published : !published)
+        const matchCategory =
+          categoryFilter === "all" || p.category === categoryFilter
+        const haystack = [
+          p.title,
+          p.description,
+          p.category,
+          ...(p.techStack || []),
+          ...(p.features || []),
+        ]
+          .join(" ")
+          .toLowerCase()
+        const matchSearch = q === "" || haystack.includes(q)
+        return matchStatus && matchCategory && matchSearch
+      })
+    : projects
+
+  const clearFilters = () => {
+    setSearch("")
+    setStatusFilter("all")
+    setCategoryFilter("all")
+  }
 
   return (
     <div className="space-y-6">
@@ -121,10 +174,10 @@ export default function Projects() {
             <button
               onClick={() => setViewMode("grid")}
               title="Grid view"
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`cursor-target p-2 rounded-lg transition-all duration-200 ${
                 viewMode === "grid"
                   ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
-                  : "text-gray-500 hover:text-gray-300 border border-transparent"
+                  : "text-gray-500 border border-transparent hover:bg-white/5 hover:text-gray-200 hover:border-white/10"
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -132,10 +185,10 @@ export default function Projects() {
             <button
               onClick={() => setViewMode("list")}
               title="List view"
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`cursor-target p-2 rounded-lg transition-all duration-200 ${
                 viewMode === "list"
                   ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
-                  : "text-gray-500 hover:text-gray-300 border border-transparent"
+                  : "text-gray-500 border border-transparent hover:bg-white/5 hover:text-gray-200 hover:border-white/10"
               }`}
             >
               <List className="w-4 h-4" />
@@ -163,6 +216,96 @@ export default function Projects() {
           />
         </div>
       </div>
+
+      {/* Toolbar: pencarian + filter */}
+      {!loading && projects.length > 0 && (
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="relative flex-1 min-w-0">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari judul, tech stack, kategori…"
+              aria-label="Cari project"
+              className="cursor-target w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pl-10 pr-9 text-sm text-gray-200 placeholder-gray-600 outline-none transition-all focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label="Hapus pencarian"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {categories.length > 0 && (
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                aria-label="Filter kategori"
+                className="cursor-target appearance-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-gray-300 outline-none transition-all hover:border-white/20 hover:bg-white/10 focus:border-indigo-500/50"
+              >
+                <option value="all">Semua kategori</option>
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            <div className="flex items-center gap-0.5 rounded-xl border border-white/10 bg-white/5 p-1">
+              {[
+                { key: "all", label: "Semua" },
+                { key: "published", label: "Published" },
+                { key: "draft", label: "Draft" },
+              ].map(({ key, label }) => {
+                const active = statusFilter === key
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setStatusFilter(key)}
+                    aria-pressed={active}
+                    className={`cursor-target rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                      active
+                        ? "border border-indigo-500/30 bg-indigo-500/20 text-indigo-200"
+                        : "border border-transparent text-gray-500 hover:bg-white/5 hover:text-gray-200"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!loading && projects.length > 0 && isFiltering && (
+        <div className="-mt-2 flex items-center gap-2 text-xs text-gray-500">
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+          <span>
+            Menampilkan{" "}
+            <span className="font-medium text-gray-300">
+              {visibleProjects.length}
+            </span>{" "}
+            dari {projects.length} project
+          </span>
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="ml-1 text-indigo-300 underline-offset-2 transition-colors hover:text-indigo-200 hover:underline"
+          >
+            Reset filter
+          </button>
+        </div>
+      )}
 
       {showCreate && (
         <Modal title="Add New Project" onClose={() => setShowCreate(false)}>
@@ -255,9 +398,30 @@ export default function Projects() {
             </button>
           </div>
         </div>
+      ) : visibleProjects.length === 0 ? (
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-white/8 py-20 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+            <Search className="h-6 w-6 text-gray-600" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-300">
+              Tidak ada project yang cocok
+            </p>
+            <p className="mt-1 text-xs text-gray-600">
+              Coba ubah kata kunci atau filter yang dipilih.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="cursor-target rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-colors hover:border-white/20 hover:text-white"
+          >
+            Reset filter
+          </button>
+        </div>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {projects.map((project) => (
+          {visibleProjects.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
@@ -268,6 +432,12 @@ export default function Projects() {
         </div>
       ) : (
         <div className="rounded-2xl border border-white/8 overflow-hidden">
+          {isFiltering && (
+            <div className="flex items-center gap-2 border-b border-amber-500/15 bg-amber-500/5 px-4 py-2 text-[11px] text-amber-300/80">
+              <GripVertical className="h-3.5 w-3.5 shrink-0" />
+              Pengurutan dinonaktifkan saat filter aktif — reset filter untuk mengatur urutan.
+            </div>
+          )}
           <div className="flex items-center gap-4 px-4 py-2.5 bg-white/[0.03] border-b border-white/8">
             <div className="w-5 shrink-0" />
             <div className="w-20 shrink-0" />
@@ -290,18 +460,18 @@ export default function Projects() {
                   ref={provided.innerRef}
                   className="p-2 space-y-1"
                 >
-                  {projects.map((project, i) => (
+                  {visibleProjects.map((project, i) => (
                     <Draggable
                       key={project.id.toString()}
                       draggableId={project.id.toString()}
                       index={i}
+                      isDragDisabled={isFiltering}
                     >
                       {(provided, snapshot) => (
                         <ProjectRow
                           project={project}
                           onDelete={deleteProject}
                           onEdit={setEditProject}
-                          index={i}
                           provided={provided}
                           isDragging={snapshot.isDragging}
                         />

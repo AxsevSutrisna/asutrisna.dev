@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Award, Upload, Trash2, ImageIcon, Plus, Eye, X } from "lucide-react"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { useCertificateManagement } from "@/features/certificate-management/model/useCertificates"
 
@@ -54,8 +55,10 @@ const CertCard = ({ cert, onDelete, onView }) => {
           <img
             src={cert.img}
             alt="Certificate"
+            loading="lazy"
+            decoding="async"
             onLoad={() => setImgLoaded(true)}
-            className={`w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-700 ${imgLoaded ? "block" : "hidden"}`}
+            className={`w-full h-full object-cover transition-all duration-700 group-hover/item:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           />
 
           {/* Hover Overlay */}
@@ -78,6 +81,16 @@ const CertCard = ({ cert, onDelete, onView }) => {
             </div>
           )}
         </div>
+        {cert.createdAt && (
+          <p className="px-1.5 pt-2 text-[11px] text-gray-500">
+            Uploaded{" "}
+            {new Date(cert.createdAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </p>
+        )}
       </div>
     </div>
   )
@@ -89,6 +102,7 @@ export default function Certificates() {
   const [dragOver, setDragOver] = useState(false)
   const [lightboxImage, setLightboxImage] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     certificates: certs,
     loading,
@@ -112,20 +126,31 @@ export default function Certificates() {
     }
   }
 
-  const deleteCert = (id) => {
-    if (!confirm("Are you sure you want to delete this certificate?")) return
+  const deleteCert = async (id) => {
+    const ok = await confirm({
+      title: "Delete this certificate?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeCertificate(id)
   }
 
-  // Lock body scroll when lightbox is open
+  // Kunci scroll body + tutup lightbox dengan tombol Escape.
   useEffect(() => {
-    if (lightboxImage) {
-      document.body.style.overflow = "hidden"
-    } else {
+    if (!lightboxImage) {
       document.body.style.overflow = "auto"
+      return undefined
     }
+    document.body.style.overflow = "hidden"
+    const onKey = (e) => {
+      if (e.key === "Escape") setLightboxImage(null)
+    }
+    window.addEventListener("keydown", onKey)
     return () => {
       document.body.style.overflow = "auto"
+      window.removeEventListener("keydown", onKey)
     }
   }, [lightboxImage])
 
@@ -315,9 +340,13 @@ export default function Certificates() {
 
       {/* Lightbox Modal */}
       {lightboxImage && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200">
+        <div
+          onClick={() => setLightboxImage(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200"
+        >
           <button
             onClick={() => setLightboxImage(null)}
+            aria-label="Close preview"
             className="cursor-target absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors border border-white/20 no-neo"
           >
             <X className="w-6 h-6" />

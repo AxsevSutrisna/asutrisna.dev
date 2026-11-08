@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Modal from "@/components/ui/Modal"
 import { FieldError } from "@/components/ui/FieldError"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { SIMPLE_ICONS_BASE } from "@/constants/urls"
 import { techStackSlug as toSlug } from "@/entities/techStack/lib/techStackSlug"
@@ -20,7 +21,13 @@ import AddNewButton from "./components/AddNewButton"
 
 const Card = ({ children, className = "" }) => (
   <div className={`relative group ${className}`}>
-    <div className="absolute -inset-0.5 bg-[#0f172a] ] ] rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-500" />
+    <div
+      className="absolute -inset-0.5 rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-500"
+      style={{
+        background:
+          "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
+      }}
+    />
     <div className="relative bg-white/5 backdrop-blur-xl border border-white/12 rounded-2xl h-full">
       {children}
     </div>
@@ -83,7 +90,14 @@ const TechStackCard = ({ item, onEdit, onDelete, onToggleActive }) => (
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-white text-sm">{item.name}</h3>
+            <button
+              type="button"
+              onClick={() => onEdit(item)}
+              title="Edit tech stack"
+              className="cursor-target appearance-none border-0 bg-transparent p-0 text-left font-semibold text-white text-sm transition-colors hover:text-indigo-300 focus-visible:text-indigo-300 focus-visible:outline-none"
+            >
+              {item.name}
+            </button>
             <span
               className={`px-2 py-0.5 rounded-full text-[10px] border ${item.is_active ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" : "bg-gray-500/10 border-gray-500/20 text-gray-400"}`}
             >
@@ -120,11 +134,6 @@ const TechStackCard = ({ item, onEdit, onDelete, onToggleActive }) => (
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 text-[11px] text-gray-500 uppercase tracking-widest">
-        <GripVertical className="w-4 h-4 text-gray-600" />
-        Drag to reorder
       </div>
 
       <div className="flex items-center gap-4">
@@ -170,6 +179,26 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
   const [errors, setErrors] = useState({})
   const [showAdvanced, setShowAdvanced] = useState(false)
 
+  // Hapus satu pesan error (dedup dari beberapa handler).
+  const clearError = (key) =>
+    setErrors((current) => {
+      if (!current[key]) return current
+      const next = { ...current }
+      delete next[key]
+      return next
+    })
+
+  // Textarea deskripsi auto-grow (mount saat Advanced dibuka).
+  const descRef = useRef(null)
+  const autoGrow = (el) => {
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 220)}px`
+  }
+  useEffect(() => {
+    if (showAdvanced) autoGrow(descRef.current)
+  }, [showAdvanced])
+
   const set = (key) => (event) => {
     const value =
       key === "is_active" ? event.target.checked : event.target.value
@@ -180,12 +209,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
         name: value,
         slug: autoGenerateSlug ? toSlug(value) : current.slug,
       }))
-      setErrors((current) => {
-        if (!current.name) return current
-        const next = { ...current }
-        delete next.name
-        return next
-      })
+      clearError("name")
       return
     }
 
@@ -210,12 +234,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
     setIconFile(file)
     setPreview(URL.createObjectURL(file))
     setForm((curr) => ({ ...curr, icon_url: "" }))
-    setErrors((current) => {
-      if (!current.icon) return current
-      const next = { ...current }
-      delete next.icon
-      return next
-    })
+    clearError("icon")
   }
 
   const fetchSimpleIcon = (e) => {
@@ -232,11 +251,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
     setIconFile(null)
     setPreview(url)
     setForm((curr) => ({ ...curr, icon_url: url }))
-    setErrors((curr) => {
-      const n = { ...curr }
-      delete n.icon
-      return n
-    })
+    clearError("icon")
   }
 
   const handleSubmit = (event) => {
@@ -274,6 +289,7 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
           </label>
           <input
             type="text"
+            autoFocus
             value={form.name}
             onChange={set("name")}
             placeholder="e.g. ReactJS"
@@ -399,10 +415,15 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
                 Description
               </label>
               <textarea
+                ref={descRef}
                 value={form.description}
-                onChange={set("description")}
+                onChange={(e) => {
+                  set("description")(e)
+                  autoGrow(e.target)
+                }}
+                onInput={(e) => autoGrow(e.target)}
                 rows={3}
-                className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none"
+                className="cursor-target w-full bg-[#0d0d22] border border-white/10 rounded-xl px-4 py-2.5 text-gray-200 placeholder-gray-600 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none overflow-y-auto leading-relaxed"
                 placeholder="Optional description"
               />
             </div>
@@ -423,8 +444,17 @@ const TechStackForm = ({ initial, onSubmit, onCancel, uploading }) => {
           disabled={uploading}
           className="cursor-target relative group/s"
         >
-          <div className="absolute -inset-0.5 bg-[#0f172a] ] ] rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" />
-          <div className="relative flex items-center gap-2 px-5 py-2 bg-[#030014] rounded-xl border border-white/10">
+          <div
+            className="absolute -inset-0.5 rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300"
+            style={{
+              background:
+                "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
+            }}
+          />
+          <div
+            className="relative flex items-center gap-2 px-5 py-2 rounded-xl border border-white/10"
+            style={{ backgroundColor: "var(--color-backdrop-base)" }}
+          >
             {uploading ? (
               <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             ) : (
@@ -446,6 +476,7 @@ export default function TechStacks() {
   const [draggingId, setDraggingId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     items,
     loading,
@@ -510,8 +541,14 @@ export default function TechStacks() {
     if (ok) setEditItem(null)
   }
 
-  const deleteItem = (id) => {
-    if (!confirm("Delete this tech stack?")) return
+  const deleteItem = async (id) => {
+    const ok = await confirm({
+      title: "Delete this tech stack?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeItem(id)
   }
 
@@ -520,8 +557,17 @@ export default function TechStacks() {
       <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="absolute -inset-0.5 bg-[#0f172a] ] ] rounded-xl blur opacity-50" />
-            <div className="relative w-9 h-9 bg-[#030014] rounded-xl border border-white/15 flex items-center justify-center">
+            <div
+              className="absolute -inset-0.5 rounded-xl blur opacity-50"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-light))",
+              }}
+            />
+            <div
+              className="relative w-9 h-9 rounded-xl border border-white/15 flex items-center justify-center"
+              style={{ backgroundColor: "var(--color-backdrop-base)" }}
+            >
               <Boxes className="w-4 h-4 text-indigo-400" />
             </div>
           </div>
@@ -578,8 +624,13 @@ export default function TechStacks() {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {items.map((item) => (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-[11px] text-gray-500">
+            <GripVertical className="h-3.5 w-3.5 text-gray-600" />
+            Seret kartu mana pun untuk mengubah urutan.
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {items.map((item) => (
             <div
               key={item.id}
               draggable
@@ -604,6 +655,7 @@ export default function TechStacks() {
               />
             </div>
           ))}
+          </div>
         </div>
       )}
 

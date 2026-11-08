@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react"
-import { HexColorPicker } from "react-colorful"
+import { useState, useEffect, useCallback } from "react"
 import {
   fetchTheme,
   updateTheme,
@@ -9,10 +8,12 @@ import {
   THEME_COLOR_CATEGORIES,
   DEFAULT_THEME,
 } from "@/entities/theme/model/constants"
-import { RotateCcw, Copy, Check, X } from "lucide-react"
+import { RotateCcw } from "lucide-react"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import ThemePresetSection from "./components/ThemePresetSection"
+import ColorPickerField from "./components/ColorPickerField"
 import FloatingSaveButton from "./components/FloatingSaveButton"
 
 export default function ThemeManager() {
@@ -22,8 +23,8 @@ export default function ThemeManager() {
   const [invalidFields, setInvalidFields] = useState({})
   const [copiedField, setCopiedField] = useState(null)
   const [pickerOpen, setPickerOpen] = useState(null) // Track which color picker is open
-  const modalRef = useRef(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
 
   useEffect(() => {
     fetchThemeData()
@@ -122,19 +123,23 @@ export default function ThemeManager() {
   )
 
   const handleReset = async () => {
-    if (confirm("Reset all colors to default?")) {
-      try {
-        setSaving(true)
-        await resetTheme()
-        setColors(DEFAULT_THEME)
-        setInvalidFields({})
-        pushToast("success", "Theme reset successfully!")
-      } catch (error) {
-        console.error("Error resetting theme:", error)
-        pushToast("error", error.message || "Failed to reset theme")
-      } finally {
-        setSaving(false)
-      }
+    const ok = await confirm({
+      title: "Reset all colors?",
+      message: "All colors will return to their default values.",
+      confirmText: "Reset All",
+    })
+    if (!ok) return
+    try {
+      setSaving(true)
+      await resetTheme()
+      setColors(DEFAULT_THEME)
+      setInvalidFields({})
+      pushToast("success", "Theme reset successfully!")
+    } catch (error) {
+      console.error("Error resetting theme:", error)
+      pushToast("error", error.message || "Failed to reset theme")
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -161,200 +166,6 @@ export default function ThemeManager() {
     const g = parseInt(hex.slice(3, 5), 16)
     const b = parseInt(hex.slice(5, 7), 16)
     return `${r}, ${g}, ${b}`
-  }
-
-  const ColorPickerField = ({ label, value, fieldKey, hint, defaultValue }) => {
-    const isInvalid = invalidFields[fieldKey]
-    const isDefault = value === defaultValue
-
-    return (
-      <>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-white text-sm font-medium">{label}</label>
-            {isDefault && (
-              <span className="text-xs text-gray-500">(default)</span>
-            )}
-          </div>
-
-          <div className="flex gap-2 items-center">
-            {/* Large clickable color preview */}
-            <div
-              onClick={() => setPickerOpen(fieldKey)}
-              className="cursor-target w-14 h-10 rounded-lg cursor-pointer border-2 border-white/20 hover:border-indigo-400/50 transition-all hover:scale-110 shrink-0 shadow-lg hover:shadow-indigo-500/20 no-neo"
-              style={{ backgroundColor: value }}
-              title="Click to open color picker"
-            />
-
-            {/* Hex input */}
-            <input
-              type="text"
-              value={value}
-              onChange={(e) =>
-                handleColorChange(fieldKey, e.target.value.toUpperCase())
-              }
-              placeholder="#000000"
-              className={`cursor-target flex-1 px-3 py-2 bg-white/5 border rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none transition font-mono ${
-                isInvalid
-                  ? "border-red-500/50 focus:border-red-500"
-                  : "border-white/10 focus:border-indigo-500"
-              }`}
-            />
-
-            {/* Copy button */}
-            <button
-              type="button"
-              onClick={() => handleCopyToClipboard(value, fieldKey)}
-              className="cursor-target p-2 text-gray-400 hover:text-white transition shrink-0 no-neo"
-              title="Copy color code"
-            >
-              {copiedField === fieldKey ? (
-                <Check className="w-4 h-4 text-green-400" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </button>
-
-            {/* Reset button */}
-            <button
-              type="button"
-              onClick={() => handleResetField(fieldKey)}
-              className="cursor-target p-2 text-gray-400 hover:text-white transition shrink-0 no-neo"
-              title="Reset to default"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-          </div>
-
-          {isInvalid && (
-            <p className="text-xs text-red-400">
-              Use valid hex color format, example: #A1B2C3
-            </p>
-          )}
-          {hint && <p className="text-xs text-gray-500">{hint}</p>}
-        </div>
-
-        {/* Modal Color Picker - Rendered at document level to avoid propagation */}
-        {pickerOpen === fieldKey && (
-          <div
-            ref={modalRef}
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={(e) => {
-              // Only close if clicking directly on the backdrop, not the modal content
-              if (e.target === modalRef.current) {
-                setPickerOpen(null)
-              }
-            }}
-            onPointerDown={(e) => {
-              if (e.target === modalRef.current) {
-                e.currentTarget.setPointerCapture(e.pointerId)
-              }
-            }}
-          >
-            <div
-              className="bg-[#0a0a1a] border border-white/10 rounded-xl p-6 w-full max-w-sm shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold">{label}</h3>
-                <button
-                  onClick={() => setPickerOpen(null)}
-                  className="cursor-target p-1 text-gray-400 hover:text-white transition no-neo"
-                  onMouseDown={(e) => e.stopPropagation()}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Color Picker Section */}
-              <div className="space-y-4">
-                {/* react-colorful Hex Color Picker */}
-                <div
-                  className="flex justify-center"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onTouchStart={(e) => e.stopPropagation()}
-                >
-                  <div
-                    className="w-full"
-                    onPointerDown={(e) => e.stopPropagation()}
-                  >
-                    <HexColorPicker
-                      color={value}
-                      onChange={(color) => handleColorChange(fieldKey, color)}
-                      style={{ width: "100%", height: "200px" }}
-                    />
-                  </div>
-                </div>
-
-                {/* Hex input and preview side by side */}
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <label className="text-gray-400 text-xs font-medium block mb-2">
-                      HEX Code
-                    </label>
-                    <input
-                      type="text"
-                      value={value}
-                      onChange={(e) =>
-                        handleColorChange(
-                          fieldKey,
-                          e.target.value.toUpperCase()
-                        )
-                      }
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onTouchStart={(e) => e.stopPropagation()}
-                      placeholder="#000000"
-                      className="cursor-target w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-indigo-500 transition"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-gray-400 text-xs font-medium block mb-2">
-                      Preview
-                    </label>
-                    <div
-                      className="w-16 h-10 rounded-lg border border-white/10 shadow-lg"
-                      style={{ backgroundColor: value }}
-                    />
-                  </div>
-                </div>
-
-                {/* RGB Display */}
-                <div
-                  className="bg-white/5 border border-white/10 rounded-lg p-3 space-y-1"
-                  onMouseDown={(e) => e.stopPropagation()}
-                >
-                  <p className="text-gray-400 text-xs font-medium">RGB</p>
-                  <p className="text-white text-sm font-mono">
-                    {hexToRgb(value)}
-                  </p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2 pt-4 border-t border-white/10">
-                  <button
-                    onClick={() => handleResetField(fieldKey)}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    className="cursor-target flex-1 px-3 py-2 text-sm no-neo"
-                  >
-                    Reset to Default
-                  </button>
-                  <button
-                    onClick={() => setPickerOpen(null)}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    className="cursor-target flex-1 px-3 py-2 text-sm font-medium no-neo"
-                  >
-                    Done
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </>
-    )
   }
 
   if (loading)
@@ -416,10 +227,18 @@ export default function ThemeManager() {
                   {category.fields.map((fieldKey) => (
                     <ColorPickerField
                       key={fieldKey}
-                      label={fieldKey.replace(/_/g, "").toUpperCase()}
+                      label={fieldKey.replace(/_/g, " ").toUpperCase()}
                       value={colors[fieldKey] || DEFAULT_THEME[fieldKey]}
                       fieldKey={fieldKey}
                       defaultValue={DEFAULT_THEME[fieldKey]}
+                      isInvalid={invalidFields[fieldKey]}
+                      isCopied={copiedField === fieldKey}
+                      isPickerOpen={pickerOpen === fieldKey}
+                      onColorChange={handleColorChange}
+                      onCopy={handleCopyToClipboard}
+                      onResetField={handleResetField}
+                      onOpenPicker={setPickerOpen}
+                      onClosePicker={() => setPickerOpen(null)}
                     />
                   ))}
                 </div>
@@ -520,7 +339,7 @@ export default function ThemeManager() {
                   disabled
                   className="w-full px-3 py-2 rounded-lg font-medium text-white text-xs transition"
                   style={{
-                    background: `linear-gradient(135deg, ${colors.button_secondary_from || colors.secondary_color_dark}, ${colors.button_secondary_to || colors.secondary_color_light})`,
+                    background: `linear-gradient(135deg, ${colors.button_secondary_from || colors.secondary_color_dark}, ${colors.secondary_color_light})`,
                   }}
                 >
                   Secondary
@@ -572,58 +391,6 @@ export default function ThemeManager() {
                   }}
                 >
                   <p>● Muted Text Color</p>
-                </div>
-              </div>
-            </div>
-
-            {/* State Colors Preview */}
-            <div className="p-4 border border-white/10 rounded-lg space-y-3">
-              <p className="text-white text-sm font-medium">State Colors</p>
-
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="space-y-1">
-                  <div
-                    className="w-full h-6 rounded border border-white/10"
-                    style={{
-                      backgroundColor:
-                        colors.state_success || DEFAULT_THEME.state_success,
-                    }}
-                    title="Success"
-                  />
-                  <p className="text-gray-400 text-center">Success</p>
-                </div>
-                <div className="space-y-1">
-                  <div
-                    className="w-full h-6 rounded border border-white/10"
-                    style={{
-                      backgroundColor:
-                        colors.state_warning || DEFAULT_THEME.state_warning,
-                    }}
-                    title="Warning"
-                  />
-                  <p className="text-gray-400 text-center">Warning</p>
-                </div>
-                <div className="space-y-1">
-                  <div
-                    className="w-full h-6 rounded border border-white/10"
-                    style={{
-                      backgroundColor:
-                        colors.state_error || DEFAULT_THEME.state_error,
-                    }}
-                    title="Error"
-                  />
-                  <p className="text-gray-400 text-center">Error</p>
-                </div>
-                <div className="space-y-1">
-                  <div
-                    className="w-full h-6 rounded border border-white/10"
-                    style={{
-                      backgroundColor:
-                        colors.state_info || DEFAULT_THEME.state_info,
-                    }}
-                    title="Info"
-                  />
-                  <p className="text-gray-400 text-center">Info</p>
                 </div>
               </div>
             </div>
@@ -689,8 +456,7 @@ export default function ThemeManager() {
                 style={{
                   backgroundColor:
                     colors.card_bg_dark || DEFAULT_THEME.card_bg_dark,
-                  borderColor:
-                    colors.card_border_light || DEFAULT_THEME.card_border_light,
+                  borderColor: "rgba(255,255,255,0.12)",
                 }}
               >
                 <p
@@ -710,47 +476,6 @@ export default function ThemeManager() {
                 >
                   Card content with custom colors
                 </p>
-              </div>
-            </div>
-
-            {/* Color Palette Mini View */}
-            <div className="p-4 border border-white/10 rounded-lg">
-              <p className="text-white text-xs font-medium mb-3 uppercase tracking-wider">
-                Color Palette
-              </p>
-              <div className="grid grid-cols-4 gap-2">
-                <div className="text-center">
-                  <div
-                    className="w-full h-8 rounded-lg mb-1 border border-white/10"
-                    style={{ backgroundColor: colors.primary_color_dark }}
-                    title="Primary Dark"
-                  />
-                  <p className="text-xs text-gray-400 truncate">Primary</p>
-                </div>
-                <div className="text-center">
-                  <div
-                    className="w-full h-8 rounded-lg mb-1 border border-white/10"
-                    style={{ backgroundColor: colors.primary_color_light }}
-                    title="Primary Light"
-                  />
-                  <p className="text-xs text-gray-400 truncate">Light</p>
-                </div>
-                <div className="text-center">
-                  <div
-                    className="w-full h-8 rounded-lg mb-1 border border-white/10"
-                    style={{ backgroundColor: colors.backdrop_base }}
-                    title="Backdrop Base"
-                  />
-                  <p className="text-xs text-gray-400 truncate">Base</p>
-                </div>
-                <div className="text-center">
-                  <div
-                    className="w-full h-8 rounded-lg mb-1 border border-white/10"
-                    style={{ backgroundColor: colors.backdrop_glow }}
-                    title="Backdrop Glow"
-                  />
-                  <p className="text-xs text-gray-400 truncate">Glow</p>
-                </div>
               </div>
             </div>
           </div>

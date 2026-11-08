@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import { useMessageManagement } from "@/features/message-management/model/useMessages"
 import {
@@ -44,8 +45,17 @@ const MessageCard = ({
     >
       {/* Header Row (Always Visible) */}
       <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
         onClick={onToggleExpand}
-        className="w-full flex items-center justify-between p-4 cursor-pointer cursor-target hover:bg-white/5 transition-colors gap-4"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            onToggleExpand()
+          }
+        }}
+        className="w-full flex items-center justify-between p-4 cursor-target hover:bg-white/5 transition-colors gap-4 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40"
       >
         <div className="flex items-center gap-4 min-w-0 flex-1">
           {/* Read Status Dot */}
@@ -175,6 +185,7 @@ export default function Messages() {
   const [sortOrder, setSortOrder] = useState("newest") // 'newest', 'oldest'
   const [expandedId, setExpandedId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     items,
     loading,
@@ -182,36 +193,48 @@ export default function Messages() {
     toggleRead: toggleReadStatus,
   } = useMessageManagement(pushToast)
 
-  const deleteItem = (id) => {
-    if (!confirm("Are you sure you want to delete this message?")) return
+  const deleteItem = async (id) => {
+    const ok = await confirm({
+      title: "Delete this message?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     removeMessage(id)
   }
 
   const unreadCount = items.filter((i) => !i.is_read).length
   const readCount = items.length - unreadCount
 
-  const filteredItems = items
-    .filter((item) => {
-      if (filterStatus === "unread" && item.is_read) return false
-      if (filterStatus === "read" && !item.is_read) return false
+  // Di-memo agar tak re-filter/sort saat hanya expand/collapse berubah.
+  const filteredItems = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    return items
+      .filter((item) => {
+        if (filterStatus === "unread" && item.is_read) return false
+        if (filterStatus === "read" && !item.is_read) return false
 
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase()
-        const matchName = item.name?.toLowerCase().includes(query)
-        const matchEmail = item.email?.toLowerCase().includes(query)
-        const matchSubject = item.subject?.toLowerCase().includes(query)
-        const matchMessage = item.message?.toLowerCase().includes(query)
-        if (!matchName && !matchEmail && !matchSubject && !matchMessage)
-          return false
-      }
+        if (query) {
+          const haystack = [
+            item.name,
+            item.email,
+            item.subject,
+            item.message,
+          ]
+            .join(" ")
+            .toLowerCase()
+          if (!haystack.includes(query)) return false
+        }
 
-      return true
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime()
-      const dateB = new Date(b.created_at).getTime()
-      return sortOrder === "newest" ? dateB - dateA : dateA - dateB
-    })
+        return true
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime()
+        const dateB = new Date(b.created_at).getTime()
+        return sortOrder === "newest" ? dateB - dateA : dateA - dateB
+      })
+  }, [items, filterStatus, searchQuery, sortOrder])
 
   return (
     <div className="space-y-6">

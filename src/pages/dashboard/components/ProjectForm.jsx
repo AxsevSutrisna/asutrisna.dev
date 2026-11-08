@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   Upload,
   FolderGit2,
@@ -73,6 +73,20 @@ export default function ProjectForm({
 
   const getFieldError = (key) =>
     touched[key] || errors[key] ? errors[key] : ""
+
+  // Textarea deskripsi auto-grow (tinggi mengikuti isi, dibatasi lalu scroll).
+  const descriptionRef = useRef(null)
+  const autoGrowDescription = () => {
+    const el = descriptionRef.current
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 240)}px`
+  }
+
+  useEffect(() => {
+    // Sesuaikan tinggi awal saat mode edit (deskripsi sudah terisi).
+    autoGrowDescription()
+  }, [])
 
   useEffect(() => {
     if (Object.keys(touched).length === 0) return
@@ -165,6 +179,7 @@ export default function ProjectForm({
           <input
             data-project-field="title"
             type="text"
+            autoFocus
             value={form.title}
             onChange={set("title")}
             onBlur={markTouched("title")}
@@ -209,14 +224,33 @@ export default function ProjectForm({
         </div>
 
         <div className="sm:col-span-2 space-y-1.5">
-          <label className={labelCls}>Description</label>
+          <div className="flex items-center justify-between gap-2">
+            <label className={labelCls}>Description</label>
+            <span
+              className={`text-[11px] tabular-nums ${
+                form.description.length > 300
+                  ? "text-amber-400/80"
+                  : "text-gray-600"
+              }`}
+            >
+              {form.description.length} karakter
+            </span>
+          </div>
           <textarea
+            ref={descriptionRef}
             value={form.description}
-            onChange={set("description")}
+            onChange={(e) => {
+              set("description")(e)
+              autoGrowDescription()
+            }}
+            onInput={autoGrowDescription}
             placeholder="Describe what this project does, its purpose, and impact..."
             rows={3}
-            className={`${inputCls} resize-none`}
+            className={`${inputCls} min-h-[96px] resize-none overflow-y-auto leading-relaxed`}
           />
+          <p className="text-[11px] text-gray-500">
+            Tampil ringkas (2 baris) di kartu; selengkapnya di halaman detail.
+          </p>
         </div>
 
         {sectionTitle(<Zap className="w-3 h-3" />, "Tech & Features")}

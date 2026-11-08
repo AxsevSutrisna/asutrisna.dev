@@ -17,6 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
+import ConfirmProvider from "./components/ui/ConfirmProvider"
 
 const Portfolio = lazy(() => import("./features/projects/Portfolio"))
 const ContactPage = lazy(() => import("./features/contact/Contact"))
@@ -82,6 +83,7 @@ function App() {
         <div className="pointer-events-none">
           <AnimatedBackground />
         </div>
+        <ConfirmProvider>
         <BrowserRouter>
           <Routes>
             {/* PUBLIC */}
@@ -191,6 +193,7 @@ function App() {
             />
           </Routes>
         </BrowserRouter>
+        </ConfirmProvider>
       </HelmetProvider>
     </ErrorBoundary>
   )

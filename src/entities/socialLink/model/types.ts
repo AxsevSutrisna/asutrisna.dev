@@ -21,7 +21,6 @@ export interface SocialLinkInput {
   url: string
   icon: string | null
   color: string
-  gradient: string
   sort_order: number
   is_primary: boolean
   is_active: boolean

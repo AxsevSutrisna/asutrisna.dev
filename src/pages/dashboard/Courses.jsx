@@ -2,6 +2,7 @@ import { useState } from "react"
 import Modal from "@/components/ui/Modal"
 import { FieldError } from "@/components/ui/FieldError"
 import { useToast } from "@/hooks/useToast"
+import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
 import {
   Trash2,
@@ -352,6 +353,7 @@ export default function Courses() {
   const [showCreate, setShowCreate] = useState(false)
   const [editCourse, setEditCourse] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
+  const confirm = useConfirm()
   const {
     courses,
     loading,
@@ -372,7 +374,13 @@ export default function Courses() {
   }
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this course?")) return
+    const ok = await confirm({
+      title: "Delete this course?",
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    })
+    if (!ok) return
     await removeCourse(id)
   }
 

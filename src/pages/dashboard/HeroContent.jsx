@@ -11,6 +11,7 @@ import {
   Paintbrush,
   AlertCircle,
   Save,
+  MousePointerClick,
 } from "lucide-react"
 import FloatingSaveButton from "./components/FloatingSaveButton"
 
@@ -42,6 +43,7 @@ const InputField = ({
   <div className="space-y-1.5">
     <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">
       {label}
+      {required && <span className="text-red-400"> *</span>}
     </label>
     <input
       type={type}
@@ -63,22 +65,34 @@ const TextAreaField = ({
   rows = 4,
   required = false,
   hint,
-}) => (
-  <div className="space-y-1.5">
-    <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">
-      {label}
-    </label>
-    <textarea
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      rows={rows}
-      required={required}
-      className="cursor-target w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none"
-    />
-    {hint && <p className="text-[11px] text-gray-500">{hint}</p>}
-  </div>
-)
+}) => {
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 240)}px`
+  }, [value])
+
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs text-indigo-300/70 uppercase tracking-wider font-medium">
+        {label}
+        {required && <span className="text-red-400"> *</span>}
+      </label>
+      <textarea
+        ref={ref}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        rows={rows}
+        required={required}
+        className="cursor-target w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all resize-none overflow-y-auto min-h-[88px] leading-relaxed"
+      />
+      {hint && <p className="text-[11px] text-gray-500">{hint}</p>}
+    </div>
+  )
+}
 
 const TagInput = ({ label, value, onChange, placeholder, hint }) => {
   const [draft, setDraft] = useState("")
@@ -237,6 +251,15 @@ export default function HeroContentDashboard() {
     setImagePreview(URL.createObjectURL(file))
   }
 
+  // Update satu field CTA secara immutable (hindari mutasi array in-place).
+  const updateCta = (idx, key, value) =>
+    setForm((current) => ({
+      ...current,
+      cta_buttons: current.cta_buttons.map((cta, i) =>
+        i === idx ? { ...cta, [key]: value } : cta
+      ),
+    }))
+
   const normalizeList = (value) =>
     String(value || "")
       .split(",")
@@ -321,6 +344,8 @@ export default function HeroContentDashboard() {
     )
   }
 
+  const previewTechBadges = normalizeList(form.tech_badges)
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -370,8 +395,9 @@ export default function HeroContentDashboard() {
       <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-500/20 bg-blue-500/5 text-blue-100 text-sm">
         <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
         <p>
-          This is your portfolio&apos;s hero section. All changes are
-          automatically published to your home page in real-time.
+          This is your portfolio&apos;s hero section. Click{" "}
+          <span className="font-medium text-blue-200">Save Changes</span> to
+          publish — your home page updates in real-time.
         </p>
       </div>
 
@@ -483,8 +509,9 @@ export default function HeroContentDashboard() {
             <div className="relative bg-white/5 backdrop-blur-xl border border-white/12 rounded-2xl p-6 space-y-5">
               <div className="flex items-center justify-between mb-2 pb-3 border-b border-white/5">
                 <div className="flex items-center gap-2">
+                  <MousePointerClick className="w-4 h-4 text-indigo-400" />
                   <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
-                    Call- Buttons
+                    Action Buttons
                   </h2>
                 </div>
                 <button
@@ -542,28 +569,14 @@ export default function HeroContentDashboard() {
                         <InputField
                           label="Label"
                           value={cta.label}
-                          onChange={(e) => {
-                            const newCtaButtons = [...form.cta_buttons]
-                            newCtaButtons[idx].label = e.target.value
-                            setForm((current) => ({
-                              ...current,
-                              cta_buttons: newCtaButtons,
-                            }))
-                          }}
+                          onChange={(e) => updateCta(idx, "label", e.target.value)}
                           placeholder="e.g. Projects"
                           required
                         />
                         <InputField
                           label="Target URL"
                           value={cta.url}
-                          onChange={(e) => {
-                            const newCtaButtons = [...form.cta_buttons]
-                            newCtaButtons[idx].url = e.target.value
-                            setForm((current) => ({
-                              ...current,
-                              cta_buttons: newCtaButtons,
-                            }))
-                          }}
+                          onChange={(e) => updateCta(idx, "url", e.target.value)}
                           placeholder="e.g. /#Portofolio"
                           required
                         />
@@ -659,7 +672,7 @@ export default function HeroContentDashboard() {
               Live Preview
             </h2>
 
-            <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0f172a] ] ]">
+            <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0f172a]">
               {/* Image Preview */}
               <div className="aspect-square bg-black/40 flex items-center justify-center overflow-hidden">
                 {imagePreview ? (
@@ -683,7 +696,7 @@ export default function HeroContentDashboard() {
 
                 <h3 className="text-lg font-bold text-white leading-tight">
                   {form.title_line_1 || "Title 1"} <br />
-                  <span className="bg-[#0f172a] text-white">
+                  <span className="text-indigo-300">
                     {form.title_line_2 || "Title 2"}
                   </span>
                 </h3>
@@ -693,19 +706,17 @@ export default function HeroContentDashboard() {
                 </p>
 
                 <div className="flex flex-wrap gap-1.5 pt-2">
-                  {normalizeList(form.tech_badges)
-                    .slice(0, 3)
-                    .map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-gray-300"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  {normalizeList(form.tech_badges).length > 3 && (
+                  {previewTechBadges.slice(0, 3).map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-gray-300"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                  {previewTechBadges.length > 3 && (
                     <span className="px-2 py-1 text-[10px] text-gray-400">
-                      +{normalizeList(form.tech_badges).length - 3}
+                      +{previewTechBadges.length - 3}
                     </span>
                   )}
                 </div>
@@ -741,7 +752,7 @@ export default function HeroContentDashboard() {
 
             <div className="text-[11px] text-gray-400 space-y-1">
               <p>
-                💡 Changes are automatically reflected on your home page in
+                💡 After saving, changes reflect on your home page in
                 real-time.
               </p>
             </div>
