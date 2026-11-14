@@ -67,10 +67,10 @@ export default function Portofolio() {
         data-aos="fade-up"
         data-aos-duration="1000"
       >
-        <h2 className="inline-block text-3xl md:text-5xl font-display font-bold text-center mx-auto text-white flex items-center justify-center gap-3">
-          <span>Things I&apos;ve Built</span>
-        </h2>
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-4">
+        <h1 className="text-[28px] md:text-5xl font-display font-bold text-white">
+          Things I&apos;ve Built
+        </h1>
+        <p className="text-slate-400 max-w-2xl mx-auto text-base mt-4">
           Here&apos;s a selection of projects I&apos;ve crafted over time. Many
           are open-source, so feel free to explore and contribute!
         </p>
@@ -109,7 +109,7 @@ export default function Portofolio() {
             placeholder="Search projects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#111827] border border-white/20 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none transition-colors cursor-target"
+            className="w-full bg-[#111827] border border-white/20 rounded-lg pl-10 pr-4 py-2 text-base text-white placeholder-slate-400 focus:outline-none transition-colors cursor-target"
             style={{ "--tw-ring-color": "var(--color-primary-light)" }}
             onFocus={(e) => {
               e.target.style.borderColor = "var(--color-primary-light)"
@@ -124,9 +124,9 @@ export default function Portofolio() {
       {/* Project Grid */}
       <div className="container mx-auto">
         {displayedProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 list-none p-0 m-0">
             {displayedProjects.map((project, index) => (
-              <div
+              <li
                 key={project.id || index}
                 data-aos={
                   index % 3 === 0
@@ -145,10 +145,11 @@ export default function Portofolio() {
                   description={project.description}
                   link={project.link}
                   id={project.id}
+                  category={project.category}
                 />
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           <div className="w-full text-center py-12 text-slate-400">
             No projects found matching your search or filter.

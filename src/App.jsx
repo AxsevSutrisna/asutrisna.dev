@@ -38,7 +38,7 @@ const CVPage = lazy(() => import("./features/cv/CVPage"))
 
 // Layout untuk halaman Home (ada Navbar & Footer, tanpa padding khusus)
 const MainLayout = () => (
-  <div className="flex flex-col min-h-screen">
+  <div className="flex flex-col min-h-screen pb-24 md:pb-0 overflow-x-clip">
     <Navbar />
     <main className="flex-1">
       <Outlet />

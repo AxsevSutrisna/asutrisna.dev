@@ -1,17 +1,19 @@
 import PropTypes from "prop-types"
 import { ExternalLink, ArrowRight } from "lucide-react"
 import PublicCtaButton from "@/components/ui/public-cta-button"
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { toSlug } from "@/shared/lib/slug"
 import { trackEvent } from "@/shared/lib/analytics"
 
-const CardProject = ({ img, title, description, link: ProjectLink, id }) => {
+const CardProject = ({
+  img,
+  title,
+  description,
+  link: ProjectLink,
+  id,
+  category,
+}) => {
   const handleLiveDemo = (e) => {
     if (!ProjectLink) {
       e.preventDefault()
@@ -31,51 +33,70 @@ const CardProject = ({ img, title, description, link: ProjectLink, id }) => {
   }
 
   return (
-    <Card className="group relative w-full overflow-hidden p-5 flex flex-col justify-between h-full">
-      <div className="relative overflow-hidden rounded-lg mb-4 border-2 border-black/40">
+    <Card className="group relative h-full w-full overflow-hidden flex flex-col gap-4 p-4 rounded-2xl">
+      {/* Thumbnail */}
+      <div className="relative overflow-hidden rounded-xl border-2 border-black/40">
         <img
           src={img}
           alt={title}
-          className="w-full h-full object-cover aspect-[16/8] transform group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+          className="w-full aspect-[16/9] object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        {category ? (
+          <span className="absolute top-3 left-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-black/60 backdrop-blur-sm border border-white/15 text-white">
+            {category}
+          </span>
+        ) : null}
       </div>
 
-      <CardHeader className="p-0 space-y-3 flex-1">
-        <CardTitle>{title}</CardTitle>
-        <CardDescription className="line-clamp-3">
+      {/* Content */}
+      <div className="flex flex-col gap-2 flex-1 min-w-0">
+        <h3 className="font-display text-xl font-bold leading-snug text-white line-clamp-2">
+          {title}
+        </h3>
+        <p
+          className="text-base leading-relaxed line-clamp-3"
+          style={{ color: "var(--color-text-secondary)" }}
+        >
           {description}
-        </CardDescription>
-      </CardHeader>
+        </p>
+      </div>
 
-      <CardFooter className="p-0 pt-4 flex items-center justify-between mt-auto">
+      {/* Actions — tombol utama lebar + link eksternal sebagai ikon */}
+      <div className="flex items-center gap-2 mt-auto">
         {ProjectLink ? (
-          <PublicCtaButton
-            href={ProjectLink || "#"}
-            text="Visit Link"
-            icon={ExternalLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleLiveDemo}
-            className="px-4 py-2 text-sm cursor-target"
-          />
-        ) : (
-          <span className="text-gray-500 text-sm">
-            Visit Link Not Available
-          </span>
-        )}
-
+          <Button
+            asChild
+            variant="neutral"
+            size="icon"
+            className="w-11 h-11 shrink-0 cursor-target"
+          >
+            <a
+              href={ProjectLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleLiveDemo}
+              aria-label={`Visit ${title} live site`}
+              title="Visit live site"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </Button>
+        ) : null}
         {id ? (
           <PublicCtaButton
             to={`/project/${toSlug(title)}`}
-            text="Details"
+            text="View Details"
             icon={ArrowRight}
             onClick={handleDetails}
-            className="px-4 py-2 text-sm cursor-target"
+            className="flex-1 justify-center px-4 text-sm cursor-target"
           />
         ) : (
-          <span className="text-gray-500 text-sm">Details Not Available</span>
+          <span className="flex-1 text-center text-xs text-gray-500">
+            Details unavailable
+          </span>
         )}
-      </CardFooter>
+      </div>
     </Card>
   )
 }
@@ -86,6 +107,7 @@ CardProject.propTypes = {
   description: PropTypes.string,
   link: PropTypes.string,
   id: PropTypes.number.isRequired,
+  category: PropTypes.string,
 }
 
 export default CardProject

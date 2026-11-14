@@ -41,7 +41,7 @@ const StatCard = memo(
 
           <div>
             <p
-              className="text-sm uppercase tracking-wider mb-2"
+              className="text-xs uppercase tracking-wider mb-2"
               style={{ color: "var(--color-text-secondary)" }}
               data-aos="fade-up"
               data-aos-duration="800"
