@@ -360,7 +360,7 @@ const Home = () => {
       </Helmet>
 
       <div
-        className="h-auto overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] pt-8 md:pt-32 pb-10 sm:pb-16 lg:pb-24"
+        className="h-auto overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] pt-8 lg:pt-32 pb-10 sm:pb-16 lg:pb-24"
         id="Hero"
         style={{ backgroundColor: "var(--color-backdrop-base)" }}
       >

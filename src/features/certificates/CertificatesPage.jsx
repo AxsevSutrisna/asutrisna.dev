@@ -33,18 +33,18 @@ export default function CertificatesPage() {
         data-aos="fade-up"
         data-aos-duration="1000"
       >
-        <h2 className="inline-block text-3xl md:text-5xl font-display font-bold text-center mx-auto text-white">
-          <span>🎓 My Certificates</span>
-        </h2>
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2">
+        <h1 className="text-[28px] sm:text-4xl lg:text-5xl font-display font-bold text-white">
+          🎓 My Certificates
+        </h1>
+        <p className="text-slate-400 max-w-2xl mx-auto text-base mt-2">
           A collection of my professional certifications and achievements.
         </p>
       </div>
 
       <div className="container mx-auto flex justify-center items-center p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 list-none p-0 m-0 w-full">
           {displayedCertificates.map((certificate, index) => (
-            <div
+            <li
               key={certificate.id || index}
               data-aos={
                 index % 3 === 0
@@ -58,9 +58,9 @@ export default function CertificatesPage() {
               }
             >
               <Certificate ImgSertif={certificate.img} />
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
       {certificates.length > initialItems && (
         <div className="mt-12 w-full flex justify-center">

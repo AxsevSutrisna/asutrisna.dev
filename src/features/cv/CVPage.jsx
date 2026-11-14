@@ -140,13 +140,13 @@ const renderBullets = (text) => {
 
 const SectionHeader = ({ icon: Icon, eyebrow, title, description }) => (
   <div className="flex flex-col gap-2">
-    <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.24em] text-gray-500">
-      <Icon className="h-3.5 w-3.5 text-[color:var(--color-primary-light)]" />
+    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-gray-500">
+      <Icon className="h-4 w-4 text-[color:var(--color-primary-light)]" />
       <span>{eyebrow}</span>
     </div>
-    <h2 className="text-2xl sm:text-3xl font-bold text-white">{title}</h2>
+    <h2 className="text-2xl sm:text-[28px] font-bold text-white">{title}</h2>
     {description ? (
-      <p className="max-w-2xl text-sm sm:text-base text-gray-400">
+      <p className="max-w-2xl text-base text-gray-400">
         {description}
       </p>
     ) : null}
@@ -383,10 +383,10 @@ export default function CVPage() {
             <h1 className="text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
               {profile.name}
             </h1>
-            <p className="text-base font-semibold text-gray-400 sm:text-lg">
+            <p className="text-base font-semibold text-gray-400 sm:text-xl">
               {heroSubtitle}
             </p>
-            <p className="mx-auto max-w-3xl text-base leading-7 text-gray-400 sm:text-lg">
+            <p className="mx-auto max-w-3xl text-base leading-7 text-gray-400">
               {profile.description}
             </p>
           </div>
@@ -449,7 +449,7 @@ export default function CVPage() {
                             {experience.is_current ? (
                               <Badge
                                 variant="primary"
-                                className="rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.24em]"
+                                className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.24em]"
                               >
                                 Current
                               </Badge>
@@ -492,7 +492,7 @@ export default function CVPage() {
                             <Badge
                               key={tech}
                               variant="neutral"
-                              className="rounded-full px-3 py-1.5 text-xs"
+                              className="rounded-full px-3 py-1 text-xs"
                             >
                               {tech}
                             </Badge>
@@ -528,7 +528,7 @@ export default function CVPage() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <h3 className="text-lg font-semibold text-white">
+                          <h3 className="text-xl font-semibold text-white">
                             {education.school}
                           </h3>
                           <p className="text-sm text-gray-300">
@@ -540,7 +540,7 @@ export default function CVPage() {
                         </div>
                         <Badge
                           variant="neutral"
-                          className="rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.2em]"
+                          className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.2em]"
                         >
                           {formatEducationDate(
                             education.start_month,
@@ -594,7 +594,7 @@ export default function CVPage() {
                         </h3>
                         <Badge
                           variant="neutral"
-                          className="rounded-full px-3 py-1 text-[11px]"
+                          className="rounded-full px-3 py-1 text-xs"
                         >
                           {group.stacks.length}
                         </Badge>
@@ -604,7 +604,7 @@ export default function CVPage() {
                           <Badge
                             key={stack.id || stack.name}
                             variant="default"
-                            className="rounded-full px-3 py-1.5 text-xs"
+                            className="rounded-full px-3 py-1 text-xs"
                           >
                             {stack.name}
                           </Badge>

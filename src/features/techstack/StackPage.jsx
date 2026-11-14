@@ -133,7 +133,7 @@ export default function StackPage() {
         data-aos="fade-down"
         data-aos-duration="1000"
       >
-        <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-4">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
           My{" "}
           <span style={{ color: "var(--color-primary-light)" }}>
             Tech Stack

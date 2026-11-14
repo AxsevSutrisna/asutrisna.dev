@@ -67,7 +67,7 @@ export default function Portofolio() {
         data-aos="fade-up"
         data-aos-duration="1000"
       >
-        <h1 className="text-[28px] md:text-5xl font-display font-bold text-white">
+        <h1 className="text-[28px] sm:text-4xl lg:text-5xl font-display font-bold text-white">
           Things I&apos;ve Built
         </h1>
         <p className="text-slate-400 max-w-2xl mx-auto text-base mt-4">

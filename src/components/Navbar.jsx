@@ -56,7 +56,7 @@ const Navbar = () => {
   return (
     <>
       {/* ── Top bar (desktop only) ── */}
-      <nav className="hidden md:block fixed w-full top-0 z-50 transition-all duration-500">
+      <nav className="hidden lg:block fixed w-full top-0 z-50 transition-all duration-500">
         <div className="mx-auto px-[5%] sm:px-[5%] lg:px-[10%] pt-4">
           <div
             className={`flex items-center justify-between h-16 px-4 sm:px-6 rounded-full border transition-all duration-300 ${
@@ -74,7 +74,7 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <Menubar className="ml-4 border-none bg-transparent shadow-none h-auto py-1">
                 {navItems.map((item) => {
                   const isActive = location.pathname === item.href
@@ -101,7 +101,7 @@ const Navbar = () => {
 
       {/* ── Mobile: "More" bottom sheet ── */}
       <div
-        className={`md:hidden fixed inset-0 z-[55] ${isOpen ? "" : "pointer-events-none"}`}
+        className={`lg:hidden fixed inset-0 z-[55] ${isOpen ? "" : "pointer-events-none"}`}
         aria-hidden={!isOpen}
       >
         <div
@@ -119,10 +119,10 @@ const Navbar = () => {
           aria-label="Navigation menu"
         >
           <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-white/20" />
-          <p className="mb-4 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500">
+          <p className="mx-auto mb-4 max-w-lg px-1 text-xs font-semibold uppercase tracking-widest text-gray-500">
             Menu
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="mx-auto grid max-w-lg grid-cols-3 gap-3">
             {navItems.map((item) => {
               const isActive = location.pathname === item.href
               const Icon = item.icon
@@ -154,11 +154,11 @@ const Navbar = () => {
 
       {/* ── Mobile: Bottom tab bar (app-style) ── */}
       <nav
-        className="md:hidden fixed inset-x-4 z-[60]"
+        className="lg:hidden fixed inset-x-0 z-[60] px-4"
         style={{ bottom: "calc(env(safe-area-inset-bottom) + 12px)" }}
         aria-label="Mobile navigation"
       >
-        <div className="flex items-center gap-1 rounded-2xl border border-white/10 bg-[#0a0a1a]/95 backdrop-blur-xl px-2 py-2 shadow-2xl">
+        <div className="mx-auto flex max-w-md items-center gap-1 sm:gap-2 rounded-2xl border border-white/10 bg-[#0a0a1a]/95 backdrop-blur-xl px-2 py-2 sm:px-3 shadow-2xl">
           {bottomTabs.map((tab) => {
             const isActive = location.pathname === tab.href
             const Icon = tab.icon
@@ -168,7 +168,7 @@ const Navbar = () => {
                 to={tab.href}
                 onClick={closeMenu}
                 aria-current={isActive ? "page" : undefined}
-                className={`relative flex flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-xl py-1.5 transition-colors ${
+                className={`relative flex flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-xl py-1.5 sm:py-2 transition-colors ${
                   isActive ? "" : "text-gray-400 hover:text-white"
                 }`}
                 style={isActive ? { color: primary } : undefined}
@@ -193,7 +193,7 @@ const Navbar = () => {
             onClick={() => setIsOpen((v) => !v)}
             aria-label="More navigation"
             aria-expanded={isOpen}
-            className="no-neo flex flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-xl py-1.5 text-white shadow-lg transition-transform active:scale-95"
+            className="no-neo flex flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-xl py-1.5 sm:py-2 text-white shadow-lg transition-transform active:scale-95"
             style={{
               background:
                 "linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-light))",

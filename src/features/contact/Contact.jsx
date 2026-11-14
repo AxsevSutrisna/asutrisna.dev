@@ -141,10 +141,10 @@ const ContactPage = () => {
                   ></div>
                   <Badge
                     variant="default"
-                    className="relative px-4 sm:px-5 py-2.5 sm:text-sm text-xs bg-white/5 border border-white/10"
+                    className="relative px-4 sm:px-5 py-2 text-xs bg-white/5 border border-white/10"
                   >
                     <Sparkles
-                      className="sm:w-4 sm:h-4 w-3.5 h-3.5"
+                      className="w-4 h-4"
                       style={{ color: "var(--color-primary-light)" }}
                     />
                     Currently active for opportunities
@@ -152,8 +152,8 @@ const ContactPage = () => {
                 </div>
               </div>
 
-              <h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-display"
+              <h1
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 font-display"
                 style={{
                   color: "var(--color-text-primary)",
                   lineHeight: "1.1",
@@ -163,10 +163,10 @@ const ContactPage = () => {
                 <span style={{ color: "var(--color-primary-light)" }}>
                   great together.
                 </span>
-              </h2>
+              </h1>
 
               <p
-                className="text-base md:text-lg max-w-lg mb-8"
+                className="text-base max-w-lg mb-8"
                 style={{ color: "var(--color-text-muted)" }}
               >
                 Im currently available for freelance projects, technical
@@ -219,7 +219,7 @@ const ContactPage = () => {
                     <Badge
                       key={role}
                       variant="default"
-                      className="inline-flex text-xs sm:text-sm px-3 py-1.5 bg-[#0f172a] border border-white/10 text-white/80 rounded-md"
+                      className="inline-flex text-xs px-3 py-1 bg-[#0f172a] border border-white/10 text-white/80 rounded-md"
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full"
@@ -267,7 +267,7 @@ const ContactPage = () => {
                     onChange={handleChange}
                     required
                     placeholder="Your Name"
-                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
+                    className="w-full px-4 py-3 text-base bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
                     style={{ color: "var(--color-text-primary)" }}
                   />
                 </div>
@@ -288,7 +288,7 @@ const ContactPage = () => {
                     onChange={handleChange}
                     required
                     placeholder="you@email.com"
-                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
+                    className="w-full px-4 py-3 text-base bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
                     style={{ color: "var(--color-text-primary)" }}
                   />
                 </div>
@@ -308,7 +308,7 @@ const ContactPage = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="Project Title or Inquiry"
-                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
+                    className="w-full px-4 py-3 text-base bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all cursor-target"
                     style={{ color: "var(--color-text-primary)" }}
                   />
                 </div>
@@ -329,7 +329,7 @@ const ContactPage = () => {
                     required
                     rows="5"
                     placeholder="Tell me about your project, needs, or timeline..."
-                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all resize-none cursor-target"
+                    className="w-full px-4 py-3 text-base bg-black/20 border border-white/10 rounded-lg outline-none focus:border-[var(--color-primary-light)] focus:ring-1 focus:ring-[var(--color-primary-light)] transition-all resize-none cursor-target"
                     style={{ color: "var(--color-text-primary)" }}
                   ></textarea>
                 </div>
