@@ -15,7 +15,7 @@ const CARD_GAP = 20 // px
 const LocalProjectCard = memo(({ project, cardWidth }) => (
   <article
     className="group relative shrink-0 flex flex-col pb-2 pr-2"
-    style={{ width: cardWidth, height: 460 }}
+    style={{ width: cardWidth, height: 420 }}
     aria-label={project.title}
   >
     <ProjectCard
@@ -24,6 +24,7 @@ const LocalProjectCard = memo(({ project, cardWidth }) => (
       description={project.description}
       link={project.link}
       id={project.id}
+      category={project.category}
     />
   </article>
 ))
@@ -32,7 +33,7 @@ LocalProjectCard.displayName = "LocalProjectCard"
 /* ─── Skeleton card ─────────────────────────────────────────────── */
 const SkeletonCard = ({ cardWidth }) => (
   <div
-    className="shrink-0 rounded-[18px] border-2 border-white/10 bg-white/[0.03] animate-pulse"
+    className="shrink-0 rounded-2xl border-2 border-white/10 bg-white/[0.03] animate-pulse"
     style={{ width: cardWidth, height: 420 }}
   />
 )
@@ -78,7 +79,7 @@ const FeaturedProjects = () => {
     return (
       <section
         id="FeaturedProjects"
-        className="w-full py-20 sm:py-24 px-4 sm:px-6 md:px-8 lg:px-[10%]"
+        className="w-full py-14 sm:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-[10%]"
         style={{ backgroundColor: "var(--color-backdrop-base)" }}
       >
         <div className="container mx-auto text-center py-16 rounded-2xl border border-white/10 bg-white/5">
@@ -97,13 +98,13 @@ const FeaturedProjects = () => {
   return (
     <section
       id="FeaturedProjects"
-      className="w-full py-20 sm:py-24"
+      className="w-full py-14 sm:py-20 lg:py-24"
       style={{ backgroundColor: "var(--color-backdrop-base)" }}
       aria-label="Featured Projects"
     >
       {/* ── Section Header ── */}
       <div
-        className="px-4 sm:px-6 md:px-8 lg:px-[10%] mb-10 sm:mb-14"
+        className="px-4 sm:px-6 md:px-8 lg:px-[10%] mb-8 sm:mb-14"
         data-aos="fade-up"
         data-aos-duration="800"
       >
@@ -111,7 +112,7 @@ const FeaturedProjects = () => {
           {/* Badge */}
           <div className="inline-flex items-center px-3 py-1 rounded-full border border-white/15 bg-white/[0.04] mb-5">
             <span
-              className="text-[10px] sm:text-xs font-bold tracking-widest uppercase"
+              className="text-xs font-bold tracking-widest uppercase"
               style={{ color: "var(--color-primary-light)" }}
             >
               Featured Projects
@@ -121,7 +122,7 @@ const FeaturedProjects = () => {
           {/* Title + View All row */}
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
                 Highlighted{" "}
                 <span style={{ color: "var(--color-primary-light)" }}>
                   Work

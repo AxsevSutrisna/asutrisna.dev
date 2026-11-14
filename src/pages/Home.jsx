@@ -360,7 +360,7 @@ const Home = () => {
       </Helmet>
 
       <div
-        className="h-auto overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] pt-32 pb-10 sm:pb-16 lg:pb-24"
+        className="h-auto overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] pt-8 lg:pt-32 pb-10 sm:pb-16 lg:pb-24"
         id="Hero"
         style={{ backgroundColor: "var(--color-backdrop-base)" }}
       >
@@ -384,7 +384,7 @@ const Home = () => {
                   >
                     <div className="relative group">
                       <div
-                        className="absolute -inset-0.5 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000"
+                        className="absolute -inset-1 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000"
                         style={{
                           background:
                             "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))",
@@ -392,10 +392,10 @@ const Home = () => {
                       ></div>
                       <Badge
                         variant="default"
-                        className="relative px-4 sm:px-5 py-2.5 sm:text-sm text-xs"
+                        className="relative px-4 sm:px-5 py-2 text-xs"
                       >
                         <Sparkles
-                          className="sm:w-4 sm:h-4 w-3.5 h-3.5"
+                          className="w-4 h-4"
                           style={{ color: "var(--color-primary-light)" }}
                         />
                         {heroData.badge_text}
@@ -448,7 +448,7 @@ const Home = () => {
                       {text}
                     </span>
                     <span
-                      className="w-[3px] h-6 ml-1 animate-blink"
+                      className="w-1 h-6 ml-1 animate-blink"
                       style={{
                         background:
                           "linear-gradient(180deg, var(--color-primary-dark), var(--color-primary-light))",
@@ -458,7 +458,7 @@ const Home = () => {
 
                   {/* Description */}
                   <p
-                    className="text-base md:text-lg max-w-xl leading-relaxed font-light"
+                    className="text-base lg:text-xl max-w-xl leading-relaxed font-light"
                     style={{ color: "var(--color-text-secondary)" }}
                     data-aos="fade-up"
                     data-aos-delay="1000"
@@ -513,7 +513,7 @@ const Home = () => {
 
               {/* Right Column - WebM Video */}
               <div
-                className="hidden lg:flex w-full py-0 md:py-[10%] sm:py-0 lg:w-1/2 h-[260px] sm:h-[400px] lg:h-[600px] xl:h-[750px] relative items-center justify-center order-2 lg:order-2 mt-5 sm:mt-0"
+                className="hidden lg:flex w-full py-0 md:py-[10%] sm:py-0 lg:w-1/2 h-[260px] sm:h-[400px] lg:h-[600px] xl:h-[752px] relative items-center justify-center order-2 lg:order-2 mt-5 sm:mt-0"
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
                 data-aos="fade-left"
@@ -521,7 +521,7 @@ const Home = () => {
               >
                 <div className="relative w-full opacity-90">
                   <div
-                    className={`absolute inset-0 bg-[#0f172a] (--color-primary-dark)]/10 (--color-primary-light)]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
+                    className={`absolute inset-0 bg-[#0f172a] rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
                       isHovering
                         ? "opacity-50 scale-105"
                         : "opacity-20 scale-100"
@@ -575,16 +575,17 @@ const Home = () => {
       </div>
 
       {/* Stats Grid */}
-      <div
+      <section
+        aria-label="Key statistics"
         className="w-full overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[5%] xl:px-[5%] pt-8 sm:pt-12 md:pt-16 pb-10 sm:pb-16 relative"
         style={{ backgroundColor: "var(--color-backdrop-base)" }}
       >
-        <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {statsData.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ── Experience Highlight ──────────────────────── */}
       <SectionDivider />
@@ -609,7 +610,7 @@ const Home = () => {
           data-aos-duration="1000"
         >
           <div className="text-center mb-8 px-4 sm:px-6 md:px-8 lg:px-[10%]">
-            <h2 className="text-3xl font-display font-bold text-white mb-3">
+            <h2 className="text-[28px] font-display font-bold text-white mb-3">
               Core Technology Stack
             </h2>
             <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
@@ -645,7 +646,7 @@ const Home = () => {
                   />
                 </div>
                 <div className="flex items-center justify-center w-full h-1/2 mb-2">
-                  <span className="text-[10px] sm:text-xs font-medium text-white/70 group-hover/item:text-white transition-colors text-center px-2 truncate w-full">
+                  <span className="text-xs font-medium text-white/70 group-hover/item:text-white transition-colors text-center px-2 truncate w-full">
                     {item.title}
                   </span>
                 </div>

@@ -51,7 +51,7 @@ const CertCard = memo(({ cert }) => {
 
           {/* Award badge overlay */}
           <div
-            className="absolute top-2.5 left-2.5 w-8 h-8 rounded-full flex items-center justify-center border border-white/15"
+            className="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center border border-white/15"
             style={{
               background: "rgba(0,0,0,0.5)",
               backdropFilter: "blur(4px)",
@@ -127,17 +127,17 @@ const EducationHighlight = () => {
   return (
     <section
       id="CertificatesHighlight"
-      className="w-full px-4 sm:px-6 md:px-8 lg:px-[10%] py-20 sm:py-24"
+      className="w-full px-4 sm:px-6 md:px-8 lg:px-[10%] py-14 sm:py-20 lg:py-24"
       style={{ backgroundColor: "var(--color-backdrop-base)" }}
       aria-label="Certificates Highlight"
     >
       <div className="container mx-auto">
         {/* ── Section Header ── */}
-        <div className="mb-10 sm:mb-14">
+        <div className="mb-8 sm:mb-14">
           {/* Badge */}
           <div className="inline-flex items-center px-3 py-1 rounded-full border border-white/15 bg-white/[0.04] mb-5">
             <span
-              className="text-[10px] sm:text-xs font-bold tracking-widest uppercase"
+              className="text-xs font-bold tracking-widest uppercase"
               style={{ color: "var(--color-primary-light)" }}
             >
               Achievements
@@ -147,7 +147,7 @@ const EducationHighlight = () => {
           {/* Title + View All row */}
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
                 Professional{" "}
                 <span style={{ color: "var(--color-primary-light)" }}>
                   Certificates
@@ -173,7 +173,7 @@ const EducationHighlight = () => {
                   <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:w-0 group-hover:after:w-full after:transition-all after:duration-300 after:h-[1.5px] after:bg-current">
                     View all certificates
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               )}
             </div>

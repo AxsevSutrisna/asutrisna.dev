@@ -1,4 +1,5 @@
 
+import { useState } from "react"
 import { useTechStacks } from "./hooks/useTechStacks"
 import {
   Code,
@@ -32,15 +33,44 @@ const getCategoryConfig = (category) => {
   return { icon: Code, color: "text-gray-400", bg: "bg-gray-400" }
 }
 
+/* Satu ikon tool — kalau gambar gagal dimuat, tampilkan badge 2 huruf (rapi). */
+const ToolIcon = ({ stack }) => {
+  const [failed, setFailed] = useState(false)
+  const showImg = Boolean(stack.icon_url) && !failed
+  return (
+    <li
+      title={stack.name}
+      className="cursor-target flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-2 shadow-sm transition-all duration-300 hover:scale-110 hover:bg-white/10"
+    >
+      {showImg ? (
+        <img
+          src={stack.icon_url}
+          alt={stack.name}
+          onError={() => setFailed(true)}
+          className="h-full w-full object-contain drop-shadow-md"
+          loading="lazy"
+        />
+      ) : (
+        <span className="text-xs font-bold uppercase text-gray-300">
+          {stack.name.substring(0, 2)}
+        </span>
+      )}
+    </li>
+  )
+}
+
 const TechCategoryCard = ({ category, stacks, animation }) => {
   const toolsList = stacks.map((s) => s.name).join(", ")
-  const { icon: Icon, color, bg } = getCategoryConfig(category)
+  const toolCount = stacks.length
+  const { icon: Icon, color } = getCategoryConfig(category)
 
-  // Create a consistent dummy progress based on the category string length so it doesn't jump on renders
-  const dummyProgress = 40 + ((category.length * 7) % 40)
+  const titleId = `stack-${String(category || "general")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")}`
 
   return (
-    <div
+    <article
+      aria-labelledby={titleId}
       className="cursor-target rounded-3xl border border-white/10 bg-white/5 hover:border-white/20 transition-all duration-300 relative overflow-hidden group shadow-lg"
       data-aos={animation}
       data-aos-duration="1200"
@@ -51,58 +81,43 @@ const TechCategoryCard = ({ category, stacks, animation }) => {
         style={{ backgroundColor: "var(--color-primary-light)" }}
       ></div>
 
-      <div className="relative z-10 p-6">
+      <div className="relative z-10 p-4 sm:p-6">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-4">
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform duration-300">
-            <Icon className={`w-7 h-7 ${color}`} />
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform duration-300">
+              <Icon className={`w-7 h-7 ${color}`} />
+            </div>
+            <h3
+              id={titleId}
+              className="text-xl sm:text-2xl font-bold text-white tracking-tight truncate"
+            >
+              {category || "General"}
+            </h3>
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-            {category || "General"}
-          </h3>
+          <span
+            className={`shrink-0 inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-white/5 border border-white/10 ${color}`}
+          >
+            {toolCount} {toolCount === 1 ? "tool" : "tools"}
+          </span>
         </div>
 
         {/* Description */}
-        <p className="text-sm sm:text-base text-gray-400 mb-6 min-h-[48px] leading-relaxed">
+        <p className="text-base text-gray-400 mb-6 min-h-[48px] leading-relaxed">
           {toolsList}
         </p>
 
-        {/* Dummy Progress Bar */}
-        <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden mb-6 relative">
-          <div
-            className={`h-full ${bg} rounded-full transition-all duration-500 ease-out`}
-            style={{ width: `${dummyProgress}%` }}
-          ></div>
-          <div
-            className={`absolute top-0 left-0 h-full ${bg} rounded-full transition-all duration-500 ease-out w-0 group-hover:w-full`}
-          ></div>
-        </div>
-
         {/* Stack Icons Grid */}
-        <div className="flex flex-wrap gap-3">
+        <ul
+          className="flex flex-wrap gap-2 sm:gap-3 list-none p-0 m-0"
+          aria-label={`${category || "General"} tools`}
+        >
           {stacks.map((stack) => (
-            <div
-              key={stack.id}
-              title={stack.name}
-              className="cursor-target w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center p-2.5 hover:bg-white/10 hover:scale-110 transition-all duration-300 shadow-sm"
-            >
-              {stack.icon_url ? (
-                <img
-                  src={stack.icon_url}
-                  alt={stack.name}
-                  className="w-full h-full object-contain drop-shadow-md"
-                  loading="lazy"
-                />
-              ) : (
-                <span className="text-xs text-gray-400 font-bold uppercase">
-                  {stack.name.substring(0, 2)}
-                </span>
-              )}
-            </div>
+            <ToolIcon key={stack.id} stack={stack} />
           ))}
-        </div>
+        </ul>
       </div>
-    </div>
+    </article>
   )
 }
 
@@ -112,19 +127,19 @@ export default function StackPage() {
   const categories = Object.keys(techStacks)
 
   return (
-    <div className="w-full px-[5%] md:px-[10%]">
+    <div className="w-full px-[5%] md:px-[10%] overflow-x-clip">
       <div
-        className="text-center mb-16"
+        className="text-center mb-10 sm:mb-16"
         data-aos="fade-down"
         data-aos-duration="1000"
       >
-        <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-4">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
           My{" "}
           <span style={{ color: "var(--color-primary-light)" }}>
             Tech Stack
           </span>
         </h1>
-        <p className="text-gray-400 max-w-2xl mx-auto text-base md:text-lg">
+        <p className="text-gray-400 max-w-2xl mx-auto text-base">
           A comprehensive look at the tools and technologies I use to architect
           solutions and empower communities.
         </p>

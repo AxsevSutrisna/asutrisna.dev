@@ -114,6 +114,7 @@ const AboutPage = () => {
       itemScope
       itemType="https://schema.org/Person"
     >
+      <meta itemProp="name" content={content.name} />
       <div className="w-full mx-auto relative">
         <div className="flex flex-col lg:grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
           <div className="space-y-6 text-left">
@@ -121,10 +122,10 @@ const AboutPage = () => {
             <div data-aos="fade-right" data-aos-duration="1000">
               <Badge
                 variant="outline"
-                className="px-4 py-1.5 rounded-full border-white/20 text-white/80 bg-white/5 backdrop-blur-md"
+                className="px-4 py-2 rounded-full border-white/20 text-white/80 bg-white/5 backdrop-blur-md"
               >
                 <span
-                  className="text-sm font-medium"
+                  className="text-xs font-medium"
                   style={{ color: "var(--color-primary-light)" }}
                 >
                   About Me
@@ -132,7 +133,7 @@ const AboutPage = () => {
               </Badge>
             </div>
 
-            <h2
+            <h1
               className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight"
               data-aos="fade-right"
               data-aos-duration="1200"
@@ -155,10 +156,11 @@ const AboutPage = () => {
                 parentClassName="text-[var(--color-primary-light)]"
                 style={{ color: "var(--color-primary-light)" }}
               />
-            </h2>
+            </h1>
 
             <div
-              className="text-base sm:text-lg leading-relaxed text-justify sm:text-left text-gray-300 space-y-4"
+              className="text-base leading-relaxed text-justify sm:text-left text-gray-300 space-y-4"
+              itemProp="description"
               data-aos="fade-right"
               data-aos-duration="1400"
             >
@@ -172,7 +174,7 @@ const AboutPage = () => {
             {/* Personal Quote */}
             {content.quote && (
               <blockquote
-                className="border-l-2 border-white/20 pl-4 text-sm sm:text-base italic text-gray-400"
+                className="border-l-2 border-white/20 pl-4 text-base italic text-gray-400"
                 style={{ borderColor: "var(--color-primary-light)" }}
                 data-aos="fade-right"
                 data-aos-duration="1500"
@@ -204,7 +206,7 @@ const AboutPage = () => {
                 <Badge
                   key={role}
                   variant="outline"
-                  className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-semibold tracking-widest border-white/10 bg-[#0f172a] shadow-sm uppercase"
+                  className="px-3 py-1 rounded-md text-xs font-semibold tracking-widest border-white/10 bg-[#0f172a] shadow-sm uppercase"
                   style={{ color: "var(--color-primary-light)" }}
                 >
                   {role}

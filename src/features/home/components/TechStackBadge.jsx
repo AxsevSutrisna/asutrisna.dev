@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 const TechStackBadge = memo(({ tech }) => (
   <Badge
     variant="default"
-    className="inline-flex text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1"
+    className="inline-flex text-xs px-3 py-1"
   >
     <span
       className="w-1.5 h-1.5 rounded-full"

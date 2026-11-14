@@ -84,7 +84,7 @@ const ProjectDetails = () => {
       >
         <div className="text-center space-y-6 animate-fadeIn">
           <div className="w-16 h-16 md:w-24 md:h-24 mx-auto border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-          <h2 className="text-xl md:text-3xl font-bold text-white">
+          <h2 className="text-xl md:text-[28px] font-bold text-white">
             Loading Project...
           </h2>
         </div>
@@ -99,7 +99,7 @@ const ProjectDetails = () => {
         style={{ backgroundColor: "var(--color-backdrop-base)" }}
       >
         <div className="text-center space-y-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-white">
+          <h2 className="text-2xl md:text-[28px] font-bold text-white">
             Project not found
           </h2>
           <p className="text-gray-400">
@@ -242,7 +242,7 @@ const ProjectDetails = () => {
                 onClick={() => navigate(-1)}
                 variant="neutral"
                 size="sm"
-                className="group inline-flex items-center justify-center space-x-1.5 md:space-x-2 px-3 md:px-5 py-2 md:py-2.5 text-sm md:text-base w-fit shrink-0 cursor-target"
+                className="group inline-flex items-center justify-center space-x-1.5 md:space-x-2 px-3 md:px-5 py-2 md:py-3 text-sm md:text-base w-fit shrink-0 cursor-target"
               >
                 <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 group-hover:-translate-x-1 transition-transform" />
                 <span>Back</span>
@@ -271,7 +271,7 @@ const ProjectDetails = () => {
               <div className="space-y-6 md:space-y-10 animate-slideInLeft">
                 <div className="space-y-4 md:space-y-6">
                   <h1
-                    className="text-3xl md:text-6xl font-bold leading-tight"
+                    className="text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
                     style={{ color: "var(--color-text-primary)" }}
                   >
                     {project.title}
@@ -296,7 +296,7 @@ const ProjectDetails = () => {
 
                 <div className="prose prose-invert max-w-none">
                   <p
-                    className="text-base md:text-lg leading-relaxed"
+                    className="text-base leading-relaxed"
                     style={{ color: "var(--color-text-secondary)" }}
                   >
                     {project.description}
@@ -310,7 +310,7 @@ const ProjectDetails = () => {
                     asChild
                     variant="neutral"
                     size="default"
-                    className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
+                    className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-3 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
                   >
                     <a
                       href={project.link || "#"}
@@ -332,7 +332,7 @@ const ProjectDetails = () => {
                     asChild
                     variant="neutral"
                     size="default"
-                    className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-2.5 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
+                    className="group relative inline-flex items-center space-x-1.5 md:space-x-2 px-4 md:px-8 py-3 md:py-4 text-sm md:text-base overflow-hidden cursor-target"
                   >
                     <a
                       href={project.github || FALLBACK_GITHUB}
@@ -356,7 +356,7 @@ const ProjectDetails = () => {
                 </div>
 
                 <div className="space-y-4 md:space-y-6">
-                  <h3 className="text-lg md:text-xl font-semibold text-white/90 mt-[3rem] md:mt-0 flex items-center gap-2 md:gap-3">
+                  <h3 className="text-xl md:text-2xl font-semibold text-white/90 mt-12 md:mt-0 flex items-center gap-2 md:gap-3">
                     <Code2
                       className="w-4 h-4 md:w-5 md:h-5"
                       style={{ color: "var(--color-primary-light)" }}
