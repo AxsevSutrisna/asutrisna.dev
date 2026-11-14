@@ -120,7 +120,7 @@ const renderBullets = (text) => {
   if (lines.length === 0) return null
 
   return (
-    <div className="space-y-2 text-sm text-gray-300 leading-relaxed">
+    <div className="space-y-2 text-base text-gray-300 leading-relaxed">
       {lines.map((line, index) => {
         const isBullet = /^[-•–]\s+/.test(line)
         const content = isBullet ? line.replace(/^[-•–]\s+/, "") : line
@@ -175,7 +175,7 @@ const DownloadMenu = ({ options }) => {
         text="Download CV"
         icon={Download}
         iconClassName="w-4 h-4"
-        className="cursor-target"
+        className="w-full sm:w-auto justify-center cursor-target"
       />
 
       {open ? (
@@ -187,7 +187,7 @@ const DownloadMenu = ({ options }) => {
             return isDisabled ? (
               <div
                 key={option.label}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-500 opacity-50"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-base text-gray-500 opacity-50"
               >
                 <FileText className="h-4 w-4" />
                 <div>
@@ -206,7 +206,7 @@ const DownloadMenu = ({ options }) => {
                   setOpen(false)
                   trackEvent("download_cv", { version: option.label })
                 }}
-                className="cursor-target flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white transition-colors hover:bg-white/5"
+                className="cursor-target flex items-center gap-3 rounded-xl px-4 py-3 text-base text-white transition-colors hover:bg-white/5"
               >
                 <FileText className="h-4 w-4 text-[color:var(--color-primary-light)]" />
                 <div>
@@ -392,7 +392,7 @@ export default function CVPage() {
           </div>
 
           {socialButtons.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-3 pt-2 w-full max-w-xs sm:max-w-none">
               {socialButtons.map((social) => (
                 <PublicCtaButton
                   key={social.id || social.label}
@@ -402,7 +402,7 @@ export default function CVPage() {
                   text={social.label}
                   icon={social.Icon}
                   iconClassName="w-4 h-4"
-                  className="cursor-target"
+                  className="w-full sm:w-auto justify-center cursor-target"
                   onClick={() =>
                     trackEvent("social_click", {
                       platform: social.label,
@@ -414,7 +414,7 @@ export default function CVPage() {
             </div>
           ) : null}
 
-          <div className="pt-4">
+          <div className="pt-4 w-full max-w-xs sm:max-w-none sm:flex sm:justify-center">
             <DownloadMenu options={downloadOptions} />
           </div>
         </section>
@@ -455,7 +455,7 @@ export default function CVPage() {
                               </Badge>
                             ) : null}
                           </div>
-                          <p className="text-sm font-medium text-[color:var(--color-primary-light)]">
+                          <p className="text-base font-medium text-[color:var(--color-primary-light)]">
                             {experience.company}
                           </p>
                           <div className="flex flex-wrap gap-2 text-xs text-gray-400">
@@ -503,7 +503,7 @@ export default function CVPage() {
                   )
                 })
               ) : (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-sm text-gray-500">
+                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-base text-gray-500">
                   No work experience data is available yet.
                 </div>
               )}
@@ -531,7 +531,7 @@ export default function CVPage() {
                           <h3 className="text-xl font-semibold text-white">
                             {education.school}
                           </h3>
-                          <p className="text-sm text-gray-300">
+                          <p className="text-base text-gray-300">
                             {education.degree}
                             {education.field_of_study
                               ? ` in ${education.field_of_study}`
@@ -552,7 +552,7 @@ export default function CVPage() {
                         </Badge>
                       </div>
 
-                      <div className="mt-3 space-y-2 text-sm text-gray-400">
+                      <div className="mt-3 space-y-2 text-base text-gray-400">
                         {education.grade ? (
                           <p>Grade: {education.grade}</p>
                         ) : null}
@@ -566,7 +566,7 @@ export default function CVPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-sm text-gray-500">
+                  <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-base text-gray-500">
                     No education data is available yet.
                   </div>
                 )}
@@ -589,7 +589,7 @@ export default function CVPage() {
                       className="rounded-2xl border border-white/10 bg-black/20 p-4"
                     >
                       <div className="mb-3 flex items-center justify-between gap-3">
-                        <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-gray-300">
+                        <h3 className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-300">
                           {group.category}
                         </h3>
                         <Badge
@@ -613,7 +613,7 @@ export default function CVPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-sm text-gray-500">
+                  <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-base text-gray-500">
                     No active tech stacks are available yet.
                   </div>
                 )}
@@ -642,7 +642,7 @@ export default function CVPage() {
                       <Certificate
                         ImgSertif={certificate.img || certificate.Img}
                       />
-                      <div className="flex items-center justify-between gap-3 text-sm text-gray-400">
+                      <div className="flex items-center justify-between gap-3 text-xs text-gray-400">
                         <span>Certificate #{index + 1}</span>
                         {certificate.created_at ? (
                           <span>{formatDateLabel(certificate.created_at)}</span>
@@ -652,7 +652,7 @@ export default function CVPage() {
                   ))}
                 </div>
               ) : (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-sm text-gray-500">
+                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-base text-gray-500">
                   No certificates are available yet.
                 </div>
               )}
