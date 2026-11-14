@@ -13,7 +13,7 @@ export default function Modal({ title, onClose, children }) {
   }, [onClose])
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6">
+    <div className="dashboard-modal fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}

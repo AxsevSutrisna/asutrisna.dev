@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useTechStackStore } from "../../../store/useTechStackStore"
+import { useTechStackStore } from "@/store/useTechStackStore"
 
 export function useTechStacks() {
   const {

@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import { aboutService } from "../services/aboutService"
-import { experienceService } from "../services/experienceService"
+import { aboutRepository } from "@/entities/about/api/aboutRepository"
+import { experienceRepository } from "@/entities/experience/api/experienceRepository"
 
 export const useAboutStore = create((set, get) => ({
   content: null,
@@ -14,8 +14,8 @@ export const useAboutStore = create((set, get) => ({
     set({ loading: true, error: null })
     try {
       const [contentData, workData] = await Promise.all([
-        aboutService.fetchAboutContent(),
-        experienceService.fetchWorkExperiences(),
+        aboutRepository.fetchPublished(),
+        experienceRepository.fetchAll(),
       ])
       set({ content: contentData, workItems: workData, loading: false })
     } catch (err) {

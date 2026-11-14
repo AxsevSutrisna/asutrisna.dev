@@ -8,20 +8,22 @@ import ErrorBoundary from "./components/ErrorBoundary"
 import { PageSkeleton } from "./components/ui/Skeleton"
 import "./index.css"
 import Navbar from "./components/Navbar"
-import Home from "./Pages/Home"
+import Home from "./pages/Home"
 import AnimatedBackground from "./components/Background"
 import Footer from "./components/Footer"
 import { useTheme } from "./hooks/useTheme"
 import PublicLayout from "./components/layouts/PublicLayout"
 import ProtectedRoute from "./components/ProtectedRoute"
 
-import Login from "./Pages/Login"
-import Dashboard from "./Pages/Dashboard"
+import Login from "./pages/Login"
+import Dashboard from "./pages/Dashboard"
+import ConfirmProvider from "./components/ui/ConfirmProvider"
+import AnalyticsTracker from "./components/AnalyticsTracker"
 
 const Portfolio = lazy(() => import("./features/projects/Portfolio"))
 const ContactPage = lazy(() => import("./features/contact/Contact"))
 const ProjectDetails = lazy(() => import("./features/projects/ProjectDetail"))
-const NotFoundPage = lazy(() => import("./Pages/NotFound"))
+const NotFoundPage = lazy(() => import("./pages/NotFound"))
 
 const About = lazy(() => import("./features/about/About"))
 const StackPage = lazy(() => import("./features/techstack/StackPage"))
@@ -82,7 +84,9 @@ function App() {
         <div className="pointer-events-none">
           <AnimatedBackground />
         </div>
+        <ConfirmProvider>
         <BrowserRouter>
+          <AnalyticsTracker />
           <Routes>
             {/* PUBLIC */}
             <Route element={<MainLayout />}>
@@ -191,6 +195,7 @@ function App() {
             />
           </Routes>
         </BrowserRouter>
+        </ConfirmProvider>
       </HelmetProvider>
     </ErrorBoundary>
   )

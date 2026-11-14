@@ -1,9 +1,8 @@
 import { useEffect, useState, useCallback } from "react"
 import { useCertificates } from "./hooks/useCertificates"
-import Certificate from "../../components/Certificate"
-import { Button } from "../../components/ui/button"
+import Certificate from "@/components/Certificate"
 
-import ShowMoreButton from "../../components/ui/ShowMoreButton"
+import ShowMoreButton from "@/components/ui/ShowMoreButton"
 
 export default function CertificatesPage() {
   const { certificates } = useCertificates()
@@ -58,7 +57,7 @@ export default function CertificatesPage() {
                 index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"
               }
             >
-              <Certificate ImgSertif={certificate.img || certificate.Img} />
+              <Certificate ImgSertif={certificate.img} />
             </div>
           ))}
         </div>

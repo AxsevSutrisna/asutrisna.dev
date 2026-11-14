@@ -652,14 +652,20 @@ button.no-neo {
   transform: none !important;
 }
 
-/* Keep dashboard admin buttons in the previous visual style */
-.dashboard-admin button[class*="rounded"] {
+/* Keep dashboard admin buttons — dan modal-nya — in the flat/modern style,
+   selaras dengan AddNewButton. Modal di-portal ke <body> (di luar
+   .dashboard-admin), jadi butuh selektor .dashboard-modal tersendiri agar
+   tombol form (Cancel/Submit/Save) ikut flat, tidak mendapat efek "ketekan". */
+.dashboard-admin button[class*="rounded"],
+.dashboard-modal button[class*="rounded"] {
   box-shadow: none !important;
   transform: none !important;
 }
 
 .dashboard-admin button[class*="rounded"]:hover,
-.dashboard-admin button[class*="rounded"]:active {
+.dashboard-admin button[class*="rounded"]:active,
+.dashboard-modal button[class*="rounded"]:hover,
+.dashboard-modal button[class*="rounded"]:active {
   box-shadow: none !important;
   transform: none !important;
 }

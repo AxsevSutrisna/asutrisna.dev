@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { toSlug } from "../../../utils/slug"
+import { toSlug } from "@/shared/lib/slug"
 
 const CardProject = ({ img, title, description, link: ProjectLink, id }) => {
   const handleLiveDemo = (e) => {

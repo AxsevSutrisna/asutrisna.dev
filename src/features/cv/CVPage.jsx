@@ -15,18 +15,18 @@ import {
   Youtube,
 } from "lucide-react"
 
-import Certificate from "../../components/Certificate"
-import { Badge } from "../../components/ui/badge"
-import { Card, CardContent, CardHeader } from "../../components/ui/card"
-import PublicCtaButton from "../../components/ui/public-cta-button"
-import { aboutService } from "../../services/aboutService"
-import { useCertificates } from "../certificates/hooks/useCertificates"
-import { useContactInfo } from "../contact/hooks/useContactInfo"
-import { useExperienceData } from "../experience/hooks/useExperienceData"
-import { useTechStacks } from "../techstack/hooks/useTechStacks"
-import { formatDateRange as formatEducationDate } from "../../utils/educations"
-import { formatDateRange as formatWorkDate } from "../../utils/workExperiences"
-import { GOOGLE_DRIVE_DOWNLOAD_BASE, STATIC_PATHS } from "../../constants/urls"
+import Certificate from "@/components/Certificate"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import PublicCtaButton from "@/components/ui/public-cta-button"
+import { aboutRepository } from "@/entities/about/api/aboutRepository"
+import { useCertificates } from "@/features/certificates/hooks/useCertificates"
+import { useContactInfo } from "@/features/contact/hooks/useContactInfo"
+import { useExperienceData } from "@/features/experience/hooks/useExperienceData"
+import { useTechStacks } from "@/features/techstack/hooks/useTechStacks"
+import { formatDateRange as formatEducationDate } from "@/utils/educations"
+import { formatDateRange as formatWorkDate } from "@/utils/workExperiences"
+import { GOOGLE_DRIVE_DOWNLOAD_BASE, STATIC_PATHS } from "@/constants/urls"
 
 const FALLBACK_PROFILE = {
   name: "Muhammad Ikhwan Fathulloh",
@@ -239,7 +239,7 @@ export default function CVPage() {
     const fetchAboutContent = async () => {
       setAboutLoading(true)
       try {
-        const data = await aboutService.fetchAboutContent()
+        const data = await aboutRepository.fetchPublished()
         if (active) {
           setAboutContent(data)
         }

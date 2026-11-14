@@ -1,6 +1,9 @@
 import { useEffect } from "react"
-import { supabase } from "../config/supabase"
-import { DEFAULT_THEME } from "../utils/themeManager"
+import { DEFAULT_THEME } from "@/entities/theme/model/constants"
+import {
+  fetchTheme,
+  subscribeTheme,
+} from "@/entities/theme/api/themeRepository"
 
 const CSS_VAR_MAP = {
   // Primary and Secondary
@@ -19,8 +22,6 @@ const CSS_VAR_MAP = {
   background_blob_three: "--color-background-blob-three",
   background_blob_four: "--color-background-blob-four",
   background_grid_line: "--color-grid-line",
-  background_gradient_from: "--color-background-gradient-from",
-  background_gradient_to: "--color-background-gradient-to",
 
   // Text
   text_primary: "--color-text-primary",
@@ -35,38 +36,13 @@ const CSS_VAR_MAP = {
   button_primary_from: "--color-button-primary-from",
   button_primary_to: "--color-button-primary-to",
   button_secondary_from: "--color-button-secondary-from",
-  button_secondary_to: "--color-button-secondary-to",
   button_outline_color: "--color-button-outline",
 
   // Cards
-  card_bg_light: "--color-card-bg-light",
   card_bg_dark: "--color-card-bg-dark",
-  card_border_light: "--color-card-border-light",
-  card_border_dark: "--color-card-border-dark",
-
-  // States
-  state_success: "--color-state-success",
-  state_warning: "--color-state-warning",
-  state_error: "--color-state-error",
-  state_info: "--color-state-info",
-
-  // Navigation
-  navbar_bg: "--color-navbar-bg",
-  navbar_link_active: "--color-navbar-link-active",
-  navbar_link_inactive: "--color-navbar-link-inactive",
-
-  // Forms & Links
-  input_bg_color: "--color-input-bg",
-  input_border_color: "--color-input-border",
-  input_border_focus: "--color-input-border-focus",
-  link_color: "--color-link",
-  link_hover_color: "--color-link-hover",
 
   // Effects
   shadow_primary_color: "--color-shadow-primary",
-  glow_color_primary: "--color-glow-primary",
-  glow_color_secondary: "--color-glow-secondary",
-  overlay_bg_color: "--color-overlay-bg",
 }
 
 const hexToRgba = (hex, alpha = 1) => {
@@ -129,58 +105,42 @@ const injectCSSVariables = (colors) => {
   root.style.setProperty("--color-grid-line-soft", hexToRgba(gridSoft, 0.018))
 }
 
+const buildColors = (source) => {
+  const colors = {}
+  Object.keys(CSS_VAR_MAP).forEach((key) => {
+    colors[key] = source[key] || DEFAULT_THEME[key]
+  })
+  return colors
+}
+
+const applyColors = (source) => {
+  const colors = buildColors(source)
+  injectCSSVariables(colors)
+  try {
+    localStorage.setItem("theme_colors", JSON.stringify(colors))
+  } catch {
+    // ignore storage errors (private mode / blocked)
+  }
+}
+
 export const useTheme = () => {
   useEffect(() => {
-    let subscription = null
+    let unsubscribe = null
 
     const setupTheme = async () => {
       try {
         const cached = localStorage.getItem("theme_colors")
-        if (cached) {
-          const colors = JSON.parse(cached)
-          injectCSSVariables(colors)
-        }
+        if (cached) injectCSSVariables(JSON.parse(cached))
+      } catch {
+        // ignore cache read errors
+      }
 
-        const { data, error } = await supabase
-          .from("site_theme")
-          .select("*")
-          .eq("id", 1)
-          .maybeSingle()
+      try {
+        const data = await fetchTheme()
+        if (data) applyColors(data)
 
-        if (error) throw error
-
-        if (data) {
-          const colors = {}
-          Object.keys(CSS_VAR_MAP).forEach((key) => {
-            colors[key] = data[key] || DEFAULT_THEME[key]
-          })
-
-          injectCSSVariables(colors)
-          localStorage.setItem("theme_colors", JSON.stringify(colors))
-        }
-
-        subscription = supabase
-          .channel("site_theme_changes")
-          .on(
-            "postgres_changes",
-            {
-              event: "UPDATE",
-              schema: "public",
-              table: "site_theme",
-              filter: "id=eq.1",
-            },
-            (payload) => {
-              if (payload.new) {
-                const colors = {}
-                Object.keys(CSS_VAR_MAP).forEach((key) => {
-                  colors[key] = payload.new[key] || DEFAULT_THEME[key]
-                })
-                injectCSSVariables(colors)
-                localStorage.setItem("theme_colors", JSON.stringify(colors))
-              }
-            }
-          )
-          .subscribe(() => {})
+        // Realtime via idempotent, StrictMode-safe shared helper.
+        unsubscribe = subscribeTheme((row) => applyColors(row))
       } catch (error) {
         console.error("Error setting up theme:", error)
       }
@@ -189,9 +149,7 @@ export const useTheme = () => {
     setupTheme()
 
     return () => {
-      if (subscription) {
-        supabase.removeChannel(subscription)
-      }
+      if (unsubscribe) unsubscribe()
     }
   }, [])
 }

@@ -1,6 +1,6 @@
 import { useCourses } from "./hooks/useCourses"
 import { BookOpen, ExternalLink } from "lucide-react"
-import PublicCtaButton from "../../components/ui/public-cta-button"
+import PublicCtaButton from "@/components/ui/public-cta-button"
 export default function CoursesPage() {
   const { courses, loading } = useCourses()
 

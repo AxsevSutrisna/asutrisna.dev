@@ -106,6 +106,15 @@ const TargetCursor = ({
       currentLeaveHandler = null
     }
 
+    // Jika target aktif terlepas dari DOM (mis. modal / tombol X ditutup),
+    // event "mouseleave" tak terpicu — reset manual agar crosshair tidak
+    // tersangkut di posisi terakhir target.
+    const resetIfTargetDetached = () => {
+      if (activeTarget && !activeTarget.isConnected && currentLeaveHandler) {
+        currentLeaveHandler()
+      }
+    }
+
     const initialOffset = getOffset()
     gsap.set(cursor, {
       xPercent: -50,
@@ -158,7 +167,10 @@ const TargetCursor = ({
 
     tickerFnRef.current = tickerFn
 
-    const moveHandler = (e) => moveCursor(e.clientX, e.clientY)
+    const moveHandler = (e) => {
+      resetIfTargetDetached()
+      moveCursor(e.clientX, e.clientY)
+    }
     window.addEventListener("mousemove", moveHandler)
 
     const scrollHandler = () => {
@@ -365,6 +377,11 @@ const TargetCursor = ({
     }
     window.addEventListener("resize", resizeHandler)
 
+    // Reset seketika saat node (mis. modal ditutup) dihapus dari DOM,
+    // tanpa perlu menunggu gerak mouse.
+    const domObserver = new MutationObserver(resetIfTargetDetached)
+    domObserver.observe(document.body, { childList: true, subtree: true })
+
     return () => {
       if (tickerFnRef.current) {
         gsap.ticker.remove(tickerFnRef.current)
@@ -373,6 +390,7 @@ const TargetCursor = ({
       window.removeEventListener("mouseover", enterHandler)
       window.removeEventListener("scroll", scrollHandler)
       window.removeEventListener("resize", resizeHandler)
+      domObserver.disconnect()
       window.removeEventListener("mousedown", mouseDownHandler)
       window.removeEventListener("mouseup", mouseUpHandler)
       if (activeTarget) {

@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useAchievementStore } from "../../../store/useAchievementStore"
+import { useAchievementStore } from "@/store/useAchievementStore"
 import { Trophy } from "lucide-react"
 // Gunakan gradien warna serupa dengan avatar perusahaan di ExperienceHighlight
 const AVATAR_COLORS = [
@@ -93,8 +93,8 @@ export default function AchievementHighlight() {
                 className="mt-2 text-sm sm:text-base"
                 style={{ color: "var(--color-text-muted)" }}
               >
-                Milestones, competitive awards, and honors I've received along
-                my journey.
+                Milestones, competitive awards, and honors I&apos;ve received
+                along my journey.
               </p>
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function AchievementHighlight() {
                           borderColor: "var(--color-primary-light)",
                         }}
                       >
-                        "{item.deskripsi}"
+                        &ldquo;{item.deskripsi}&rdquo;
                       </p>
                     )}
                   </div>

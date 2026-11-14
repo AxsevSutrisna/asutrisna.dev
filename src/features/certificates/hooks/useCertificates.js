@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useCertificatesStore } from "../../../store/useCertificatesStore"
+import { useCertificatesStore } from "@/store/useCertificatesStore"
 
 export function useCertificates() {
   const { certificates, loading, fetchCertificates } = useCertificatesStore()
