@@ -89,11 +89,11 @@ export default function About() {
           </div>
         </div>
 
-        <AddNewButton onClick={() => setShowCreate(true)} label="New About" />
+        <AddNewButton onClick={() => setShowCreate(true)} label="Add About" />
       </div>
 
       {showCreate && (
-        <Modal title="Add About Content" onClose={() => setShowCreate(false)}>
+        <Modal title="Add New About" onClose={() => setShowCreate(false)}>
           <AboutForm
             initial={null}
             onSubmit={handleCreate}
@@ -143,7 +143,7 @@ export default function About() {
             <div className="mt-2">
               <AddNewButton
                 onClick={() => setShowCreate(true)}
-                label="Create About Profile"
+                label="Add About"
               />
             </div>
           </div>

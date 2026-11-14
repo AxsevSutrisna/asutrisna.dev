@@ -185,10 +185,21 @@ export default function ThemeManager() {
         </div>
         <button
           onClick={handleReset}
-          className="cursor-target flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-red-400 transition border border-red-500/20 no-neo"
+          className="relative group shrink-0 cursor-target no-neo"
         >
-          <RotateCcw className="w-4 h-4" />
-          Reset All
+          {/* Meniru struktur AddNewButton (glow + body pill) agar selaras dengan
+              tombol header modul lain, bernuansa merah karena aksi destruktif. */}
+          <div
+            className="absolute -inset-0.5 rounded-xl opacity-40 blur transition duration-300 group-hover:opacity-80"
+            style={{ background: "linear-gradient(90deg, #b91c1c, #ef4444)" }}
+          />
+          <div
+            className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 transition-colors"
+            style={{ backgroundColor: "var(--color-backdrop-base)" }}
+          >
+            <RotateCcw className="w-4 h-4 text-red-400" />
+            <span className="text-sm font-medium text-red-300">Reset All</span>
+          </div>
         </button>
       </div>
 

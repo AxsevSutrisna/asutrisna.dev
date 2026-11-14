@@ -701,11 +701,11 @@ export default function SocialLinksDashboard() {
           </div>
         </div>
 
-        <AddNewButton onClick={() => setShowCreate(true)} label="New Link" />
+        <AddNewButton onClick={() => setShowCreate(true)} label="Add Social Link" />
       </div>
 
       {showCreate && (
-        <Modal title="Add Social Link" onClose={() => setShowCreate(false)}>
+        <Modal title="Add New Social Link" onClose={() => setShowCreate(false)}>
           <SocialLinkForm
             initial={null}
             onSubmit={handleCreate}

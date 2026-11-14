@@ -451,7 +451,7 @@ export default function Courses() {
               <div className="mt-2">
                 <AddNewButton
                   onClick={() => setShowCreate(true)}
-                  label="Add First Course"
+                  label="Add Course"
                 />
               </div>
             </div>

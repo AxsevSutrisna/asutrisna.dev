@@ -212,7 +212,7 @@ export default function Projects() {
 
           <AddNewButton
             onClick={() => setShowCreate(true)}
-            label="New Project"
+            label="Add Project"
           />
         </div>
       </div>
@@ -392,8 +392,7 @@ export default function Projects() {
                 className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-sm font-medium text-gray-200"
                 style={{ backgroundColor: "var(--color-backdrop-base)" }}
               >
-                <Plus className="w-4 h-4 text-indigo-400" /> Create First
-                Project
+                <Plus className="w-4 h-4 text-indigo-400" /> Add Project
               </div>
             </button>
           </div>

@@ -239,7 +239,7 @@ export default function Achievements() {
         </div>
         <AddNewButton
           onClick={() => setShowCreate(true)}
-          label="New Achievement"
+          label="Add Achievement"
         />
       </div>
 
@@ -352,7 +352,7 @@ export default function Achievements() {
 
       {showCreate && (
         <Modal
-          title="Create New Achievement"
+          title="Add New Achievement"
           onClose={() => setShowCreate(false)}
         >
           <AchievementForm

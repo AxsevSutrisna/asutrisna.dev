@@ -542,12 +542,12 @@ export default function TechStacks() {
 
         <AddNewButton
           onClick={() => setShowCreate(true)}
-          label="New Tech Stack"
+          label="Add Tech Stack"
         />
       </div>
 
       {showCreate && (
-        <Modal title="Add Tech Stack" onClose={() => setShowCreate(false)}>
+        <Modal title="Add New Tech Stack" onClose={() => setShowCreate(false)}>
           <TechStackForm
             initial={null}
             onSubmit={handleCreate}

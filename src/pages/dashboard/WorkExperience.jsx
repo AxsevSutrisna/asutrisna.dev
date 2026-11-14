@@ -934,7 +934,7 @@ export default function WorkExperience() {
             <div className="mt-2">
               <AddNewButton
                 onClick={() => setShowCreate(true)}
-                label="Add First Experience"
+                label="Add Experience"
               />
             </div>
           </div>
