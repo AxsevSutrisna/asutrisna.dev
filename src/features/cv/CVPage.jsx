@@ -27,6 +27,7 @@ import { useTechStacks } from "@/features/techstack/hooks/useTechStacks"
 import { formatDateRange as formatEducationDate } from "@/utils/educations"
 import { formatDateRange as formatWorkDate } from "@/utils/workExperiences"
 import { GOOGLE_DRIVE_DOWNLOAD_BASE, STATIC_PATHS } from "@/constants/urls"
+import { trackEvent } from "@/shared/lib/analytics"
 
 const FALLBACK_PROFILE = {
   name: "Muhammad Ikhwan Fathulloh",
@@ -201,7 +202,10 @@ const DownloadMenu = ({ options }) => {
                 key={option.label}
                 href={href}
                 download
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false)
+                  trackEvent("download_cv", { version: option.label })
+                }}
                 className="cursor-target flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white transition-colors hover:bg-white/5"
               >
                 <FileText className="h-4 w-4 text-[color:var(--color-primary-light)]" />
@@ -399,6 +403,12 @@ export default function CVPage() {
                   icon={social.Icon}
                   iconClassName="w-4 h-4"
                   className="cursor-target"
+                  onClick={() =>
+                    trackEvent("social_click", {
+                      platform: social.label,
+                      location: "cv",
+                    })
+                  }
                 />
               ))}
             </div>

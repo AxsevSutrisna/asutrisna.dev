@@ -9,20 +9,25 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { toSlug } from "@/shared/lib/slug"
+import { trackEvent } from "@/shared/lib/analytics"
 
 const CardProject = ({ img, title, description, link: ProjectLink, id }) => {
   const handleLiveDemo = (e) => {
     if (!ProjectLink) {
       e.preventDefault()
       alert("Visit Link link is not available")
+      return
     }
+    trackEvent("project_live_click", { title })
   }
 
   const handleDetails = (e) => {
     if (!id) {
       e.preventDefault()
       alert("Project details are not available")
+      return
     }
+    trackEvent("project_details_click", { title })
   }
 
   return (

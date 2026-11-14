@@ -6,6 +6,7 @@ import { ArrowLeft, ExternalLink, Github, Code2, Star, X } from "lucide-react"
 import { useToast } from "@/hooks/useToast"
 import ToastStack from "@/components/ToastStack"
 import { FALLBACK_SITE_ORIGIN, FALLBACK_GITHUB } from "@/constants/urls"
+import { trackEvent } from "@/shared/lib/analytics"
 import {
   buildCreativeWorkSchema,
   buildPersonSchema,
@@ -316,6 +317,11 @@ const ProjectDetails = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group relative inline-flex items-center space-x-1.5 md:space-x-2"
+                      onClick={() =>
+                        trackEvent("project_live_click", {
+                          title: project.title,
+                        })
+                      }
                     >
                       <ExternalLink className="relative w-4 h-4 md:w-5 md:h-5 group-hover:rotate-12 transition-transform" />
                       <span className="relative font-medium">Visit Link</span>
@@ -336,7 +342,11 @@ const ProjectDetails = () => {
                       onClick={(e) => {
                         if (!handleGithubClick(project.github)) {
                           e.preventDefault()
+                          return
                         }
+                        trackEvent("project_github_click", {
+                          title: project.title,
+                        })
                       }}
                     >
                       <Github className="relative w-4 h-4 md:w-5 md:h-5 group-hover:rotate-12 transition-transform" />

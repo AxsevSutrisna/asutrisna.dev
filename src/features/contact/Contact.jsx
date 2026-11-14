@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/useToast"
 import ToastStack from "@/components/ToastStack"
 import { FORM_SUBMIT_ENDPOINT } from "@/constants/urls"
+import { trackEvent } from "@/shared/lib/analytics"
 
 const ICONS = {
   Linkedin,
@@ -96,6 +97,10 @@ const ContactPage = () => {
         body: JSON.stringify(submitData),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+      trackEvent("contact_submit", {
+        has_subject: Boolean(formData.subject),
+      })
 
       pushToast(
         "success",
@@ -188,6 +193,12 @@ const ContactPage = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={link.display_name}
+                        onClick={() =>
+                          trackEvent("social_click", {
+                            platform: link.platform || link.display_name,
+                            location: "contact",
+                          })
+                        }
                       >
                         <IconComponent className="w-5 h-5" />
                       </a>
