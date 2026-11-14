@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import ConfirmProvider from "./components/ui/ConfirmProvider"
+import AnalyticsTracker from "./components/AnalyticsTracker"
 
 const Portfolio = lazy(() => import("./features/projects/Portfolio"))
 const ContactPage = lazy(() => import("./features/contact/Contact"))
@@ -85,6 +86,7 @@ function App() {
         </div>
         <ConfirmProvider>
         <BrowserRouter>
+          <AnalyticsTracker />
           <Routes>
             {/* PUBLIC */}
             <Route element={<MainLayout />}>

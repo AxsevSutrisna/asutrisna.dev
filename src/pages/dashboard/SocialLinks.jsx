@@ -27,6 +27,7 @@ import {
   MessageCircle,
 } from "lucide-react"
 import AddNewButton from "./components/AddNewButton"
+import { useReorderDnD } from "@/shared/lib/useReorderDnD"
 
 const getLucideIcon = (name) => {
   switch (name?.toLowerCase()) {
@@ -621,8 +622,6 @@ const SocialLinkForm = ({ initial, onSubmit, onCancel, uploading }) => {
 export default function SocialLinksDashboard() {
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
-  const [draggingId, setDraggingId] = useState(null)
-  const [dropTargetId, setDropTargetId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
   const confirm = useConfirm()
   const {
@@ -637,36 +636,7 @@ export default function SocialLinksDashboard() {
     reorderItems,
   } = useSocialLinkManagement(pushToast)
 
-  const handleDragStart = (id) => setDraggingId(id)
-  const handleDragOver = (e) => e.preventDefault()
-  const handleDragEnter = (id) => {
-    if (draggingId && draggingId !== id) setDropTargetId(id)
-  }
-  const handleDragLeave = (id, e) => {
-    if (!e.currentTarget.contains(e.relatedTarget) && dropTargetId === id)
-      setDropTargetId(null)
-  }
-
-  const handleDrop = async (targetId) => {
-    if (!draggingId || draggingId === targetId) {
-      setDraggingId(null)
-      setDropTargetId(null)
-      return
-    }
-    const srcIdx = items.findIndex((i) => i.id === draggingId)
-    const tgtIdx = items.findIndex((i) => i.id === targetId)
-
-    setDraggingId(null)
-    setDropTargetId(null)
-
-    if (srcIdx === -1 || tgtIdx === -1) return
-
-    const nextItems = [...items]
-    const [moved] = nextItems.splice(srcIdx, 1)
-    nextItems.splice(tgtIdx, 0, moved)
-
-    await reorderItems(nextItems)
-  }
+  const dnd = useReorderDnD(items, reorderItems)
 
   const handleCreate = async (form, iconFile) => {
     const ok = await createItem(form, iconFile)
@@ -766,24 +736,15 @@ export default function SocialLinksDashboard() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-5">
           {items.map((item) => (
-            <div
-              key={item.id}
-              draggable
-              onDragStart={() => handleDragStart(item.id)}
-              onDragOver={handleDragOver}
-              onDrop={() => handleDrop(item.id)}
-              onDragEnd={() => setDraggingId(null)}
-              onDragEnter={() => handleDragEnter(item.id)}
-              onDragLeave={(event) => handleDragLeave(item.id, event)}
-            >
+            <div key={item.id} {...dnd.getItemProps(item.id)}>
               <SocialLinkCard
                 item={item}
                 onEdit={setEditItem}
                 onDelete={deleteItem}
                 onToggleActive={toggleActive}
                 onSetPrimary={setPrimary}
-                isDragging={draggingId === item.id}
-                isDropTarget={dropTargetId === item.id}
+                isDragging={dnd.isDragging(item.id)}
+                isDropTarget={dnd.isDropTarget(item.id)}
               />
             </div>
           ))}

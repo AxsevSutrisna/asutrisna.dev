@@ -1,57 +1,125 @@
 import { useCallback, useEffect, useState } from "react"
-import { messageRepository } from "@/entities/message/api/messageRepository"
+import {
+  messageRepository,
+  type MessageSort,
+  type MessageStatus,
+} from "@/entities/message/api/messageRepository"
+import { useDebouncedValue } from "@/shared/lib/useDebouncedValue"
+import { errorMessage } from "@/shared/lib/errorMessage"
 import type { Message } from "@/entities/message/model/types"
 
 type Notify = (type: "success" | "error" | "info", message: string) => void
 
-const toMessage = (err: unknown, fallback: string): string =>
-  err instanceof Error ? err.message : fallback
+const PAGE_SIZE = 10
 
-/** Use-case hook pengelolaan Messages (inbox) di dashboard admin. */
+/**
+ * Use-case hook pengelolaan Messages (inbox) di dashboard admin dengan
+ * pagination server-side. Pencarian/filter/sort juga dikirim ke DB agar benar
+ * atas seluruh data; hitungan total & unread diambil global untuk badge.
+ */
 export function useMessageManagement(notify?: Notify) {
   const [items, setItems] = useState<Message[]>([])
+  const [total, setTotal] = useState(0)
+  const [counts, setCounts] = useState({ total: 0, unread: 0 })
   const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("")
+  const [status, setStatus] = useState<MessageStatus>("all")
+  const [sort, setSort] = useState<MessageSort>("newest")
+
+  const debouncedSearch = useDebouncedValue(search, 300)
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+
+  // Kembali ke halaman 1 saat kriteria berubah.
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch, status, sort])
 
   const refresh = useCallback(async () => {
     setLoading(true)
     try {
-      setItems(await messageRepository.list())
+      const [res, c] = await Promise.all([
+        messageRepository.listPaged({
+          page,
+          pageSize: PAGE_SIZE,
+          search: debouncedSearch,
+          status,
+          sort,
+        }),
+        messageRepository.counts(),
+      ])
+      setItems(res.rows)
+      setTotal(res.total)
+      setCounts(c)
     } catch (err) {
-      notify?.("error", toMessage(err, "Gagal memuat pesan"))
+      notify?.("error", errorMessage(err, "Gagal memuat pesan"))
     } finally {
       setLoading(false)
     }
-  }, [notify])
+  }, [page, debouncedSearch, status, sort, notify])
 
   useEffect(() => {
     refresh()
   }, [refresh])
 
-  const removeMessage = useCallback(
-    async (id: number | string) => {
+  // Jika halaman melewati total (mis. setelah hapus item terakhir di halaman), mundur.
+  useEffect(() => {
+    if (!loading && page > totalPages) setPage(totalPages)
+  }, [loading, page, totalPages])
+
+  const run = useCallback(
+    async (fn: () => Promise<unknown>, messages: { success?: string; error: string }) => {
+      setBusy(true)
       try {
-        await messageRepository.remove(id)
-        notify?.("success", "Message deleted successfully!")
+        await fn()
+        if (messages.success) notify?.("success", messages.success)
         await refresh()
+        return true
       } catch (err) {
-        notify?.("error", toMessage(err, "Failed to delete message"))
+        notify?.("error", errorMessage(err, messages.error))
+        return false
+      } finally {
+        setBusy(false)
       }
     },
     [notify, refresh]
   )
 
-  const toggleRead = useCallback(
-    async (item: Message) => {
-      try {
-        await messageRepository.setRead(item.id, !item.is_read)
-        notify?.("success", item.is_read ? "Marked as unread" : "Marked as read")
-        await refresh()
-      } catch (err) {
-        notify?.("error", toMessage(err, "Failed to update status"))
-      }
-    },
-    [notify, refresh]
-  )
+  const removeMessage = (id: number | string) =>
+    run(() => messageRepository.remove(id), {
+      success: "Message deleted successfully!",
+      error: "Failed to delete message",
+    })
 
-  return { items, loading, removeMessage, toggleRead }
+  const toggleRead = (item: Message) =>
+    run(() => messageRepository.setRead(item.id, !item.is_read), {
+      success: item.is_read ? "Marked as unread" : "Marked as read",
+      error: "Failed to update status",
+    })
+
+  return {
+    items,
+    loading,
+    busy,
+    // pagination
+    page,
+    setPage,
+    totalPages,
+    pageSize: PAGE_SIZE,
+    total,
+    // query controls
+    search,
+    setSearch,
+    status,
+    setStatus,
+    sort,
+    setSort,
+    // global counts (badge & filter tabs)
+    counts,
+    // mutations
+    removeMessage,
+    toggleRead,
+  }
 }

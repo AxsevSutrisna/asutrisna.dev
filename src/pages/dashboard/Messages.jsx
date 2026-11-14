@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react"
+import { useState } from "react"
 import { useToast } from "@/hooks/useToast"
 import { useConfirm } from "@/components/ui/useConfirm"
 import ToastStack from "@/components/ToastStack"
+import Pagination from "@/components/ui/Pagination"
 import { useMessageManagement } from "@/features/message-management/model/useMessages"
 import {
   Trash2,
@@ -180,15 +181,24 @@ const SkeletonCard = () => (
 
 /* ── Main Page ── */
 export default function Messages() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all") // 'all', 'unread', 'read'
-  const [sortOrder, setSortOrder] = useState("newest") // 'newest', 'oldest'
   const [expandedId, setExpandedId] = useState(null)
   const { toasts, pushToast, removeToast } = useToast()
   const confirm = useConfirm()
   const {
     items,
     loading,
+    page,
+    setPage,
+    totalPages,
+    pageSize,
+    total,
+    search,
+    setSearch,
+    status,
+    setStatus,
+    sort,
+    setSort,
+    counts,
     removeMessage,
     toggleRead: toggleReadStatus,
   } = useMessageManagement(pushToast)
@@ -204,37 +214,9 @@ export default function Messages() {
     removeMessage(id)
   }
 
-  const unreadCount = items.filter((i) => !i.is_read).length
-  const readCount = items.length - unreadCount
-
-  // Di-memo agar tak re-filter/sort saat hanya expand/collapse berubah.
-  const filteredItems = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
-    return items
-      .filter((item) => {
-        if (filterStatus === "unread" && item.is_read) return false
-        if (filterStatus === "read" && !item.is_read) return false
-
-        if (query) {
-          const haystack = [
-            item.name,
-            item.email,
-            item.subject,
-            item.message,
-          ]
-            .join(" ")
-            .toLowerCase()
-          if (!haystack.includes(query)) return false
-        }
-
-        return true
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.created_at).getTime()
-        const dateB = new Date(b.created_at).getTime()
-        return sortOrder === "newest" ? dateB - dateA : dateA - dateB
-      })
-  }, [items, filterStatus, searchQuery, sortOrder])
+  const readCount = Math.max(0, counts.total - counts.unread)
+  const rangeStart = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const rangeEnd = Math.min(total, page * pageSize)
 
   return (
     <div className="space-y-6">
@@ -260,18 +242,16 @@ export default function Messages() {
             <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               Messages
             </h1>
-            {!loading && (
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="flex items-center gap-1 text-[11px] text-gray-400 bg-white/5 border border-white/8 rounded-full px-2.5 py-0.5">
-                  <Mail className="w-3 h-3" /> {items.length} total
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="flex items-center gap-1 text-[11px] text-gray-400 bg-white/5 border border-white/8 rounded-full px-2.5 py-0.5">
+                <Mail className="w-3 h-3" /> {counts.total} total
+              </span>
+              {counts.unread > 0 && (
+                <span className="flex items-center gap-1 text-[11px] text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-2.5 py-0.5">
+                  <Mail className="w-3 h-3" /> {counts.unread} unread
                 </span>
-                {unreadCount > 0 && (
-                  <span className="flex items-center gap-1 text-[11px] text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-2.5 py-0.5">
-                    <Mail className="w-3 h-3" /> {unreadCount} unread
-                  </span>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -284,13 +264,13 @@ export default function Messages() {
           <input
             type="text"
             placeholder="Search messages..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="cursor-target w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-gray-600"
           />
-          {searchQuery && (
+          {search && (
             <button
-              onClick={() => setSearchQuery("")}
+              onClick={() => setSearch("")}
               className="cursor-target absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
             >
               <X className="w-4 h-4" />
@@ -302,44 +282,42 @@ export default function Messages() {
         <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto">
           {/* Sort Button */}
           <button
-            onClick={() =>
-              setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))
-            }
+            onClick={() => setSort(sort === "newest" ? "oldest" : "newest")}
             className="cursor-target flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-gray-300 transition-all shrink-0"
-            title={sortOrder === "newest" ? "Sort by Oldest" : "Sort by Newest"}
+            title={sort === "newest" ? "Sort by Oldest" : "Sort by Newest"}
           >
             <ArrowDownUp className="w-4 h-4" />
             <span className="hidden sm:inline">
-              {sortOrder === "newest" ? "Newest" : "Oldest"}
+              {sort === "newest" ? "Newest" : "Oldest"}
             </span>
           </button>
 
           {/* Filter Tabs */}
           <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl shrink-0">
             <button
-              onClick={() => setFilterStatus("all")}
+              onClick={() => setStatus("all")}
               className={`cursor-target px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                filterStatus === "all"
+                status === "all"
                   ? "bg-indigo-500/20 text-indigo-300 shadow-sm"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
             >
-              All ({items.length})
+              All ({counts.total})
             </button>
             <button
-              onClick={() => setFilterStatus("unread")}
+              onClick={() => setStatus("unread")}
               className={`cursor-target px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                filterStatus === "unread"
+                status === "unread"
                   ? "bg-indigo-500/20 text-indigo-300 shadow-sm"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
             >
-              Unread ({unreadCount})
+              Unread ({counts.unread})
             </button>
             <button
-              onClick={() => setFilterStatus("read")}
+              onClick={() => setStatus("read")}
               className={`cursor-target px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                filterStatus === "read"
+                status === "read"
                   ? "bg-indigo-500/20 text-indigo-300 shadow-sm"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
@@ -351,12 +329,12 @@ export default function Messages() {
       </div>
 
       {/* ── Content ── */}
-      {loading ? (
+      {loading && items.length === 0 ? (
         <div className="space-y-4">
           <SkeletonCard />
           <SkeletonCard />
         </div>
-      ) : items.length === 0 ? (
+      ) : counts.total === 0 ? (
         <div className="relative rounded-2xl border border-white/8 border-dashed overflow-hidden">
           <div
             className="absolute inset-0 opacity-30"
@@ -379,7 +357,7 @@ export default function Messages() {
             </div>
           </div>
         </div>
-      ) : filteredItems.length === 0 ? (
+      ) : items.length === 0 ? (
         <div className="relative rounded-2xl border border-white/8 border-dashed overflow-hidden">
           <div className="relative py-24 flex flex-col items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
@@ -394,8 +372,8 @@ export default function Messages() {
               </p>
               <button
                 onClick={() => {
-                  setSearchQuery("")
-                  setFilterStatus("all")
+                  setSearch("")
+                  setStatus("all")
                 }}
                 className="cursor-target mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-gray-300 transition-colors"
               >
@@ -405,19 +383,37 @@ export default function Messages() {
           </div>
         </div>
       ) : (
-        <div className="space-y-2">
-          {filteredItems.map((item) => (
-            <MessageCard
-              key={item.id}
-              item={item}
-              onDelete={deleteItem}
-              onToggleRead={toggleReadStatus}
-              isExpanded={expandedId === item.id}
-              onToggleExpand={() =>
-                setExpandedId((prev) => (prev === item.id ? null : item.id))
-              }
-            />
-          ))}
+        <div className="space-y-4">
+          <div
+            className={`space-y-2 transition-opacity ${loading ? "opacity-60" : ""}`}
+          >
+            {items.map((item) => (
+              <MessageCard
+                key={item.id}
+                item={item}
+                onDelete={deleteItem}
+                onToggleRead={toggleReadStatus}
+                isExpanded={expandedId === item.id}
+                onToggleExpand={() =>
+                  setExpandedId((prev) => (prev === item.id ? null : item.id))
+                }
+              />
+            ))}
+          </div>
+
+          {/* Pagination + range info */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <p className="text-xs text-gray-500 order-2 sm:order-1">
+              Showing {rangeStart}–{rangeEnd} of {total}
+            </p>
+            <div className="order-1 sm:order-2">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onChange={setPage}
+              />
+            </div>
+          </div>
         </div>
       )}
 

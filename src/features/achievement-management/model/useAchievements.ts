@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react"
 import { achievementRepository } from "@/entities/achievement/api/achievementRepository"
+import { useCrudResource } from "@/shared/lib/useCrudResource"
+import { resolveSortOrder } from "@/shared/lib/sortOrder"
 import type {
   Achievement,
   AchievementInput,
@@ -10,130 +11,53 @@ type FormValues = Omit<AchievementInput, "sort_order"> & {
   sort_order: number | string
 }
 
-const message = (err: unknown, fallback: string): string =>
-  err instanceof Error ? err.message : fallback
-
 /** Use-case hook pengelolaan Achievements di dashboard admin. */
 export function useAchievementManagement(notify?: Notify) {
-  const [achievements, setAchievements] = useState<Achievement[]>([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-
-  const refresh = useCallback(async () => {
-    setLoading(true)
-    try {
-      setAchievements(await achievementRepository.fetchAll())
-    } catch (err) {
-      notify?.("error", message(err, "Gagal memuat achievements"))
-    } finally {
-      setLoading(false)
-    }
-  }, [notify])
-
-  useEffect(() => {
-    refresh()
-  }, [refresh])
-
-  const nextSortOrder = useCallback(
-    () =>
-      achievements.reduce(
-        (highest, item) => Math.max(highest, Number(item.sort_order || 0)),
-        0
-      ) + 1,
-    [achievements]
+  const { items, setItems, loading, busy, run } = useCrudResource<Achievement>(
+    achievementRepository.fetchAll,
+    notify,
+    { loadError: "Gagal memuat achievements" }
   )
 
-  const resolveSortOrder = useCallback(
-    (value: number | string): number => {
-      if (value === "" || value === null || value === undefined) {
-        return nextSortOrder()
-      }
-      const parsed = Number(value)
-      return Number.isNaN(parsed) ? nextSortOrder() : parsed
-    },
-    [nextSortOrder]
-  )
+  const toInput = (form: FormValues): AchievementInput => ({
+    title: form.title,
+    deskripsi: form.deskripsi,
+    place: form.place,
+    badge_text: form.badge_text,
+    date: form.date,
+    level_competition: form.level_competition,
+    sort_order: resolveSortOrder(items, form.sort_order),
+  })
 
-  const toInput = useCallback(
-    (form: FormValues): AchievementInput => ({
-      title: form.title,
-      deskripsi: form.deskripsi,
-      place: form.place,
-      badge_text: form.badge_text,
-      date: form.date,
-      level_competition: form.level_competition,
-      sort_order: resolveSortOrder(form.sort_order),
-    }),
-    [resolveSortOrder]
-  )
+  const createAchievement = (form: FormValues) =>
+    run(() => achievementRepository.create(toInput(form)), {
+      success: "Achievement created!",
+      error: "Gagal membuat achievement",
+    })
 
-  const createAchievement = useCallback(
-    async (form: FormValues) => {
-      setSaving(true)
-      try {
-        await achievementRepository.create(toInput(form))
-        notify?.("success", "Achievement created!")
-        await refresh()
-        return true
-      } catch (err) {
-        notify?.("error", message(err, "Gagal membuat achievement"))
-        return false
-      } finally {
-        setSaving(false)
-      }
-    },
-    [notify, refresh, toInput]
-  )
+  const updateAchievement = (id: number | string, form: FormValues) =>
+    run(() => achievementRepository.update(id, toInput(form)), {
+      success: "Achievement updated!",
+      error: "Gagal memperbarui achievement",
+    })
 
-  const updateAchievement = useCallback(
-    async (id: number | string, form: FormValues) => {
-      setSaving(true)
-      try {
-        await achievementRepository.update(id, toInput(form))
-        notify?.("success", "Achievement updated!")
-        await refresh()
-        return true
-      } catch (err) {
-        notify?.("error", message(err, "Gagal memperbarui achievement"))
-        return false
-      } finally {
-        setSaving(false)
-      }
-    },
-    [notify, refresh, toInput]
-  )
+  const removeAchievement = (id: number | string) =>
+    run(() => achievementRepository.remove(id), {
+      success: "Achievement removed.",
+      error: "Gagal menghapus achievement",
+    })
 
-  const removeAchievement = useCallback(
-    async (id: number | string) => {
-      try {
-        await achievementRepository.remove(id)
-        notify?.("success", "Achievement removed.")
-        await refresh()
-      } catch (err) {
-        notify?.("error", message(err, "Gagal menghapus achievement"))
-      }
-    },
-    [notify, refresh]
-  )
-
-  const reorderAchievements = useCallback(
-    async (ordered: Achievement[]) => {
-      setAchievements(ordered) // optimistic
-      try {
-        await achievementRepository.reorder(ordered.map((item) => item.id))
-        await refresh()
-      } catch (err) {
-        notify?.("error", message(err, "Gagal menyimpan urutan achievement"))
-        await refresh()
-      }
-    },
-    [notify, refresh]
-  )
+  const reorderAchievements = async (ordered: Achievement[]) => {
+    setItems(ordered) // optimistic
+    await run(() => achievementRepository.reorder(ordered.map((i) => i.id)), {
+      error: "Gagal menyimpan urutan achievement",
+    })
+  }
 
   return {
-    achievements,
+    achievements: items,
     loading,
-    saving,
+    saving: busy,
     createAchievement,
     updateAchievement,
     removeAchievement,

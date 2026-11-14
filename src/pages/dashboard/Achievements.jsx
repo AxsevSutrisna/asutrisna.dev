@@ -6,6 +6,7 @@ import ToastStack from "@/components/ToastStack"
 import { Trophy, Trash2, Pencil, Save, GripVertical } from "lucide-react"
 import AddNewButton from "./components/AddNewButton"
 import { useAchievementManagement } from "@/features/achievement-management/model/useAchievements"
+import { useReorderDnD } from "@/shared/lib/useReorderDnD"
 
 const AchievementForm = ({
   initial,
@@ -185,9 +186,6 @@ export default function Achievements() {
   const [showCreate, setShowCreate] = useState(false)
   const [editItem, setEditItem] = useState(null)
 
-  const [draggingId, setDraggingId] = useState(null)
-  const [dropTargetId, setDropTargetId] = useState(null)
-
   const { toasts, pushToast, removeToast } = useToast()
   const confirm = useConfirm()
   const {
@@ -200,42 +198,7 @@ export default function Achievements() {
     reorderAchievements,
   } = useAchievementManagement(pushToast)
 
-  const handleDragStart = (id) => setDraggingId(id)
-  const handleDragOver = (event) => event.preventDefault()
-  const handleDragEnter = (id) => {
-    if (draggingId && draggingId !== id) {
-      setDropTargetId(id)
-    }
-  }
-  const handleDragLeave = (id, event) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-      if (dropTargetId === id) {
-        setDropTargetId(null)
-      }
-    }
-  }
-
-  const handleDrop = async (targetId) => {
-    if (!draggingId || draggingId === targetId) {
-      setDraggingId(null)
-      setDropTargetId(null)
-      return
-    }
-
-    const sourceIndex = achievements.findIndex((item) => item.id === draggingId)
-    const targetIndex = achievements.findIndex((item) => item.id === targetId)
-
-    setDraggingId(null)
-    setDropTargetId(null)
-
-    if (sourceIndex === -1 || targetIndex === -1) return
-
-    const nextItems = [...achievements]
-    const [movedItem] = nextItems.splice(sourceIndex, 1)
-    nextItems.splice(targetIndex, 0, movedItem)
-
-    await reorderAchievements(nextItems)
-  }
+  const dnd = useReorderDnD(achievements, reorderAchievements)
 
   const handleCreate = async (form) => {
     const ok = await createAchievement(form)
@@ -302,16 +265,10 @@ export default function Achievements() {
             {achievements.map((item) => (
             <div
               key={item.id}
-              draggable
-              onDragStart={() => handleDragStart(item.id)}
-              onDragOver={handleDragOver}
-              onDrop={() => handleDrop(item.id)}
-              onDragEnd={() => setDraggingId(null)}
-              onDragEnter={() => handleDragEnter(item.id)}
-              onDragLeave={(event) => handleDragLeave(item.id, event)}
-              className={`relative ${draggingId === item.id ? "opacity-60 scale-[0.99]" : ""} ${dropTargetId === item.id ? "ring-2 ring-indigo-400/70 ring-offset-2 ring-offset-transparent shadow-[0_0_0_1px_rgba(129,140,248,0.25)]" : ""}`}
+              {...dnd.getItemProps(item.id)}
+              className={`relative ${dnd.isDragging(item.id) ? "opacity-60 scale-[0.99]" : ""} ${dnd.isDropTarget(item.id) ? "ring-2 ring-indigo-400/70 ring-offset-2 ring-offset-transparent shadow-[0_0_0_1px_rgba(129,140,248,0.25)]" : ""}`}
             >
-              {dropTargetId === item.id && draggingId !== item.id && (
+              {dnd.isDropTarget(item.id) && !dnd.isDragging(item.id) && (
                 <div className="absolute -inset-1 rounded-2xl border-2 border-dashed border-indigo-400/70 bg-indigo-500/10 pointer-events-none flex items-center justify-center text-indigo-200 text-xs font-medium tracking-widest uppercase z-10">
                   Drop to place here
                 </div>

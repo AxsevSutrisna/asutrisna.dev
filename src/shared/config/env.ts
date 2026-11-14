@@ -9,6 +9,8 @@
 export interface AppEnv {
   supabaseUrl: string
   supabaseAnonKey: string
+  /** Google Analytics 4 Measurement ID (G-XXXXXXXXXX). Opsional. */
+  gaMeasurementId?: string
 }
 
 function readEnv(): AppEnv {
@@ -26,7 +28,10 @@ function readEnv(): AppEnv {
     )
   }
 
-  return { supabaseUrl, supabaseAnonKey }
+  // Opsional — analytics dinonaktifkan otomatis bila kosong.
+  const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || undefined
+
+  return { supabaseUrl, supabaseAnonKey, gaMeasurementId }
 }
 
 export const env: AppEnv = readEnv()

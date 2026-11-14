@@ -1,115 +1,66 @@
-import { useCallback, useEffect, useState } from "react"
 import { projectRepository } from "@/entities/project/api/projectRepository"
+import { useCrudResource } from "@/shared/lib/useCrudResource"
 import type { ProjectImageItem } from "@/entities/project/api/projectRepository"
 import type { ProjectFormValues } from "@/entities/project/lib/projectMapper"
 import type { Project } from "@/entities/project/model/types"
 
 type Notify = (type: "success" | "error" | "info", message: string) => void
 
-const message = (err: unknown, fallback: string): string =>
-  err instanceof Error ? err.message : fallback
-
 /**
- * Use-case hook untuk pengelolaan Projects di dashboard admin.
- * Mengorkestrasi repository (upload + CRUD + reorder), state loading/uploading,
- * refresh pasca-mutasi, dan notifikasi toast. Tidak menyentuh supabase langsung.
+ * Use-case hook pengelolaan Projects di dashboard admin.
+ * Mengorkestrasi repository (upload + CRUD + reorder) via useCrudResource.
  */
 export function useProjectManagement(notify?: Notify) {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [uploading, setUploading] = useState(false)
+  const { items, setItems, loading, busy, refresh, run } =
+    useCrudResource<Project>(projectRepository.fetchAll, notify, {
+      loadError: "Gagal memuat projects",
+    })
 
-  const refresh = useCallback(async () => {
-    setLoading(true)
-    try {
-      setProjects(await projectRepository.fetchAll())
-    } catch (err) {
-      notify?.("error", message(err, "Gagal memuat projects"))
-    } finally {
-      setLoading(false)
-    }
-  }, [notify])
-
-  useEffect(() => {
-    refresh()
-  }, [refresh])
-
-  const createProject = useCallback(
-    async (form: ProjectFormValues, images: ProjectImageItem[]) => {
-      setUploading(true)
-      try {
+  const createProject = (form: ProjectFormValues, images: ProjectImageItem[]) =>
+    run(
+      async () => {
         const urls = await projectRepository.uploadImages(images)
         await projectRepository.create(form, urls)
-        notify?.("success", "Project created successfully!")
-        await refresh()
-        return true
-      } catch (err) {
-        notify?.("error", message(err, "Gagal membuat project"))
-        return false
-      } finally {
-        setUploading(false)
+      },
+      {
+        success: "Project created successfully!",
+        error: "Gagal membuat project",
       }
-    },
-    [notify, refresh]
-  )
+    )
 
-  const updateProject = useCallback(
-    async (
-      id: number | string,
-      form: ProjectFormValues,
-      images: ProjectImageItem[]
-    ) => {
-      setUploading(true)
-      try {
+  const updateProject = (
+    id: number | string,
+    form: ProjectFormValues,
+    images: ProjectImageItem[]
+  ) =>
+    run(
+      async () => {
         const urls = await projectRepository.uploadImages(images)
         await projectRepository.update(id, form, urls)
-        notify?.("success", "Project updated successfully!")
-        await refresh()
-        return true
-      } catch (err) {
-        notify?.("error", message(err, "Gagal memperbarui project"))
-        return false
-      } finally {
-        setUploading(false)
+      },
+      {
+        success: "Project updated successfully!",
+        error: "Gagal memperbarui project",
       }
-    },
-    [notify, refresh]
-  )
+    )
 
-  const removeProject = useCallback(
-    async (id: number | string) => {
-      try {
-        await projectRepository.remove(id)
-        notify?.("success", "Project deleted successfully!")
-        await refresh()
-      } catch (err) {
-        notify?.("error", message(err, "Gagal menghapus project"))
-      }
-    },
-    [notify, refresh]
-  )
+  const removeProject = (id: number | string) =>
+    run(() => projectRepository.remove(id), {
+      success: "Project deleted successfully!",
+      error: "Gagal menghapus project",
+    })
 
-  const reorderProjects = useCallback(
-    async (ordered: Project[]) => {
-      setUploading(true)
-      try {
-        await projectRepository.reorder(ordered.map((project) => project.id))
-        notify?.("success", "Project order saved successfully!")
-        await refresh()
-      } catch (err) {
-        notify?.("error", message(err, "Gagal menyimpan urutan project"))
-      } finally {
-        setUploading(false)
-      }
-    },
-    [notify, refresh]
-  )
+  const reorderProjects = (ordered: Project[]) =>
+    run(() => projectRepository.reorder(ordered.map((project) => project.id)), {
+      success: "Project order saved successfully!",
+      error: "Gagal menyimpan urutan project",
+    })
 
   return {
-    projects,
-    setProjects,
+    projects: items,
+    setProjects: setItems,
     loading,
-    uploading,
+    uploading: busy,
     refresh,
     createProject,
     updateProject,
