@@ -1,4 +1,13 @@
-export const FALLBACK_SITE_ORIGIN = "https://asutrisna-porto.vercel.app/"
+// Canonical primary origin for SEO (canonical URL, Open Graph, JSON-LD, sitemap).
+// Always points to the production domain regardless of which host actually serves
+// the app, so the *.vercel.app and preview URLs consolidate to the primary domain
+// instead of creating duplicate content. Override via VITE_SITE_URL if the primary
+// domain ever changes.
+export const SITE_ORIGIN = (
+  import.meta.env.VITE_SITE_URL || "https://asutrisnadev.my.id"
+).replace(/\/$/, "")
+
+export const FALLBACK_SITE_ORIGIN = SITE_ORIGIN
 
 export const FALLBACK_GITHUB = "https://github.com/AxsevSutrisna"
 

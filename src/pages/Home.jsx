@@ -84,7 +84,10 @@ const Home = () => {
   const [isHovering, setIsHovering] = useState(false)
   const [heroData, setHeroData] = useState(null)
   const [heroLoading, setHeroLoading] = useState(true)
-  const [siteOrigin, setSiteOrigin] = useState(FALLBACK_SITE_ORIGIN)
+  // Canonical origin is fixed to the primary domain (see constants/urls SITE_ORIGIN)
+  // so canonical/OG/JSON-LD always point to the primary domain, even when the app is
+  // served from a *.vercel.app or preview URL.
+  const [siteOrigin] = useState(FALLBACK_SITE_ORIGIN)
 
   const {
     socialLinks,
@@ -255,12 +258,6 @@ const Home = () => {
     fetchTechStacks()
     fetchSocialLinks()
   }, [fetchTechStacks, fetchSocialLinks])
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setSiteOrigin(window.location.origin)
-    }
-  }, [])
 
   useEffect(() => {
     const handleResize = () => AOS.refresh()
