@@ -1,4 +1,6 @@
-const DEFAULT_ORIGIN = "https://asutrisna-porto.vercel.app/"
+import { SITE_ORIGIN } from "@/constants/urls"
+
+const DEFAULT_ORIGIN = SITE_ORIGIN
 
 const trimString = (value) => String(value ?? "").trim()
 

@@ -1,8 +1,7 @@
 export const TYPING_SPEED = 100
 export const ERASING_SPEED = 50
 export const PAUSE_DURATION = 2000
-export const FALLBACK_SITE_ORIGIN =
-  typeof window !== "undefined" ? window.location.origin : ""
+export { FALLBACK_SITE_ORIGIN } from "@/constants/urls"
 
 export const normalizeArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean)

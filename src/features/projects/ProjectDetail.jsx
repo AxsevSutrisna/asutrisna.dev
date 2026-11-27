@@ -39,11 +39,9 @@ const ProjectDetails = () => {
   const navigate = useNavigate()
   const [project, setProject] = useState(null)
   const [isResolved, setIsResolved] = useState(false)
-  const [siteOrigin, setSiteOrigin] = useState(
-    typeof window !== "undefined"
-      ? window.location.origin
-      : FALLBACK_SITE_ORIGIN
-  )
+  // Fixed to the primary domain so the per-project canonical/JSON-LD always points
+  // to the primary domain regardless of the host serving the app.
+  const [siteOrigin] = useState(FALLBACK_SITE_ORIGIN)
   const [fullScreenImage, setFullScreenImage] = useState(null)
 
   const { toasts, pushToast, removeToast } = useToast()
@@ -69,12 +67,6 @@ const ProjectDetails = () => {
     setProject(projects.find((p) => p.slug === slug) ?? null)
     setIsResolved(true)
   }, [projects, slug])
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setSiteOrigin(window.location.origin)
-    }
-  }, [])
 
   if (!isResolved) {
     return (

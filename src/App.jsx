@@ -15,8 +15,6 @@ import { useTheme } from "./hooks/useTheme"
 import PublicLayout from "./components/layouts/PublicLayout"
 import ProtectedRoute from "./components/ProtectedRoute"
 
-import Login from "./pages/Login"
-import Dashboard from "./pages/Dashboard"
 import ConfirmProvider from "./components/ui/ConfirmProvider"
 import AnalyticsTracker from "./components/AnalyticsTracker"
 
@@ -35,6 +33,10 @@ const CertificatesPage = lazy(
   () => import("./features/certificates/CertificatesPage")
 )
 const CVPage = lazy(() => import("./features/cv/CVPage"))
+
+// Admin-only, never loaded for public visitors — split out of the main bundle.
+const Login = lazy(() => import("./pages/Login"))
+const Dashboard = lazy(() => import("./pages/Dashboard"))
 
 // Layout untuk halaman Home (ada Navbar & Footer, tanpa padding khusus)
 const MainLayout = () => (
@@ -172,15 +174,24 @@ function App() {
             </Route>
 
             {/* AUTH */}
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/login"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <Login />
+                </Suspense>
+              }
+            />
 
             {/* ADMIN (PROTECTED) */}
             <Route
               path="/dashboard/*"
               element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
+                <Suspense fallback={<PageSkeleton />}>
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                </Suspense>
               }
             />
 
